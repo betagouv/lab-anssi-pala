@@ -11,6 +11,7 @@
 # Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
 # non historisées (le dépôt vise à être rejoué sur d'autres projets)
 scripts/shannon/scan-targets/
+scripts/outil-tiers-to-shannon/sarif-shannon/
 outils/shannon/workspaces/
 resultats/brut/
 exports/
