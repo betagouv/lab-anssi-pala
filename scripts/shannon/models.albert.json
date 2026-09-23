@@ -1,0 +1,23 @@
+{
+  "providers": {
+    "albert": {
+      "baseUrl": "https://albert.api.etalab.gouv.fr/v1",
+      "api": "openai-completions",
+      "apiKey": "YOUR_API_KEY",
+      "models": [
+        {
+          "id": "openai/gpt-oss-120b",
+          "name": "Albert - GPT-OSS 120B",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 131072,
+          "maxTokens": 32768,
+          "compat": {
+            "supportsDeveloperRole": false,
+            "supportsReasoningEffort": false
+          }
+        }
+      ]
+    }
+  }
+}
