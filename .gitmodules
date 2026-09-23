@@ -1,0 +1,9 @@
+[submodule "cible/cible-exemple"]
+	path = cible/cible-exemple
+	url = https://github.com/betagouv/cible-exemple.git
+[submodule "outils/shannon"]
+	path = outils/shannon
+	url = https://github.com/KeygraphHQ/shannon.git
+[submodule "outils/outil-tiers"]
+	path = outils/outil-tiers
+	url = https://github.com/editeur-tiers/outil-tiers.git
