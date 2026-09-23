@@ -1,0 +1,31 @@
+# Secrets et environnements (jamais versionnés — voir .env.example / *.template)
+.env
+.env.*
+!.env.example
+.outil-tiers.env
+.outil-tiers-webui-static/
+
+# Dépôts outillés en sous-modules : le contenu vit dans le sous-module, pas ici
+#   cible/cible-exemple, outils/shannon, outils/outil-tiers  -> voir .gitmodules
+
+# Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
+# non historisées (le dépôt vise à être rejoué sur d'autres projets)
+scripts/shannon/scan-targets/
+outils/shannon/workspaces/
+resultats/brut/
+exports/
+matrice/
+
+# Configs Shannon remplies avec des identifiants : ne versionner que les *.template.yaml
+scripts/shannon/config-cible-exemple-authentifie.yaml
+scripts/shannon/config-cible-exemple-focus.yaml
+scripts/shannon/config-cible-exemple-creation-compte.yaml
+scripts/shannon/config-cible-exemple-sast.yaml
+
+credentials/
+secrets/
+*.key
+*.pem
+
+node_modules/
+.DS_Store
