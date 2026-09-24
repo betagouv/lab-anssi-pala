@@ -11,10 +11,9 @@ outils/outil-tiers/webui-static/
 # Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
 # non historisées (le dépôt vise à être rejoué sur d'autres projets)
 cible/copies/
-scripts/outil-tiers-to-shannon/sarif-shannon/
+passerelles/outil-tiers-to-shannon/sarif-shannon/
 outils/shannon/source/workspaces/
 resultats/brut/
-exports/
 matrice/
 
 # Configs Shannon remplies avec des identifiants : ne versionner que les *.template.yaml
