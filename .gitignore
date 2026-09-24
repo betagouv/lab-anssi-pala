@@ -6,7 +6,7 @@ outils/*/*.env
 outils/outil-tiers/webui-static/
 
 # Dépôts outillés en sous-modules : le contenu vit dans le sous-module, pas ici
-#   cible/cible-exemple, outils/shannon/source, outils/outil-tiers/source  -> voir .gitmodules
+#   cible/cible-exemple, outils/<outil>/source  -> voir .gitmodules
 
 # Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
 # non historisées (le dépôt vise à être rejoué sur d'autres projets)
@@ -21,6 +21,10 @@ outils/shannon/configs/config-cible-exemple-authentifie.yaml
 outils/shannon/configs/config-cible-exemple-focus.yaml
 outils/shannon/configs/config-cible-exemple-creation-compte.yaml
 outils/shannon/configs/config-cible-exemple-sast.yaml
+
+# Codex Security : identité Codex et historique des scans (isolés de ~/.codex)
+outils/codex-security/codex-home/
+outils/codex-security/state/
 
 # Artefacts laissés par Shannon dans la cible de fumée
 outils/shannon/smoke-target/.shannon/

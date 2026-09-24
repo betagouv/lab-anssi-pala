@@ -1,0 +1,9 @@
+{
+  "name": "codex-security-lab",
+  "private": true,
+  "description": "CLI Codex Security publiée sur npm, version figée (le sous-module source/ sert de référence de documentation et de code)",
+  "type": "module",
+  "dependencies": {
+    "@openai/codex-security": "0.1.30"
+  }
+}

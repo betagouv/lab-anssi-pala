@@ -46,5 +46,10 @@ Les commits exacts de la cible et des outils sont fixés par les sous-modules
 
 ## Outil — Codex Security
 
-- Dépôt : `github.com/openai/codex-security`
-- Chemin local prévu : `outils/codex-security/source/` (sous-module, pas encore ajouté)
+- Dépôt : https://github.com/openai/codex-security
+- Chemin local : `outils/codex-security/source/` (sous-module)
+- Commit : `607298fca7a24dfc290f560005acaf2332bdfa1c`
+- CLI utilisée : `@openai/codex-security@0.1.30` (npm, `outils/codex-security/package-lock.json`),
+  embarquant Codex `0.155.0` et le plugin Codex Security `0.1.95`
+- Proxy LiteLLM : `ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02`
+- Node.js 24.14.0, Python 3.14.3 (hôte)

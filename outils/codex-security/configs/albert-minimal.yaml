@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
+#
+# Premier scan minimal : mode standard, périmètre réduit, modèle Albert via le proxy LiteLLM.
+# Fichier de configuration de confiance (même autorité que les options CLI) : il choisit
+# la destination des appels modèle. Voir source/docs/project-configuration.md.
+#
+# Le chemin de sortie est passé en CLI (--output-dir) par scripts/run-scan.sh.
+auth: api-key
+scan:
+  mode: standard
+  scope:
+    # Relatif au dépôt scanné. Exemple de périmètre : 5 fichiers, ~260 lignes.
+    paths: [src/chemin/exemple]
+codex:
+  model: gpt-oss-120b
+  model_provider: albert
+  # Albert (vLLM) n'accepte que low|medium|high ; Codex Security utilise xhigh par défaut.
+  model_reasoning_effort: high
+  # Codex envoie sinon reasoning.summary, que le pont LiteLLM transmet comme
+  # reasoning_effort={'summary': ...} -> 400 côté Albert.
+  model_reasoning_summary: none
+  # Métadonnées absentes du catalogue Codex pour ce modèle (max_context_length Albert).
+  model_context_window: 131072
+  analytics:
+    enabled: false
+  model_providers:
+    albert:
+      name: Albert (DINUM) via LiteLLM
+      base_url: http://127.0.0.1:4000/v1
+      env_key: LITELLM_API_KEY
+      wire_api: responses
