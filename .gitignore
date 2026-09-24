@@ -10,7 +10,7 @@ outils/outil-tiers/webui-static/
 
 # Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
 # non historisées (le dépôt vise à être rejoué sur d'autres projets)
-scripts/shannon/scan-targets/
+cible/copies/
 scripts/outil-tiers-to-shannon/sarif-shannon/
 outils/shannon/source/workspaces/
 resultats/brut/
@@ -18,10 +18,14 @@ exports/
 matrice/
 
 # Configs Shannon remplies avec des identifiants : ne versionner que les *.template.yaml
-scripts/shannon/config-cible-exemple-authentifie.yaml
-scripts/shannon/config-cible-exemple-focus.yaml
-scripts/shannon/config-cible-exemple-creation-compte.yaml
-scripts/shannon/config-cible-exemple-sast.yaml
+outils/shannon/configs/config-cible-exemple-authentifie.yaml
+outils/shannon/configs/config-cible-exemple-focus.yaml
+outils/shannon/configs/config-cible-exemple-creation-compte.yaml
+outils/shannon/configs/config-cible-exemple-sast.yaml
+
+# Artefacts laissés par Shannon dans la cible de fumée
+outils/shannon/smoke-target/.shannon/
+outils/shannon/smoke-target/.playwright/
 
 credentials/
 secrets/

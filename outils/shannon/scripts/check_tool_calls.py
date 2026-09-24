@@ -17,8 +17,8 @@ La clé est lue dans l'environnement (SHANNON_AI_API_KEY, sinon ALBERT_API_KEY)
 et n'est jamais affichée.
 
 Usage :
-    set -a; . outils/shannon/.env; set +a
-    python3 scripts/shannon/check_tool_calls.py
+    set -a; . outils/shannon/shannon.env; set +a
+    python3 outils/shannon/scripts/check_tool_calls.py
 """
 
 import json
