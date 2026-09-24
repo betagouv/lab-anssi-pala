@@ -1,5 +1,8 @@
 # Versions
 
+Les commits exacts de la cible et des outils sont fixés par les sous-modules
+(`git submodule status`) ; ce document en garde la trace lisible.
+
 ## Environnement hôte
 
 | Outil | Version | Notes |
@@ -8,28 +11,40 @@
 | git | 2.50.1 (Apple Git-155) | |
 | docker | 29.4.3 (build 055a478) | daemon actif |
 | docker compose | v5.1.3 | plugin CLI |
-| node / npm / pnpm | non installés sur l'hôte | non requis en phase 1 : un outil tiers tourne en conteneur Docker, Cible n'est pas exécuté localement (clone seul demandé) |
-| python (hôte) | 3.9.6 | non utilisé directement — un outil tiers embarque son propre Python 3.12 dans l'image Docker |
+| node / pnpm | requis pour Shannon et `passerelles/outil-tiers-to-shannon` | un outil tiers, lui, tourne entièrement en conteneur |
+| python (hôte) | 3.9.6 | scripts utilitaires (`check_tool_calls.py`, `reconcile.py`) ; un outil tiers embarque son propre Python 3.12 |
 
 ## Cible — Cible / la cible
 
 - Dépôt : https://github.com/betagouv/cible-exemple.git
-- Chemin local : `cible/cible-exemple/`
+- Chemin local : `cible/cible-exemple/` (sous-module)
 - Branche : `main`
 - Commit : `224ba638b3486104cb9d4f4468ff5750378d11a4`
-- Remote : `origin → https://github.com/betagouv/cible-exemple.git`
+- Copies de scan : `cible/copies/` (non versionnées, voir `scripts/bootstrap.sh`)
 
 ## Outil — un outil tiers
 
-- Dépôt : git@github.com:editeur-tiers/outil-tiers.git
-- Chemin local : `outils/outil-tiers/`
+- Dépôt : https://github.com/editeur-tiers/outil-tiers
+- Chemin local : `outils/outil-tiers/source/` (sous-module)
 - Branche : `main`
 - Commit : `e4fe316bf30892e104269ab2ad32ce3e82e1af9d`
 - Version applicative : `outil-tiers 1.0.0`
-- Remote : `origin → git@github.com:editeur-tiers/outil-tiers.git`
 
-## Image Docker un outil tiers
+### Image Docker un outil tiers
 
 - Tag local : `outil-tiers:local`
-- Construite depuis `outils/outil-tiers/Dockerfile` (build multi-stage `python:3.12-slim` + `uv`)
-- `ENTRYPOINT ["outil-tiers"]` — l'image est un CLI, pas un service long-running (voir `documentation/setup.md` pour le détail architecture)
+- Construite depuis `outils/outil-tiers/source/Dockerfile` (build multi-stage `python:3.12-slim` + `uv`)
+- `ENTRYPOINT ["outil-tiers"]` — l'image est un CLI, pas un service long-running (voir `outils/outil-tiers/docs/setup.md`)
+- Image dérivée `outil-tiers-sandbox:local` : `outils/outil-tiers/docker-sandbox/Dockerfile`
+
+## Outil — Shannon
+
+- Dépôt : https://github.com/KeygraphHQ/shannon
+- Chemin local : `outils/shannon/source/` (sous-module)
+- Commit : `327c10fd90a6186a9f035b4b6ddb5bbba1839e92` (`v3.3.0`)
+- Patch local : `outils/shannon/patches/bash-timeout-30s.patch`
+
+## Outil — Codex Security
+
+- Dépôt : `github.com/openai/codex-security`
+- Chemin local prévu : `outils/codex-security/source/` (sous-module, pas encore ajouté)
