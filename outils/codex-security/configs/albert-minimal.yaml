@@ -21,6 +21,10 @@ codex:
   model_reasoning_summary: none
   # Métadonnées absentes du catalogue Codex pour ce modèle (max_context_length Albert).
   model_context_window: 131072
+  # Durcissement : toute commande qui demande à sortir du bac à sable échoue au lieu d'être
+  # soumise à l'auto-revue (défaut Codex Security : on-request + auto_review). Motif : lors du
+  # premier scan, gpt-oss-120b a tenté de relancer Codex avec --sandbox danger-full-access.
+  approval_policy: never
   analytics:
     enabled: false
   model_providers:
