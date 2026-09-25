@@ -3,6 +3,14 @@
 You are the only agent in this scan. Follow the steps below in order. They are a complete,
 already-verified path through the skill's SDK-owned headless workflow (parent-agent fallback).
 
+## How to act: tools
+
+- The ONLY way to run a command or write a file is the `exec_command` tool. `apply_patch` is NOT
+  available here: calling it fails with "unsupported call".
+- Writing a command in a message does NOT run it. Every command in the steps below must be
+  executed through `exec_command`, and you must read its real output before going on.
+- Never claim that a file exists or that a command succeeded unless an `exec_command` output shows it.
+
 ## Hard rules
 
 - Do NOT read, grep, list or explore files under "$CODEX_SECURITY_PLUGIN_ROOT", node_modules, or any
@@ -44,84 +52,57 @@ cannot tie to exact lines. It is fine to report zero findings.
 Then print:
 CODEX_SECURITY_SCAN_PROGRESS {"phase":"reporting","filesCompleted":N,"filesTotal":N}
 
-## Step 4: write the three canonical files with this exact script
+## Step 4: write the findings draft, then run the provided script
 
-Write the script to "$CODEX_SECURITY_SCAN_DIR/write_artifacts.py" with a heredoc, fill in FINDINGS
-and SURFACES, then run it with "$PYTHON". Do not change anything else in the script.
-Identity fields ("findingId", "occurrenceId", "fingerprints") are placeholders: the SDK replaces them.
-
-```python
-import json, os, datetime
-FINDINGS = [
-    # One dict per finding, for example:
-    # {
-    #   "ruleId": "short-kebab-case-rule-id",
-    #   "anchor": "short-kebab-case-unique-anchor",
-    #   "title": "One-line title",
-    #   "summary": "Two or three sentences: source, missing control, sink, impact.",
-    #   "severity": "high",            # critical | high | medium | low | informational
-    #   "confidence": "medium",        # high | medium | low
-    #   "confidenceRationale": "Why, citing the evidence.",
-    #   "category": "information-exposure",
-    #   "cwe": ["CWE-200"],
-    #   "locations": [{"path": "src/chemin/exemple/file.ts", "startLine": 34, "endLine": 34, "role": "sink"}],
-    #   "remediation": "Concrete fix.",
-    # },
-]
-SURFACES = [
-    # One per security surface reviewed, for example:
-    # {"id": "surface_oidc_login", "label": "OIDC login callback", "disposition": "reported"},
-    # disposition: reported | no_issue_found | needs_follow_up | not_applicable | rejected
-]
-scan_dir = os.environ["CODEX_SECURITY_SCAN_DIR"]
-scan_id = os.environ["CODEX_SECURITY_SCAN_ID"]
-now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-target = {
-    "kind": os.environ["CODEX_SECURITY_TARGET_KIND"],
-    "targetId": os.environ["CODEX_SECURITY_TARGET_ID"],
-    "displayName": os.environ["CODEX_SECURITY_TARGET_DISPLAY_NAME"],
-}
-if os.environ.get("CODEX_SECURITY_TARGET_REVISION"):
-    target["revision"] = os.environ["CODEX_SECURITY_TARGET_REVISION"]
-if os.environ.get("CODEX_SECURITY_TARGET_SNAPSHOT_DIGEST") and target["kind"] != "git_revision":
-    target["snapshotDigest"] = os.environ["CODEX_SECURITY_TARGET_SNAPSHOT_DIGEST"]
-scope = ["src/chemin/exemple"]
-manifest = {"documentType": "codex-security.scan-manifest", "schemaVersion": "1.0", "scan": {
-    "id": scan_id, "producer": {"name": "codex-security-plugin", "version": "0.1.95"},
-    "status": "completed", "startedAt": now, "completedAt": now, "target": target,
-    "scope": {"includePaths": scope, "excludePaths": []},
-    "coverageRef": "coverage.json", "findingsRef": "findings.json"}}
-findings = {"documentType": "codex-security.findings", "schemaVersion": "1.0", "scanId": scan_id,
-    "findings": [{
-        "findingId": "draft", "occurrenceId": "draft", "ruleId": f["ruleId"],
-        "identity": {"anchor": f["anchor"]},
-        "fingerprints": {"algorithm": "codex-security/v1", "primary": "draft"},
-        "title": f["title"], "summary": f["summary"],
-        "severity": {"level": f["severity"]},
-        "confidence": {"level": f["confidence"], "rationale": f["confidenceRationale"]},
-        "taxonomy": {"category": f["category"], "cwe": f["cwe"]},
-        "locations": f["locations"], "remediation": f["remediation"],
-        "provenance": {"source": "local_plugin"}} for f in FINDINGS]}
-coverage = {"documentType": "codex-security.coverage", "schemaVersion": "1.0", "scanId": scan_id,
-    "mode": "scoped_path", "completeness": "complete", "inventoryStrategy": "scoped_path",
-    "includePaths": scope, "excludePaths": [],
-    "surfaces": [dict(s, receiptRefs=[]) for s in SURFACES],
-    "explicitExclusions": [], "deferred": []}
-for name, doc in (("scan-manifest.json", manifest), ("findings.json", findings), ("coverage.json", coverage)):
-    with open(os.path.join(scan_dir, name), "w", encoding="utf-8") as out:
-        json.dump(doc, out, ensure_ascii=False, indent=2)
-print("written", len(FINDINGS), "findings,", len(SURFACES), "surfaces")
-```
-
-Then bind the requested scope (exact command, one line):
+4a. With ONE `exec_command`, write your findings as JSON to "$CODEX_SECURITY_SCAN_DIR/draft.json"
+using a quoted heredoc. Use exactly this shape (an empty "findings" list is allowed):
 
 ```sh
-"$PYTHON" "$CODEX_SECURITY_PLUGIN_ROOT/scripts/generate_rank_input.py" bind-repo-scopes --scopes-file "$CODEX_SECURITY_TARGET_PATHS_FILE" --manifest "$CODEX_SECURITY_SCAN_DIR/scan-manifest.json" --coverage "$CODEX_SECURITY_SCAN_DIR/coverage.json"
+cat > "$CODEX_SECURITY_SCAN_DIR/draft.json" <<'JSON'
+{
+  "findings": [
+    {
+      "ruleId": "short-kebab-case-rule-id",
+      "anchor": "short-kebab-case-anchor-unique-per-finding",
+      "title": "One-line title",
+      "summary": "Two or three sentences: source, missing control, sink, impact.",
+      "severity": "high",
+      "confidence": "medium",
+      "confidenceRationale": "Why, citing the evidence lines.",
+      "category": "information-exposure",
+      "cwe": ["CWE-200"],
+      "locations": [
+        {"path": "src/chemin/exemple/file.ts", "startLine": 34, "endLine": 34, "role": "sink"}
+      ],
+      "remediation": "Concrete fix."
+    }
+  ],
+  "surfaces": [
+    {"id": "surface_oidc_login", "label": "OIDC login callback", "disposition": "reported"}
+  ]
+}
+JSON
 ```
 
-If either command fails, fix only the reported field and rerun, at most twice.
+- severity: critical | high | medium | low | informational
+- confidence: high | medium | low
+- cwe: the CWE that best matches the weakness itself
+- locations.path: relative to the repository root; startLine and endLine are integers
+- surfaces: one entry per security surface you reviewed; disposition: reported |
+  no_issue_found | needs_follow_up | not_applicable | rejected
+
+4b. With a second `exec_command`, run exactly:
+
+```sh
+"$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" "$CODEX_SECURITY_SCAN_DIR/draft.json"
+```
+
+It writes scan-manifest.json, findings.json and coverage.json, binds the scope, deletes the draft
+and prints the files in the scan directory. If it prints ERROR, fix draft.json as told (rewrite it
+with a new heredoc) and run 4b again, at most three times.
 
 ## Step 5: stop
 
-Check that the three files exist with `ls "$CODEX_SECURITY_SCAN_DIR"`, then end your turn with a
-short plain-text summary of the findings. Do not finalize, seal, or write report.md: the SDK does it.
+Only after the 4b output starts with "OK:" and lists coverage.json, findings.json and
+scan-manifest.json, end your turn with a short plain-text summary of the findings.
+Do not finalize, seal, or write report.md: the SDK does it.
