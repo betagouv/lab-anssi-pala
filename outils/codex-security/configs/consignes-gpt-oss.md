@@ -26,8 +26,10 @@ already-verified path through the skill's SDK-owned headless workflow (parent-ag
 ## Step 1: list the files in scope
 
 ```sh
-cd "$CODEX_SECURITY_REPOSITORY" && git ls-files -- src/chemin/exemple
+"$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" --liste-perimetre
 ```
+
+It prints one repository-relative path per line: these are the files in scope.
 
 Then print on its own line (N = number of files listed):
 CODEX_SECURITY_SCAN_PROGRESS {"phase":"discovery","filesCompleted":0,"filesTotal":N}
@@ -35,9 +37,9 @@ CODEX_SECURITY_SCAN_PROGRESS {"phase":"discovery","filesCompleted":0,"filesTotal
 ## Step 2: read every file in scope completely
 
 Read each file with line numbers, for example `nl -ba "$CODEX_SECURITY_REPOSITORY/<path>"`.
-To understand a data flow you may open at most 8 other repository files (routes, middlewares,
-adapters, JWT helpers) that the scoped files import or are mounted by; locate them with `rg -n`
-inside "$CODEX_SECURITY_REPOSITORY" only. After each file in scope is fully read, print the
+To understand a data flow you may open at most 15 other repository files (routes, middlewares,
+access-control helpers, command handlers, adapters) that the scoped files import, call or are
+mounted by; locate them with `rg -n` inside "$CODEX_SECURITY_REPOSITORY" only. After each file in scope is fully read, print the
 progress line again with the updated filesCompleted.
 
 ## Step 3: decide, file by file
@@ -48,10 +50,14 @@ For EACH file in scope, decide one disposition and write down why:
 - "rejected": you suspected an issue but the code shows it is not exploitable (say which lines).
 
 For each suspected vulnerability, check in the code: attacker-controlled or leakable data,
-missing or bypassable control, reachable sink, concrete impact. In an OIDC login/logout flow,
-check at least: state and nonce validation, open redirects, tokens or secrets placed in URLs,
-logs or error messages, session fixation or missing session regeneration, cookie attributes
-(Secure, HttpOnly, SameSite), logout that does not clear the session, missing authorization.
+missing or bypassable control, reachable sink, concrete impact. For web routes and APIs, check at
+least (OWASP API Security Top 10): broken object-level authorization, broken authentication,
+broken object property-level authorization (including mass assignment), unrestricted resource
+consumption, broken function-level authorization (compare the controls applied to each route),
+server-side request forgery, security misconfiguration, input validation and injection, error
+handling that leaks data or leaves a request unanswered, and secrets or tokens placed in URLs or
+logs. For authentication flows (OIDC, sessions), also check state and nonce validation, open
+redirects, session fixation or regeneration, cookie attributes and logout.
 Every such pattern you saw while reading must end up either in a finding or, with the reason,
 in the notes of a "rejected" or "no_issue_found" file. Do not dismiss a pattern without a reason.
 
@@ -65,7 +71,7 @@ need a temporary file). Put the whole JSON between single quotes, on one line, a
 single quote (apostrophe) inside any text: write "does not", not "doesn't".
 
 ```sh
-printf '%s\n' '{"findings":[{"ruleId":"short-kebab-case-rule-id","anchor":"short-kebab-case-anchor-unique-per-finding","title":"One-line title","summary":"Two or three sentences: source, missing control, sink, impact.","severity":"high","confidence":"medium","confidenceRationale":"Why, citing the evidence lines.","category":"information-exposure","cwe":["CWE-200"],"locations":[{"path":"src/chemin/exemple/file-a.ts","startLine":34,"endLine":34,"role":"sink"}],"remediation":"Concrete fix."}],"surfaces":[{"id":"surface_file_a","label":"src/chemin/exemple/file-a.ts","disposition":"reported","riskArea":"token handling","notes":"Line 34 puts the session token in the redirect URL, see the finding above."},{"id":"surface_file_b","label":"src/chemin/exemple/file-b.ts","disposition":"no_issue_found","riskArea":"session handling","notes":"Checked state, nonce, redirects and cookies: lines 10 to 25 validate state and nonce."}]}' > "$CODEX_SECURITY_SCAN_DIR/draft.json"
+printf '%s\n' '{"findings":[{"ruleId":"short-kebab-case-rule-id","anchor":"short-kebab-case-anchor-unique-per-finding","title":"One-line title","summary":"Two or three sentences: source, missing control, sink, impact.","severity":"high","confidence":"medium","confidenceRationale":"Why, citing the evidence lines.","category":"information-exposure","cwe":["CWE-200"],"locations":[{"path":"path/to/file-a.ts","startLine":34,"endLine":34,"role":"sink"}],"remediation":"Concrete fix."}],"surfaces":[{"id":"surface_file_a","label":"path/to/file-a.ts","disposition":"reported","riskArea":"token handling","notes":"Line 34 puts the session token in the redirect URL, see the finding above."},{"id":"surface_file_b","label":"path/to/file-b.ts","disposition":"no_issue_found","riskArea":"session handling","notes":"Checked state, nonce, redirects and cookies: lines 10 to 25 validate state and nonce."}]}' > "$CODEX_SECURITY_SCAN_DIR/draft.json"
 ```
 
 - findings: one object per vulnerability (the list is empty only if every file is "no_issue_found"

@@ -9,6 +9,7 @@
 # Le brouillon est supprimé une fois les artefacts écrits.
 #
 # Usage : "$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" "$CODEX_SECURITY_SCAN_DIR/brouillon.json"
+#         "$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" --liste-perimetre   (fichiers du périmètre)
 # Brouillon : {"findings": [{ruleId, anchor, title, summary, severity, confidence,
 #   confidenceRationale, category, cwe, locations, remediation}],
 #   "surfaces": [{id, label, disposition, notes, riskArea?}]}, une surface par fichier du périmètre.
@@ -85,9 +86,19 @@ def fichiers_du_perimetre(depot, perimetre):
     return [ligne for ligne in sortie.splitlines() if ligne]
 
 
+def perimetre_demande():
+    with open(os.environ["CODEX_SECURITY_TARGET_PATHS_FILE"], encoding="utf-8") as fichier:
+        return json.load(fichier)
+
+
 def main():
     if len(sys.argv) != 2:
-        sys.exit("usage: ecrit-artefacts-scan.py <draft.json>")
+        sys.exit("usage: ecrit-artefacts-scan.py <draft.json> | --liste-perimetre")
+    if sys.argv[1] == "--liste-perimetre":
+        # Évite aux consignes de coder le périmètre en dur : il vient du SDK.
+        print("\n".join(fichiers_du_perimetre(os.environ["CODEX_SECURITY_REPOSITORY"],
+                                             perimetre_demande())))
+        return
     chemin_brouillon = sys.argv[1]
     try:
         with open(chemin_brouillon, encoding="utf-8") as fichier:
@@ -100,8 +111,7 @@ def main():
     dossier = env["CODEX_SECURITY_SCAN_DIR"]
     scan_id = env["CODEX_SECURITY_SCAN_ID"]
     fichier_perimetre = env["CODEX_SECURITY_TARGET_PATHS_FILE"]
-    with open(fichier_perimetre, encoding="utf-8") as fichier:
-        perimetre = json.load(fichier)
+    perimetre = perimetre_demande()
     verifie_decision_par_fichier(
         brouillon, fichiers_du_perimetre(env["CODEX_SECURITY_REPOSITORY"], perimetre))
     maintenant = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
