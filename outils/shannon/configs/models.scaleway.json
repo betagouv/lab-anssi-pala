@@ -1,0 +1,37 @@
+{
+  "providers": {
+    "scaleway": {
+      "baseUrl": "https://api.scaleway.ai/fcbbc9c9-62a8-49f0-a5b9-606a62ecf9d8/v1",
+      "api": "openai-completions",
+      "apiKey": "YOUR_API_KEY",
+      "models": [
+        {
+          "id": "deepseek-v4-flash-0731",
+          "name": "Scaleway - DeepSeek V4 Flash",
+          "reasoning": true,
+          "input": ["text"],
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": "low",
+            "low": "low",
+            "medium": "medium",
+            "high": "high",
+            "xhigh": "high",
+            "max": "high"
+          },
+          "contextWindow": 131072,
+          "maxTokens": 16384,
+          "cost": {
+            "input": 0.4,
+            "output": 0.8,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "compat": {
+            "supportsDeveloperRole": false
+          }
+        }
+      ]
+    }
+  }
+}

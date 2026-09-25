@@ -25,6 +25,7 @@ outils/shannon/configs/config-cible-exemple-authentifie.yaml
 outils/shannon/configs/config-cible-exemple-focus.yaml
 outils/shannon/configs/config-cible-exemple-creation-compte.yaml
 outils/shannon/configs/config-cible-exemple-sast.yaml
+outils/shannon/configs/config-cible-exemple-diagnostic.yaml
 
 # Codex Security : identité Codex et historique des scans (isolés de ~/.codex)
 outils/codex-security/codex-home/
