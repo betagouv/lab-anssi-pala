@@ -14,3 +14,7 @@ model_list:
       # Sans cette option, LiteLLM relaie tel quel vers /v1/responses d'Albert (404).
       use_chat_completions_api: true
       timeout: 600
+
+litellm_settings:
+  # Remplace json_schema par json_object (voir json_schema_to_object.py).
+  callbacks: json_schema_to_object.json_schema_vers_objet

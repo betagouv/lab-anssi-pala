@@ -17,9 +17,9 @@ CONTAINER=codex-security-litellm
 docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$CONTAINER" \
   --env-file "$OUTIL_DIR/codex-security.env" \
-  -v "$OUTIL_DIR/litellm/config.yaml:/app/config.yaml:ro" \
+  -v "$OUTIL_DIR/litellm:/app/proxy-config:ro" \
   -p "127.0.0.1:$PORT:4000" \
-  "$IMAGE" --config /app/config.yaml --port 4000 >/dev/null
+  "$IMAGE" --config /app/proxy-config/config.yaml --port 4000 >/dev/null
 
 printf 'Attente du proxy LiteLLM'
 for _ in $(seq 1 60); do
