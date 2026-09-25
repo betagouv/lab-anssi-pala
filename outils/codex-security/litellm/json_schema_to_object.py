@@ -17,8 +17,15 @@ CONSIGNE = (
 )
 
 
+# Seul gpt-oss-120b (Albert) est concerné : DeepSeek chez Scaleway respecte json_schema sans
+# dégénérer, et json_object lui fait perdre les valeurs imposées par le schéma.
+MODELES_CONCERNES = {"gpt-oss-120b"}
+
+
 class JsonSchemaVersObjet(CustomLogger):
     async def async_pre_call_hook(self, user_api_key_dict, cache, data, call_type):
+        if data.get("model") not in MODELES_CONCERNES:
+            return data
         texte = data.get("text")
         format_sortie = texte.get("format") if isinstance(texte, dict) else None
         if not isinstance(format_sortie, dict) or format_sortie.get("type") != "json_schema":

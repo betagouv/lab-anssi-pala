@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
+#
+# Scan minimal : mode standard, périmètre réduit, DeepSeek V4 Flash (Scaleway) via le proxy LiteLLM.
+# Même configuration que albert-minimal.yaml, hors modèle et fournisseur ; les paramètres
+# d'échantillonnage (max_tokens 16384, temperature, top_p, presence_penalty) sont imposés par le
+# proxy (litellm/config.yaml), la clé Scaleway y reste.
+# Fichier de configuration de confiance (même autorité que les options CLI) : il choisit
+# la destination des appels modèle. Voir source/docs/project-configuration.md.
+#
+# Le chemin de sortie est passé en CLI (--output-dir) par scripts/run-scan.sh.
+auth: api-key
+scan:
+  mode: standard
+  scope:
+    # Relatif au dépôt scanné. Exemple de périmètre : 5 fichiers, ~260 lignes.
+    paths: [src/chemin/exemple]
+codex:
+  model: deepseek-v4-flash-0731
+  model_provider: scaleway_deepseek
+  # Valeur demandée pour ce test ; Scaleway accepte none|minimal|low|medium|high|xhigh|max
+  # (message d'erreur du 25/09/2026). Défaut Codex Security : xhigh.
+  model_reasoning_effort: high
+  # Codex envoie sinon reasoning.summary, que le pont LiteLLM transmet dans reasoning_effort
+  # (erreur 400 constatée chez Albert).
+  model_reasoning_summary: none
+  # Métadonnées absentes du catalogue Codex ; Scaleway ne publie pas la taille de contexte :
+  # valeur annoncée par Albert pour ce même modèle.
+  model_context_window: 131072
+  # Durcissement : toute commande qui demande à sortir du bac à sable échoue au lieu d'être
+  # soumise à l'auto-revue (défaut Codex Security : on-request + auto_review). Motif : lors du
+  # premier scan Albert, gpt-oss-120b a tenté de relancer Codex avec --sandbox danger-full-access.
+  approval_policy: never
+  analytics:
+    enabled: false
+  model_providers:
+    scaleway_deepseek:
+      name: DeepSeek V4 Flash (Scaleway) via LiteLLM
+      base_url: http://127.0.0.1:4000/v1
+      env_key: LITELLM_API_KEY
+      wire_api: responses

@@ -14,6 +14,20 @@ model_list:
       # Sans cette option, LiteLLM relaie tel quel vers /v1/responses d'Albert (404).
       use_chat_completions_api: true
       timeout: 600
+  - model_name: deepseek-v4-flash-0731
+    litellm_params:
+      # Scaleway (API compatible OpenAI) : /v1/responses n'y est servi que pour gpt-oss-120b.
+      model: hosted_vllm/deepseek-v4-flash-0731
+      api_base: https://api.scaleway.ai/fcbbc9c9-62a8-49f0-a5b9-606a62ecf9d8/v1
+      api_key: os.environ/SCALEWAY_DEEPSEEK_API_KEY
+      use_chat_completions_api: true
+      timeout: 600
+      # Paramètres d'échantillonnage imposés par le proxy : Codex ne sait pas les transmettre.
+      # Le streaming reste actif (Codex l'exige) ; reasoning_effort vient de la config Codex.
+      max_tokens: 16384
+      temperature: 1
+      top_p: 1
+      presence_penalty: 0
 
 litellm_settings:
   # Remplace json_schema par json_object (voir json_schema_to_object.py).

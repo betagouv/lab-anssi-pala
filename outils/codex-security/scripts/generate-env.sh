@@ -5,6 +5,7 @@
 # Mapping :
 #   ALBERT_API_KEY   -> ALBERT_API_KEY      (lu par le proxy LiteLLM uniquement)
 #   ALBERT_BASE_URL  -> ALBERT_BASE_URL
+#   SCALEWAY_DEEPSEEK_API_KEY -> SCALEWAY_DEEPSEEK_API_KEY (optionnelle, proxy LiteLLM uniquement)
 #   (généré)         -> LITELLM_MASTER_KEY  (jeton local entre Codex et le proxy)
 #
 # Le jeton local est conservé s'il existe déjà, pour ne pas invalider un proxy en marche.
@@ -37,6 +38,8 @@ fi
   echo "ALBERT_API_KEY=${ALBERT_API_KEY}"
   echo "ALBERT_BASE_URL=${ALBERT_BASE_URL}"
   echo "LITELLM_MASTER_KEY=${master_key}"
+  # Optionnelle : n'est utilisée que par le modèle deepseek-v4-flash-0731 du proxy.
+  [ -z "${SCALEWAY_DEEPSEEK_API_KEY:-}" ] || echo "SCALEWAY_DEEPSEEK_API_KEY=${SCALEWAY_DEEPSEEK_API_KEY}"
 } > "$OUT_ENV"
 
 chmod 600 "$OUT_ENV"
