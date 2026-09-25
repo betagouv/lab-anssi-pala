@@ -10,7 +10,8 @@
 #
 # Usage : "$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" "$CODEX_SECURITY_SCAN_DIR/brouillon.json"
 # Brouillon : {"findings": [{ruleId, anchor, title, summary, severity, confidence,
-#   confidenceRationale, category, cwe, locations, remediation}], "surfaces": [{id, label, disposition}]}
+#   confidenceRationale, category, cwe, locations, remediation}],
+#   "surfaces": [{id, label, disposition, notes, riskArea?}]}, une surface par fichier du périmètre.
 import datetime
 import json
 import os
@@ -53,10 +54,35 @@ def verifie(brouillon):
             if not isinstance(loc.get("path"), str) or not isinstance(loc.get("startLine"), int):
                 erreur(f"findings[{i}].locations[{j}] needs path (string) and startLine (integer)")
     for i, s in enumerate(brouillon.get("surfaces", [])):
-        if not all(isinstance(s.get(c), str) for c in ("id", "label", "disposition")):
-            erreur(f"surfaces[{i}] needs id, label and disposition strings")
+        if not all(isinstance(s.get(c), str) for c in ("id", "label", "disposition", "notes")):
+            erreur(f"surfaces[{i}] needs id, label, disposition and notes strings")
         if s["disposition"] not in DISPOSITIONS:
             erreur(f"surfaces[{i}].disposition must be one of {', '.join(DISPOSITIONS)}")
+        if len(s["notes"].strip()) < 40:
+            erreur(f"surfaces[{i}].notes must justify the decision in at least one full sentence")
+
+
+def verifie_decision_par_fichier(brouillon, fichiers):
+    # Une surface par fichier du périmètre (label = chemin), cohérente avec les findings : oblige
+    # le modèle à statuer explicitement sur chaque fichier lu.
+    surfaces = {s["label"]: s for s in brouillon.get("surfaces", [])}
+    fichiers_signales = {loc["path"] for f in brouillon.get("findings", []) for loc in f["locations"]}
+    manquants = [f for f in fichiers if f not in surfaces]
+    if manquants:
+        erreur("add one surface per file in scope, with label set to the file path; missing: "
+               + ", ".join(manquants))
+    for fichier in fichiers:
+        disposition = surfaces[fichier]["disposition"]
+        if fichier in fichiers_signales and disposition != "reported":
+            erreur(f'surface "{fichier}" has a finding, so its disposition must be "reported"')
+        if disposition == "reported" and fichier not in fichiers_signales:
+            erreur(f'surface "{fichier}" is "reported" but no finding has a location in this file')
+
+
+def fichiers_du_perimetre(depot, perimetre):
+    sortie = subprocess.run(["git", "-C", depot, "ls-files", "--", *perimetre],
+                            check=True, capture_output=True, text=True).stdout
+    return [ligne for ligne in sortie.splitlines() if ligne]
 
 
 def main():
@@ -76,6 +102,8 @@ def main():
     fichier_perimetre = env["CODEX_SECURITY_TARGET_PATHS_FILE"]
     with open(fichier_perimetre, encoding="utf-8") as fichier:
         perimetre = json.load(fichier)
+    verifie_decision_par_fichier(
+        brouillon, fichiers_du_perimetre(env["CODEX_SECURITY_REPOSITORY"], perimetre))
     maintenant = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     cible = {

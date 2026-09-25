@@ -40,56 +40,41 @@ adapters, JWT helpers) that the scoped files import or are mounted by; locate th
 inside "$CODEX_SECURITY_REPOSITORY" only. After each file in scope is fully read, print the
 progress line again with the updated filesCompleted.
 
-## Step 3: decide the findings
+## Step 3: decide, file by file
 
-For each suspected vulnerability, check in the code you read: attacker-controlled source, missing
-or bypassable control, reachable sink, concrete impact. Keep only findings supported by specific
-lines. Examples of what to check in an OIDC login/logout flow: state and nonce validation, open
-redirects, tokens or secrets placed in URLs or logs, session fixation, session and cookie handling
-on login and logout, error handling that leaks data, missing authorization. Report nothing you
-cannot tie to exact lines. It is fine to report zero findings.
+For EACH file in scope, decide one disposition and write down why:
+- "reported": the file contains at least one vulnerability supported by specific lines;
+- "no_issue_found": you checked the file against the list below and nothing applies;
+- "rejected": you suspected an issue but the code shows it is not exploitable (say which lines).
+
+For each suspected vulnerability, check in the code: attacker-controlled or leakable data,
+missing or bypassable control, reachable sink, concrete impact. In an OIDC login/logout flow,
+check at least: state and nonce validation, open redirects, tokens or secrets placed in URLs,
+logs or error messages, session fixation or missing session regeneration, cookie attributes
+(Secure, HttpOnly, SameSite), logout that does not clear the session, missing authorization.
+Every such pattern you saw while reading must end up either in a finding or, with the reason,
+in the notes of a "rejected" or "no_issue_found" file. Do not dismiss a pattern without a reason.
 
 Then print:
 CODEX_SECURITY_SCAN_PROGRESS {"phase":"reporting","filesCompleted":N,"filesTotal":N}
 
 ## Step 4: write the findings draft, then run the provided script
 
-4a. With ONE `exec_command`, write your findings as JSON to "$CODEX_SECURITY_SCAN_DIR/draft.json"
-using a quoted heredoc. Use exactly this shape (an empty "findings" list is allowed):
+4a. With ONE `exec_command`, write the draft with `printf` (heredocs FAIL in this sandbox: they
+need a temporary file). Put the whole JSON between single quotes, on one line, and never use a
+single quote (apostrophe) inside any text: write "does not", not "doesn't".
 
 ```sh
-cat > "$CODEX_SECURITY_SCAN_DIR/draft.json" <<'JSON'
-{
-  "findings": [
-    {
-      "ruleId": "short-kebab-case-rule-id",
-      "anchor": "short-kebab-case-anchor-unique-per-finding",
-      "title": "One-line title",
-      "summary": "Two or three sentences: source, missing control, sink, impact.",
-      "severity": "high",
-      "confidence": "medium",
-      "confidenceRationale": "Why, citing the evidence lines.",
-      "category": "information-exposure",
-      "cwe": ["CWE-200"],
-      "locations": [
-        {"path": "src/chemin/exemple/file.ts", "startLine": 34, "endLine": 34, "role": "sink"}
-      ],
-      "remediation": "Concrete fix."
-    }
-  ],
-  "surfaces": [
-    {"id": "surface_oidc_login", "label": "OIDC login callback", "disposition": "reported"}
-  ]
-}
-JSON
+printf '%s\n' '{"findings":[{"ruleId":"short-kebab-case-rule-id","anchor":"short-kebab-case-anchor-unique-per-finding","title":"One-line title","summary":"Two or three sentences: source, missing control, sink, impact.","severity":"high","confidence":"medium","confidenceRationale":"Why, citing the evidence lines.","category":"information-exposure","cwe":["CWE-200"],"locations":[{"path":"src/chemin/exemple/file-a.ts","startLine":34,"endLine":34,"role":"sink"}],"remediation":"Concrete fix."}],"surfaces":[{"id":"surface_file_a","label":"src/chemin/exemple/file-a.ts","disposition":"reported","riskArea":"token handling","notes":"Line 34 puts the session token in the redirect URL, see the finding above."},{"id":"surface_file_b","label":"src/chemin/exemple/file-b.ts","disposition":"no_issue_found","riskArea":"session handling","notes":"Checked state, nonce, redirects and cookies: lines 10 to 25 validate state and nonce."}]}' > "$CODEX_SECURITY_SCAN_DIR/draft.json"
 ```
 
-- severity: critical | high | medium | low | informational
-- confidence: high | medium | low
+- findings: one object per vulnerability (the list is empty only if every file is "no_issue_found"
+  or "rejected" with notes that justify it)
+- severity: critical | high | medium | low | informational ; confidence: high | medium | low
 - cwe: the CWE that best matches the weakness itself
 - locations.path: relative to the repository root; startLine and endLine are integers
-- surfaces: one entry per security surface you reviewed; disposition: reported |
-  no_issue_found | needs_follow_up | not_applicable | rejected
+- surfaces: exactly one per file in scope, label = the file path as listed in step 1,
+  disposition = your step 3 decision, notes = your justification (one or two sentences)
 
 4b. With a second `exec_command`, run exactly:
 
@@ -97,9 +82,9 @@ JSON
 "$PYTHON" "$CODEX_SCAN_ECRIT_ARTEFACTS" "$CODEX_SECURITY_SCAN_DIR/draft.json"
 ```
 
-It writes scan-manifest.json, findings.json and coverage.json, binds the scope, deletes the draft
-and prints the files in the scan directory. If it prints ERROR, fix draft.json as told (rewrite it
-with a new heredoc) and run 4b again, at most three times.
+It checks the draft, writes scan-manifest.json, findings.json and coverage.json, binds the scope,
+deletes the draft and prints the files in the scan directory. If it prints ERROR, rewrite
+draft.json with a new `printf` fixing what it says, and run 4b again, at most three times.
 
 ## Step 5: stop
 
