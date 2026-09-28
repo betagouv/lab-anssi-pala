@@ -1,36 +1,84 @@
 #!/usr/bin/env bash
-# Prépare l'environnement de travail après un clone : initialise les sous-modules,
-# recrée les copies de scan (non versionnées) et lance la préparation propre à
-# chaque outil (outils/<outil>/bootstrap.sh, s'il existe).
+# Prépare l'environnement de travail : sous-modules des outils, clone de la cible à scanner,
+# et préparation propre à chaque outil (outils/<outil>/bootstrap.sh, s'il existe).
 #
-# La cible (cible/cible-exemple) et le code amont de chaque outil (outils/<outil>/source)
-# sont des SOUS-MODULES : le dépôt ne stocke qu'un pointeur (URL + commit). Ce script
-# en récupère le contenu. Idempotent : peut être relancé sans effet de bord.
+# Le dépôt est agnostique de la cible : celle-ci n'est plus figée en sous-module, mais fournie
+# au lancement (--project + --url). La cible est clonée dans cible/copies/<nom> (avec .git, non
+# versionné) ; cette copie sert à la fois Codex Security (dépôt git, sortie hors du dépôt) et
+# Shannon (dépôt de référence). Les sources amont des OUTILS restent des sous-modules.
 #
-# Usage : bash scripts/bootstrap.sh
+# Idempotent : peut être relancé sans effet de bord (cible déjà clonée = conservée).
 set -euo pipefail
 
 racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$racine"
 
-echo "==> Initialisation des sous-modules"
-git submodule update --init --recursive
+usage() {
+  cat <<'USAGE'
+Prépare l'environnement d'audit (sous-modules des outils, clone de la cible, outils).
 
-echo "==> Recréation des copies de scan (cible/copies/, non versionnées)"
-mkdir -p cible/copies
+Usage :
+  bash scripts/bootstrap.sh --project <nom> --url <git-url> [--branch <branche>]
+  bash scripts/bootstrap.sh [--project <nom> --url <git-url>]   # cible optionnelle
+  bash scripts/bootstrap.sh --help
 
-# Copie sans .git de la cible (branche par défaut du sous-module cible-exemple)
-if [ ! -d cible/copies/cible-exemple ]; then
-  rsync -a --exclude '.git' cible/cible-exemple/ cible/copies/cible-exemple/
-  echo "    créé : cible/copies/cible-exemple (copie sans .git)"
+Options :
+  --project <nom>   nom court de la cible ; la copie de travail est cible/copies/<nom>
+  --url <git-url>   URL git de la cible à cloner
+  --branch <nom>    branche à cloner (défaut : branche par défaut du dépôt distant)
+  -h, --help        affiche cette aide
+
+Sans --project/--url, le script se limite aux sous-modules des outils et à leur préparation
+(utile pour réinitialiser l'outillage sans (re)cloner de cible).
+
+Exemples :
+  bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git
+  bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
+
+Après le bootstrap, les outils ciblent la copie via une variable d'environnement (rappelée en fin
+d'exécution) : CODEX_TARGET pour Codex Security, ANSSI_TARGET / MAC_TARGET pour Shannon.
+USAGE
+}
+
+projet=""
+url=""
+branche=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --project) projet="${2:-}"; shift 2 ;;
+    --url)     url="${2:-}"; shift 2 ;;
+    --branch)  branche="${2:-}"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Option inconnue : $1" >&2; echo >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+# --project et --url vont de pair : soit les deux, soit aucun.
+if [ -n "$projet" ] && [ -z "$url" ]; then
+  echo "Erreur : --project fourni sans --url." >&2; echo >&2; usage >&2; exit 2
+fi
+if [ -z "$projet" ] && [ -n "$url" ]; then
+  echo "Erreur : --url fourni sans --project." >&2; echo >&2; usage >&2; exit 2
 fi
 
-# Copie AVEC .git pour le SAST agentique, sur la branche de POC
-if [ ! -d cible/copies/cible-exemple-git ]; then
-  git clone --branch branche-de-travail \
-    https://github.com/betagouv/cible-exemple.git \
-    cible/copies/cible-exemple-git \
-    || echo "    (branche branche-de-travail indisponible : à recréer manuellement si nécessaire)"
+cd "$racine"
+
+echo "==> Initialisation des sous-modules des outils"
+git submodule update --init --recursive
+
+echo "==> Copies de scan (cible/copies/, non versionnées)"
+mkdir -p cible/copies
+
+if [ -n "$projet" ]; then
+  copie="cible/copies/$projet"
+  if [ -d "$copie" ]; then
+    echo "    conservé : $copie (déjà présent)"
+  else
+    echo "    clone de la cible « $projet » depuis $url${branche:+ (branche $branche)}"
+    git clone ${branche:+--branch "$branche"} "$url" "$copie"
+    echo "    créé : $copie"
+  fi
+else
+  echo "    (aucune cible demandée : passer --project <nom> --url <git-url> pour en cloner une)"
 fi
 
 for bootstrap_outil in outils/*/bootstrap.sh; do
@@ -49,3 +97,10 @@ for template in outils/*/*.env.template; do
   printf '    %-32s (depuis %s — %s)\n' "$env_file" "$(basename "$template")" "$etat"
 done
 echo "    ainsi que les configs Shannon remplies, depuis outils/shannon/configs/*.template.yaml."
+
+if [ -n "$projet" ]; then
+  echo
+  echo "==> Cible prête : cible/copies/$projet"
+  echo "    Codex Security : CODEX_TARGET=\"\$PWD/cible/copies/$projet\""
+  echo "    Shannon        : ANSSI_TARGET / MAC_TARGET=\"\$PWD/cible/copies/$projet\""
+fi

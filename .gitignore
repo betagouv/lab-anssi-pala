@@ -4,16 +4,15 @@
 !.env.example
 outils/*/*.env
 
-# Dépôts outillés en sous-modules : le contenu vit dans le sous-module, pas ici
-#   cible/cible-exemple, outils/<outil>/source  -> voir .gitmodules
+# Sources amont des OUTILS en sous-modules : le contenu vit dans le sous-module, pas ici
+#   outils/<outil>/source  -> voir .gitmodules
 
-# Cible fournie en copie locale, sans historique git (instantané git créé par
-# outils/codex-security/bootstrap.sh dans cible/copies/cible-exemple-codex)
-cible/cible-exemple/
+# Cibles à scanner : jamais versionnées (dépôt agnostique). Elles sont clonées au lancement
+# par scripts/bootstrap.sh dans cible/copies/<nom>. Tout cible/ est ignoré sauf ce fichier.
+cible/*
+!cible/.gitkeep
 
-# Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
-# non historisées (le dépôt vise à être rejoué sur d'autres projets)
-cible/copies/
+# Sorties d'outils, spécifiques à chaque lancement et à chaque cible : non historisées
 outils/shannon/source/workspaces/
 resultats/brut/
 matrice/
