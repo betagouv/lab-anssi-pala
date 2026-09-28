@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Lance un scan Codex Security sur une copie de la cible, avec Albert (gpt-oss-120b) via le
-# proxy LiteLLM local (voir start-proxy.sh, à lancer d'abord).
+# Lance un scan Codex Security sur une copie de la cible, via le proxy LiteLLM local
+# (voir start-proxy.sh, à lancer d'abord). Modèle par défaut : DeepSeek servi par Albert.
 #
-# Usage : bash outils/codex-security/scripts/run-scan.sh [options codex-security scan…]
-#   ex. : bash outils/codex-security/scripts/run-scan.sh --dry-run
+# Usage : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh [options…]
+#   ex. : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh --dry-run
 # Variables :
-#   CODEX_TARGET  dépôt à scanner (défaut cible/copies/cible-exemple-codex, voir bootstrap.sh)
-#   CODEX_CONFIG  fichier de configuration (défaut configs/albert-minimal.yaml)
+#   CODEX_TARGET  dépôt à scanner (OBLIGATOIRE ; cloné par scripts/bootstrap.sh dans cible/copies/<nom>)
+#   CODEX_CONFIG  fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
+#                 pour un scan ciblé, copier configs/config-cible.template.yaml et y fixer scope.paths)
 #   CODEX_OUTPUT  dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
 #   LITELLM_PORT  port du proxy (défaut 4000 ; doit correspondre à base_url dans CODEX_CONFIG)
 set -euo pipefail

@@ -5,14 +5,18 @@
 
 outil="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 racine="$(cd "$outil/../.." && pwd)"
-cible="${CODEX_TARGET:-$racine/cible/copies/cible-exemple-codex}"
-config="${CODEX_CONFIG:-$outil/configs/albert-minimal.yaml}"
+# Cible fournie par CODEX_TARGET (dépôt agnostique : aucune cible par défaut).
+cible="${CODEX_TARGET:-}"
+# Défaut : DeepSeek servi par Albert, dépôt entier (config-defaut.yaml). gpt-oss n'est plus le
+# défaut (il n'écrit pas les artefacts). Pour un scan ciblé : copier config-cible.template.yaml.
+config="${CODEX_CONFIG:-$outil/configs/config-defaut.yaml}"
 port="${LITELLM_PORT:-4000}"
 env_file="$outil/codex-security.env"
 
 [ -x "$outil/node_modules/.bin/codex-security" ] || { echo "CLI absente : lancer scripts/bootstrap.sh (npm ci dans outils/codex-security)" >&2; exit 1; }
 [ -f "$env_file" ] || { echo "Fichier manquant : $env_file (lancer scripts/start-proxy.sh)" >&2; exit 1; }
-[ -d "$cible" ] || { echo "Cible manquante : $cible (lancer scripts/bootstrap.sh)" >&2; exit 1; }
+[ -n "$cible" ] || { echo "CODEX_TARGET non défini : indiquer la cible, ex. CODEX_TARGET=\"\$PWD/cible/copies/<nom>\" (voir scripts/bootstrap.sh --project <nom> --url <git-url>)" >&2; exit 1; }
+[ -d "$cible" ] || { echo "Cible manquante : $cible (cloner via scripts/bootstrap.sh --project <nom> --url <git-url>)" >&2; exit 1; }
 curl -s -o /dev/null -m 5 "http://127.0.0.1:$port/health/liveliness" \
   || { echo "Proxy LiteLLM injoignable sur 127.0.0.1:$port (lancer scripts/start-proxy.sh)" >&2; exit 1; }
 

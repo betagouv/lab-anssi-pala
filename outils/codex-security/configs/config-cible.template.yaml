@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
+#
+# Template GÉNÉRIQUE d'un scan Codex Security ciblé, agnostique de la cible.
+# Copier vers configs/config-<nom>.yaml, puis renseigner scope.paths (chemins relatifs au dépôt
+# scanné). Aucun secret ici : la clé arrive par l'environnement (env_key), la config peut être
+# versionnée. Voir source/docs/project-configuration.md.
+#
+# Modèle par défaut : DeepSeek V4 Flash servi par Albert (fonctionne avec la seule clé Albert ;
+# tool_choice auto est forcé par le proxy). Pour DeepSeek chez Scaleway (souvent plus rapide,
+# cache actif), basculer sur le bloc « scaleway_deepseek » commenté plus bas et renseigner
+# SCALEWAY_DEEPSEEK_API_KEY dans le .env racine. gpt-oss-120b est déconseillé (n'écrit pas les
+# artefacts du scan).
+auth: api-key
+scan:
+  mode: standard
+  scope:
+    # OBLIGATOIRE : périmètre à scanner, chemins relatifs au dépôt cible.
+    paths: [CHEMIN_RELATIF_A_SCANNER]
+codex:
+  model: deepseek-v4-flash-albert
+  model_provider: albert
+  model_reasoning_effort: high
+  # Codex enverrait sinon reasoning.summary, transmis dans reasoning_effort -> 400 côté Albert.
+  model_reasoning_summary: none
+  model_context_window: 131072
+  # Durcissement : toute tentative de sortir du bac à sable échoue au lieu d'être auto-approuvée.
+  approval_policy: never
+  analytics:
+    enabled: false
+  model_providers:
+    albert:
+      name: Albert (DINUM) via LiteLLM
+      base_url: http://127.0.0.1:4000/v1
+      env_key: LITELLM_API_KEY
+      wire_api: responses
+    # Variante Scaleway (décommenter + mettre model_provider: scaleway_deepseek et
+    # model: deepseek-v4-flash-0731 ci-dessus) :
+    # scaleway_deepseek:
+    #   name: DeepSeek V4 Flash (Scaleway) via LiteLLM
+    #   base_url: http://127.0.0.1:4000/v1
+    #   env_key: LITELLM_API_KEY
+    #   wire_api: responses

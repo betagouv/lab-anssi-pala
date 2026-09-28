@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
+#
+# Config PAR DÉFAUT de run-scan.sh (utilisée quand CODEX_CONFIG n'est pas fourni).
+# DeepSeek V4 Flash servi par Albert (fonctionne avec la seule clé Albert ; le proxy force
+# tool_choice auto). gpt-oss-120b n'est plus le défaut : il n'écrit pas les artefacts du scan.
+#
+# Pas de scope : le DÉPÔT ENTIER est scanné (peut être long/coûteux). Pour un scan ciblé et rapide,
+# copier configs/config-cible.template.yaml, y fixer scope.paths, et passer CODEX_CONFIG.
+# Aucun secret ici (clé via env_key) ; voir source/docs/project-configuration.md.
+auth: api-key
+scan:
+  mode: standard
+codex:
+  model: deepseek-v4-flash-albert
+  model_provider: albert
+  model_reasoning_effort: high
+  model_reasoning_summary: none
+  model_context_window: 131072
+  approval_policy: never
+  analytics:
+    enabled: false
+  model_providers:
+    albert:
+      name: Albert (DINUM) via LiteLLM
+      base_url: http://127.0.0.1:4000/v1
+      env_key: LITELLM_API_KEY
+      wire_api: responses
