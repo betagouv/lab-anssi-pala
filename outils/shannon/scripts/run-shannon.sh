@@ -112,10 +112,24 @@ echo "Modèle    : $SHANNON_AI_MODEL" >&2
 echo "Workspace : $workspace"  >&2
 
 cd "$shannon_dir"
+statut=0
 direnv exec . node shannon start \
   -u "$url_shannon" \
   -r "$repo" \
   -c "$config" \
   ${mc_args[@]+"${mc_args[@]}"} \
   --follow \
-  -w "$workspace"
+  -w "$workspace" || statut=$?
+
+# Estimation du coût une fois le scan fini (best-effort). session.json peut être sous .shannon/
+# ou à la racine du workspace selon la version de Shannon.
+for sess in "$shannon_dir/workspaces/$workspace/.shannon/session.json" \
+            "$shannon_dir/workspaces/$workspace/session.json"; do
+  if [ -f "$sess" ]; then
+    python3 "$racine/scripts/estimer-cout.py" --shannon-session "$sess" \
+      --model-spec "$SHANNON_AI_MODEL" || true
+    break
+  fi
+done
+
+exit "$statut"

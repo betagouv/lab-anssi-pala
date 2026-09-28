@@ -21,4 +21,16 @@ chmod 700 "$sortie"
 echo "Cible  : $cible"
 echo "Config : $config"
 echo "Sortie : $sortie"
-exec "$outil/node_modules/.bin/codex-security" scan "$cible" -c "$config" --output-dir "$sortie" --headless "$@"
+
+# On ne fait plus exec : le log est capturé pour estimer le coût une fois le scan fini.
+"$outil/node_modules/.bin/codex-security" scan "$cible" -c "$config" --output-dir "$sortie" --headless "$@" \
+  2>&1 | tee "$sortie/scan.stdout.log"
+statut=${PIPESTATUS[0]}
+
+# Estimation du coût (best-effort : n'affecte jamais le statut du scan).
+model="$(grep -E '^[[:space:]]*model:' "$config" | head -1 | awk '{print $2}')"
+provider="$(grep -E '^[[:space:]]*model_provider:' "$config" | head -1 | awk '{print $2}')"
+python3 "$racine/scripts/estimer-cout.py" --codex-log "$sortie/scan.stdout.log" \
+  --provider "$provider" --model "$model" || true
+
+exit "$statut"
