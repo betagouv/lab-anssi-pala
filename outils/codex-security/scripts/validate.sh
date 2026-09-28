@@ -4,7 +4,6 @@
 # brouillon de scan).
 #
 # Usage :
-#   bash outils/codex-security/scripts/validate.sh --outil-tiers <findings.json> --id <hunter-id>
 #   bash outils/codex-security/scripts/validate.sh --finding-file <finding.json>
 # Variables : CODEX_TARGET, CODEX_CONFIG, LITELLM_PORT (voir env-runtime.sh),
 #             CODEX_OUTPUT (défaut resultats/brut/codex-security/validate-<horodatage>, doit être vide)

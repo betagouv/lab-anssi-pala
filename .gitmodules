@@ -4,9 +4,6 @@
 [submodule "outils/shannon"]
 	path = outils/shannon/source
 	url = https://github.com/KeygraphHQ/shannon.git
-[submodule "outils/outil-tiers"]
-	path = outils/outil-tiers/source
-	url = https://github.com/editeur-tiers/outil-tiers.git
 [submodule "outils/codex-security/source"]
 	path = outils/codex-security/source
 	url = https://github.com/openai/codex-security.git

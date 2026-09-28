@@ -7,7 +7,6 @@
 //
 // Usage (via validate.sh, qui prépare l'environnement) :
 //   node validate.mjs --config FILE --repository DIR --output DIR --finding-file finding.json
-//   node validate.mjs --config FILE --repository DIR --output DIR --outil-tiers findings.json --id hunter-xxx
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
@@ -19,8 +18,6 @@ const { values: args } = parseArgs({
     repository: { type: "string" },
     output: { type: "string" },
     "finding-file": { type: "string" },
-    outil-tiers: { type: "string" },
-    id: { type: "string" },
   },
 });
 
@@ -29,26 +26,8 @@ for (const requis of ["config", "repository", "output"]) {
 }
 
 async function chargeFinding() {
-  if (args["finding-file"]) {
-    return JSON.parse(await readFile(args["finding-file"], "utf8"));
-  }
-  if (!args.outil-tiers || !args.id) {
-    throw new Error("Fournir --finding-file, ou --outil-tiers et --id");
-  }
-  const document = JSON.parse(await readFile(args.outil-tiers, "utf8"));
-  const findings = Array.isArray(document) ? document : document.findings;
-  const trouve = findings.find((f) => f.id === args.id);
-  if (!trouve) throw new Error(`Finding ${args.id} absent de ${args.outil-tiers}`);
-  // Seuls les éléments descriptifs sont transmis : ni statut de vérification ni PoC un outil tiers,
-  // pour que la validation reste indépendante.
-  return {
-    title: `${trouve.cwe ?? ""} ${trouve.finding_type ?? trouve.category ?? ""}`.trim(),
-    location: `${trouve.file}:${trouve.line_number ?? trouve.line}`,
-    cwe: trouve.cwe,
-    reported_severity: trouve.severity,
-    description: trouve.description,
-    source: `un outil tiers analyse, finding ${trouve.id}`,
-  };
+  if (!args["finding-file"]) throw new Error("Fournir --finding-file");
+  return JSON.parse(await readFile(args["finding-file"], "utf8"));
 }
 
 const finding = await chargeFinding();

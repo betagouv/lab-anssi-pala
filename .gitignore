@@ -3,7 +3,6 @@
 .env.*
 !.env.example
 outils/*/*.env
-outils/outil-tiers/webui-static/
 
 # Dépôts outillés en sous-modules : le contenu vit dans le sous-module, pas ici
 #   cible/cible-exemple, outils/<outil>/source  -> voir .gitmodules
@@ -15,7 +14,6 @@ cible/cible-exemple/
 # Copies de scan et sorties d'outils, spécifiques à chaque lancement et à chaque cible :
 # non historisées (le dépôt vise à être rejoué sur d'autres projets)
 cible/copies/
-passerelles/outil-tiers-to-shannon/sarif-shannon/
 outils/shannon/source/workspaces/
 resultats/brut/
 matrice/

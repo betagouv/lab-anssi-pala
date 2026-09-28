@@ -11,8 +11,8 @@ Les commits exacts de la cible et des outils sont fixés par les sous-modules
 | git | 2.50.1 (Apple Git-155) | |
 | docker | 29.4.3 (build 055a478) | daemon actif |
 | docker compose | v5.1.3 | plugin CLI |
-| node / pnpm | requis pour Shannon et `passerelles/outil-tiers-to-shannon` | un outil tiers, lui, tourne entièrement en conteneur |
-| python (hôte) | 3.9.6 | scripts utilitaires (`check_tool_calls.py`, `reconcile.py`) ; un outil tiers embarque son propre Python 3.12 |
+| node / pnpm | requis pour Shannon | |
+| python (hôte) | 3.9.6 | scripts utilitaires (`check_tool_calls.py`) |
 
 ## Cible — Cible / la cible
 
@@ -22,20 +22,8 @@ Les commits exacts de la cible et des outils sont fixés par les sous-modules
 - Commit : `224ba638b3486104cb9d4f4468ff5750378d11a4`
 - Copies de scan : `cible/copies/` (non versionnées, voir `scripts/bootstrap.sh`)
 
-## Outil — un outil tiers
-
-- Dépôt : https://github.com/editeur-tiers/outil-tiers
-- Chemin local : `outils/outil-tiers/source/` (sous-module)
-- Branche : `main`
-- Commit : `e4fe316bf30892e104269ab2ad32ce3e82e1af9d`
-- Version applicative : `outil-tiers 1.0.0`
-
-### Image Docker un outil tiers
-
-- Tag local : `outil-tiers:local`
-- Construite depuis `outils/outil-tiers/source/Dockerfile` (build multi-stage `python:3.12-slim` + `uv`)
-- `ENTRYPOINT ["outil-tiers"]` — l'image est un CLI, pas un service long-running (voir `outils/outil-tiers/docs/setup.md`)
-- Image dérivée `outil-tiers-sandbox:local` : `outils/outil-tiers/docker-sandbox/Dockerfile`
+> **un outil tiers** (un éditeur tiers, `outil-tiers 1.0.0`, sous-module supprimé le 28/09/2026 après
+> évaluation) a été écarté ; les runs restent tracés dans `resultats/rapports/`.
 
 ## Outil — Shannon
 

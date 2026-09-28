@@ -24,10 +24,8 @@ Hors du dossier de l'outil :
 - **Rapports** : `resultats/rapports/` (versionnés, anonymisés).
 - **Cible à scanner** : `cible/cible-exemple` n'est jamais modifié ; un outil qui écrit
   dans le dépôt analysé travaille sur une copie de `cible/copies/`.
-- **Liaison entre outils** (conversion de formats, rapprochement de findings) :
-  `passerelles/`.
 - **Clé Albert** : la source de vérité reste le `.env` racine ; un script
-  `scripts/generate-env.sh` peut en dériver `<outil>.env` (voir un outil tiers).
+  `scripts/generate-env.sh` peut en dériver `<outil>.env` (voir Codex Security).
 
 ## Étapes
 

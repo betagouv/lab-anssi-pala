@@ -31,7 +31,7 @@ réponse) avant le contenu final. Avec un `max_tokens` trop bas (10), la
 réponse est tronquée en plein raisonnement (`finish_reason:"length"`,
 `content:null`). Avec `max_tokens:200`, la réponse aboutit normalement :
 `content:"OK"`, `finish_reason:"stop"`. À garder en tête pour le
-paramétrage de un outil tiers (prévoir un budget de tokens de sortie suffisant).
+paramétrage des outils (prévoir un budget de tokens de sortie suffisant).
 
 Requête de test (clé masquée) :
 
