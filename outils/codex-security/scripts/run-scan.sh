@@ -18,6 +18,9 @@ set -euo pipefail
 sortie="${CODEX_OUTPUT:-$racine/resultats/brut/codex-security/scan-$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$sortie"
 chmod 700 "$sortie"
+# Le log est écrit À CÔTÉ du dossier de sortie (jamais dedans) : Codex Security exige un
+# --output-dir vide au démarrage.
+log_scan="${sortie%/}.stdout.log"
 
 echo "Cible  : $cible"
 echo "Config : $config"
@@ -25,13 +28,13 @@ echo "Sortie : $sortie"
 
 # On ne fait plus exec : le log est capturé pour estimer le coût une fois le scan fini.
 "$outil/node_modules/.bin/codex-security" scan "$cible" -c "$config" --output-dir "$sortie" --headless "$@" \
-  2>&1 | tee "$sortie/scan.stdout.log"
+  2>&1 | tee "$log_scan"
 statut=${PIPESTATUS[0]}
 
 # Estimation du coût (best-effort : n'affecte jamais le statut du scan).
 model="$(grep -E '^[[:space:]]*model:' "$config" | head -1 | awk '{print $2}')"
 provider="$(grep -E '^[[:space:]]*model_provider:' "$config" | head -1 | awk '{print $2}')"
-python3 "$racine/scripts/estimer-cout.py" --codex-log "$sortie/scan.stdout.log" \
+python3 "$racine/scripts/estimer-cout.py" --codex-log "$log_scan" \
   --provider "$provider" --model "$model" || true
 
 exit "$statut"
