@@ -43,4 +43,14 @@ fi
 } > "$OUT_ENV"
 
 chmod 600 "$OUT_ENV"
-echo "Généré: $OUT_ENV (ALBERT_BASE_URL=${ALBERT_BASE_URL})"
+
+# Récapitule les fournisseurs réellement configurés dans le fichier généré (le proxy route les
+# modèles vers Albert et/ou Scaleway selon les clés présentes). Aucune clé n'est affichée.
+fournisseurs="Albert (${ALBERT_BASE_URL})"
+if [ -n "${SCALEWAY_DEEPSEEK_API_KEY:-}" ]; then
+  fournisseurs="$fournisseurs + Scaleway (DeepSeek)"
+else
+  fournisseurs="$fournisseurs ; Scaleway absent (SCALEWAY_DEEPSEEK_API_KEY non renseignée dans .env)"
+fi
+echo "Généré: $OUT_ENV"
+echo "  Fournisseurs configurés pour le proxy : $fournisseurs"
