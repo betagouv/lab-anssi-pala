@@ -28,6 +28,23 @@ model_list:
       temperature: 1
       top_p: 1
       presence_penalty: 0
+  - model_name: deepseek-v4-flash-albert
+    litellm_params:
+      # DeepSeek V4 Flash servi par Albert (vLLM) ; alias Albert deepseek-ai/DeepSeek-V4-Flash-0731.
+      model: hosted_vllm/deepseek-ai/DeepSeek-V4-Flash-0731
+      api_base: os.environ/ALBERT_BASE_URL
+      api_key: os.environ/ALBERT_API_KEY
+      use_chat_completions_api: true
+      timeout: 600
+      # Albert (vLLM) n'appelle les outils que si tool_choice est explicite : sans cela,
+      # DeepSeek n'émet aucun appel (défaut = none). Codex ne le fixe pas -> on l'impose ici.
+      tool_choice: auto
+      # Paramètres d'échantillonnage alignés sur l'entrée Scaleway : test de l'hypothèse selon
+      # laquelle les défauts vLLM d'Albert expliquent la qualité dégradée (scan du 28/09).
+      max_tokens: 16384
+      temperature: 1
+      top_p: 1
+      presence_penalty: 0
 
 litellm_settings:
   # Remplace json_schema par json_object (voir json_schema_to_object.py).

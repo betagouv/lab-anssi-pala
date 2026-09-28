@@ -23,6 +23,7 @@ CONSIGNE = (
 REMPLACEMENTS = {
     "gpt-oss-120b": {"type": "json_object"},
     "deepseek-v4-flash-0731": None,
+    "deepseek-v4-flash-albert": None,
 }
 
 
