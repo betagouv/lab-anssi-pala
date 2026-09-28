@@ -34,8 +34,8 @@ Exemples :
   bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git
   bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
 
-Après le bootstrap, les outils ciblent la copie via une variable d'environnement (rappelée en fin
-d'exécution) : CODEX_TARGET pour Codex Security, ANSSI_TARGET / MAC_TARGET pour Shannon.
+Après le bootstrap, les outils ciblent la copie cible/copies/<nom> (rappel en fin d'exécution) :
+CODEX_TARGET pour Codex Security ; pour Shannon, run-shannon.sh --project <nom> l'utilise par défaut.
 USAGE
 }
 
@@ -102,5 +102,5 @@ if [ -n "$projet" ]; then
   echo
   echo "==> Cible prête : cible/copies/$projet"
   echo "    Codex Security : CODEX_TARGET=\"\$PWD/cible/copies/$projet\""
-  echo "    Shannon        : ANSSI_TARGET / MAC_TARGET=\"\$PWD/cible/copies/$projet\""
+  echo "    Shannon        : run-shannon.sh --project $projet --url <url-app> --config <fichier>"
 fi
