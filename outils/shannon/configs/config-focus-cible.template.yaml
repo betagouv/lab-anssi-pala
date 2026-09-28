@@ -1,0 +1,44 @@
+# Scénario : scan FOCALISÉ sur des routes / fichiers précis (exploit: "true").
+# rules.focus oriente Shannon vers un périmètre restreint (une route et son code), par exemple
+# pour confirmer dynamiquement un finding déjà repéré par une analyse de code.
+#
+# Copier vers configs/config-<cible>-focus.yaml (ignoré par git). Instance et base JETABLES.
+# Types de règles : url_path (route HTTP) et code_path (fichier/glob relatif au dépôt -r).
+# Schéma complet : source/docs/configuration.md.
+description: >
+  Application cible en local (Docker), base de données jetable, données de test uniquement.
+  Décrire la ou les failles ciblées et pourquoi ce périmètre.
+
+exploit: "true"
+
+rules_of_engagement: |
+  - Cible autorisée : instance de test jetable uniquement.
+  - Concentrer l'effort sur les surfaces listées dans rules.focus.
+  - Pas de brute-force ; 5 tentatives de connexion maximum.
+
+authentication:
+  login_type: form
+  login_url: "http://host.docker.internal:PORT/URL_DE_CONNEXION_A_REMPLACER"
+  credentials:
+    username: "USERNAME_A_REMPLACER"
+    password: "PASSWORD_A_REMPLACER"
+  login_flow:
+    - "Type $username into the email field"
+    - "Type $password into the password field"
+    - "Click the login button"
+  success_condition:
+    type: url_contains
+    value: "/CHEMIN_APRES_CONNEXION"
+
+rules:
+  focus:
+    - description: "Route HTTP visée"
+      type: url_path
+      value: "/api/CHEMIN_A_REMPLACER"
+    - description: "Code correspondant (chemin relatif au dépôt -r)"
+      type: code_path
+      value: "chemin/vers/fichier.ts"
+  # avoid:
+  #   - description: "Zone à ne pas tester"
+  #     type: url_path
+  #     value: "/logout"

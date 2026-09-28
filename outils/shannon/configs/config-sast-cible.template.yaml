@@ -1,0 +1,29 @@
+# Scénario : SAST agentique (Capella) activé, sans exploitation (exploit: "false").
+# Shannon lit le dépôt pour repérer des failles avant/à la place de la phase dynamique. Produit une
+# sortie de nature statique, comparable à un autre outil d'analyse de code.
+#
+# Copier vers configs/config-<cible>-sast.yaml (ignoré par git). Le SAST agentique ajoute du temps
+# et du coût modèle. Schéma complet : source/docs/configuration.md.
+description: >
+  Application cible en local (Docker), base de données jetable, données de test uniquement.
+  Décrire la pile technique et le périmètre du dépôt à analyser.
+
+exploit: "false"
+
+agentic_sast:
+  enabled: "true"
+
+# Authentification facultative (utile si la phase dynamique complète le SAST). Décommenter au besoin.
+# authentication:
+#   login_type: form
+#   login_url: "http://host.docker.internal:PORT/URL_DE_CONNEXION_A_REMPLACER"
+#   credentials:
+#     username: "USERNAME_A_REMPLACER"
+#     password: "PASSWORD_A_REMPLACER"
+#   login_flow:
+#     - "Type $username into the email field"
+#     - "Type $password into the password field"
+#     - "Click the login button"
+#   success_condition:
+#     type: url_contains
+#     value: "/CHEMIN_APRES_CONNEXION"

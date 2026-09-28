@@ -1,0 +1,32 @@
+# Scénario : ANALYSE sans exploitation (exploit: "false").
+# Shannon décrit les failles sans les exploiter (pas d'écriture ni d'action réelle sur la cible).
+# Utile pour une première passe, ou pour comparer une sortie statique/analytique.
+#
+# Copier ce template vers configs/config-<cible>-analyse.yaml (ignoré par git), puis renseigner
+# la description et, si besoin, le bloc authentication. Schéma complet : source/docs/configuration.md.
+description: >
+  Application cible en local (Docker), base de données jetable, données de test uniquement.
+  Décrire ici la pile technique, le rôle de l'app et les zones sensibles connues.
+
+exploit: "false"
+
+# Authentification facultative en analyse. Décommenter et compléter pour couvrir les zones
+# authentifiées (voir config-authentification-cible.template.yaml pour le détail des champs).
+# authentication:
+#   login_type: form
+#   login_url: "http://host.docker.internal:PORT/URL_DE_CONNEXION_A_REMPLACER"
+#   credentials:
+#     username: "USERNAME_A_REMPLACER"
+#     password: "PASSWORD_A_REMPLACER"
+#   login_flow:
+#     - "Type $username into the email field"
+#     - "Type $password into the password field"
+#     - "Click the login button"
+#   success_condition:
+#     type: url_contains
+#     value: "/CHEMIN_APRES_CONNEXION"
+
+# Rapport : abaisser les seuils pour ne rien filtrer en analyse.
+report:
+  min_severity: low
+  min_confidence: low

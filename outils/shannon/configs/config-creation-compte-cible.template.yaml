@@ -1,0 +1,38 @@
+# Scénario : parcours nécessitant la CRÉATION D'UN COMPTE ou un premier login (exploit: "true").
+# Le login_flow enchaîne la première authentification ET les étapes de création/onboarding jusqu'à
+# atteindre l'état voulu. Utile quand la faille visée n'apparaît qu'au premier accès d'un nouvel
+# utilisateur (ex. redirection post-inscription, jeton d'activation…).
+#
+# Copier vers configs/config-<cible>-creation-compte.yaml (ignoré par git). Instance et base
+# JETABLES obligatoires. Schéma complet : source/docs/configuration.md.
+description: >
+  Application cible en local (Docker), base de données jetable, données de test uniquement.
+  Décrire le parcours de création de compte / premier accès et la faille visée.
+
+exploit: "true"
+
+rules_of_engagement: |
+  - Cible autorisée : instance de test jetable uniquement.
+  - Le compte utilisé doit être NOUVEAU (email jamais enregistré) pour déclencher le parcours de
+    création ; nettoyer la base entre deux runs si nécessaire.
+  - Pas de brute-force ; 5 tentatives de connexion maximum.
+
+authentication:
+  login_type: form
+  login_url: "http://host.docker.internal:PORT/URL_DE_CONNEXION_A_REMPLACER"
+  credentials:
+    username: "USERNAME_NOUVEAU_A_REMPLACER"
+    password: "PASSWORD_A_REMPLACER"
+  login_flow:
+    # 1) authentification initiale, puis 2) étapes de création/onboarding (adapter aux libellés).
+    - "Type $username into the email field"
+    - "Type $password into the password field"
+    - "Click the login button"
+    - "Wait for the account creation page to be displayed"
+    - "Fill the required account creation fields"
+    - "Accept the terms of service"
+    - "Click the validate button"
+  success_condition:
+    # État attestant que le compte est créé / le premier accès abouti.
+    type: url_contains
+    value: "/CHEMIN_APRES_CREATION"

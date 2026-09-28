@@ -1,0 +1,33 @@
+# Scénario : pentest AUTHENTIFIÉ avec exploitation (exploit: "true").
+# Shannon se connecte avec un compte de test, puis tente de vraies exploitations sur les zones
+# authentifiées. Instance et base JETABLES obligatoires (actions réelles : écritures, envois…).
+#
+# Copier ce template vers configs/config-<cible>-authentification.yaml (ignoré par git), puis
+# renseigner url/identifiants/login_flow. Schéma complet : source/docs/configuration.md.
+description: >
+  Application cible en local (Docker), base de données jetable, données de test uniquement.
+  Décrire la pile technique, le mécanisme d'authentification et les rôles disponibles.
+
+exploit: "true"
+
+rules_of_engagement: |
+  - Cible autorisée : instance de test jetable uniquement.
+  - Pas de brute-force d'authentification ; 5 tentatives de connexion maximum.
+  - Se limiter au périmètre de la cible ; ne pas sortir vers des services tiers.
+
+authentication:
+  # login_type : form (mire login/mot de passe) ou sso (redirection OIDC/FournisseurSSO…).
+  login_type: form
+  login_url: "http://host.docker.internal:PORT/URL_DE_CONNEXION_A_REMPLACER"
+  credentials:
+    username: "USERNAME_A_REMPLACER"
+    password: "PASSWORD_A_REMPLACER"
+    # totp_secret: "BASE32_A_REMPLACER"   # si MFA/TOTP
+  login_flow:
+    # Décrire chaque étape avec les LIBELLÉS EXACTS de la page (champs, boutons).
+    - "Type $username into the email field"
+    - "Type $password into the password field"
+    - "Click the login button"
+  success_condition:
+    type: url_contains
+    value: "/CHEMIN_APRES_CONNEXION"
