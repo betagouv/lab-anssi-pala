@@ -14,6 +14,9 @@ model_list:
       # Sans cette option, LiteLLM relaie tel quel vers /v1/responses d'Albert (404).
       use_chat_completions_api: true
       timeout: 600
+      # Albert (DINUM) : service gratuit -> coût nul, ne consomme jamais le budget.
+      input_cost_per_token: 0
+      output_cost_per_token: 0
   - model_name: deepseek-v4-flash-0731
     litellm_params:
       # Scaleway (API compatible OpenAI) : /v1/responses n'y est servi que pour gpt-oss-120b.
@@ -28,6 +31,10 @@ model_list:
       temperature: 1
       top_p: 1
       presence_penalty: 0
+      # Tarif Scaleway ($/token) : nécessaire pour que max_budget s'applique (sinon LiteLLM
+      # compte 0 pour un modèle hosted_vllm). Aligné sur scripts/estimer-cout.py : 0,40/0,80 €/M.
+      input_cost_per_token: 0.0000004
+      output_cost_per_token: 0.0000008
   - model_name: deepseek-v4-flash-albert
     litellm_params:
       # DeepSeek V4 Flash servi par Albert (vLLM) ; alias Albert deepseek-ai/DeepSeek-V4-Flash-0731.
@@ -45,7 +52,15 @@ model_list:
       temperature: 1
       top_p: 1
       presence_penalty: 0
+      # DeepSeek servi par Albert (DINUM) : gratuit -> coût nul.
+      input_cost_per_token: 0
+      output_cost_per_token: 0
 
 litellm_settings:
   # Remplace json_schema par json_object (voir json_schema_to_object.py).
   callbacks: json_schema_to_object.json_schema_vers_objet
+  # Plafond de dépense GLOBAL du proxy (en $), tous modèles payants confondus. Une fois atteint,
+  # LiteLLM refuse les appels suivants (BudgetExceededError). Albert étant à coût nul, seul le
+  # trafic Scaleway le consomme. Ajuster la valeur selon le besoin ; budget_duration remet à zéro.
+  max_budget: 10
+  budget_duration: 30d

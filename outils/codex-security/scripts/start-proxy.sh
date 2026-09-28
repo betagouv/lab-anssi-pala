@@ -4,6 +4,10 @@
 #
 # Usage : ./outils/codex-security/scripts/start-proxy.sh
 # Arrêt : docker rm -f codex-security-litellm
+#
+# Budget : les prix par modèle et max_budget sont dans litellm/config.yaml. LiteLLM n'APPLIQUE le
+# plafond qu'avec une base de données. Sans DB : le coût est suivi mais pas bloqué (tracking seul).
+# Pour l'enforcement, fournir LITELLM_DATABASE_URL (Postgres) ; recette dans le README.
 set -euo pipefail
 
 OUTIL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -14,9 +18,19 @@ CONTAINER=codex-security-litellm
 
 "$OUTIL_DIR/scripts/generate-env.sh"
 
+# Enforcement du budget : uniquement si une base est fournie (DATABASE_URL, requis par LiteLLM).
+db_args=()
+if [ -n "${LITELLM_DATABASE_URL:-}" ]; then
+  db_args=(-e "DATABASE_URL=$LITELLM_DATABASE_URL")
+  echo "Budget : enforcement actif (DATABASE_URL fournie)."
+else
+  echo "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README."
+fi
+
 docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$CONTAINER" \
   --env-file "$OUTIL_DIR/codex-security.env" \
+  ${db_args[@]+"${db_args[@]}"} \
   -v "$OUTIL_DIR/litellm:/app/proxy-config:ro" \
   -p "127.0.0.1:$PORT:4000" \
   "$IMAGE" --config /app/proxy-config/config.yaml --port 4000 >/dev/null
