@@ -28,7 +28,7 @@ unset OPENAI_API_KEY
 export CODEX_HOME="$outil/codex-home"
 export CODEX_SECURITY_STATE_DIR="$outil/state"
 export CODEX_SECURITY_NO_UPDATE_NOTICE=1
-# Script d'écriture des artefacts appelé par l'agent (configs/consignes-gpt-oss.md, étape 4).
+# Script d'écriture des artefacts appelé par l'agent (configs/consignes-scan.md, étape 4).
 export CODEX_SCAN_ECRIT_ARTEFACTS="$outil/scripts/ecrit-artefacts-scan.py"
 mkdir -p "$CODEX_HOME" "$CODEX_SECURITY_STATE_DIR"
 chmod 700 "$CODEX_HOME" "$CODEX_SECURITY_STATE_DIR"

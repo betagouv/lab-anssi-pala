@@ -2,7 +2,7 @@
 # Écrit les trois artefacts canoniques d'un scan Codex Security (scan-manifest.json, findings.json,
 # coverage.json) à partir d'un brouillon simple rédigé par le modèle, puis rattache le périmètre
 # demandé avec le script du plugin. Appelé par l'agent pendant le scan (voir
-# configs/consignes-gpt-oss.md) : gpt-oss-120b ne parvient pas à recopier et exécuter un long script.
+# configs/consignes-scan.md) : gpt-oss-120b ne parvient pas à recopier et exécuter un long script.
 #
 # Les valeurs imposées par le SDK (identifiant du scan, cible, périmètre) sont lues dans
 # l'environnement. Les identités des findings sont provisoires : le finaliseur du SDK les recalcule.
