@@ -1,0 +1,21 @@
+{
+  "name": "pala-outillage",
+  "private": true,
+  "description": "Outillage TypeScript du laboratoire d'audit (en parallèle des scripts bash/Python)",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.2"
+  }
+}
