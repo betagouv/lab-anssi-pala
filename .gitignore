@@ -26,6 +26,16 @@ outils/shannon/configs/*.yaml
 outils/codex-security/codex-home/
 outils/codex-security/state/
 
+# Configs Codex Security : ne versionner que les *.template.yaml et le defaut
+outils/codex-security/configs/*.yaml
+!outils/codex-security/configs/albert-deepseek-exemple.yaml
+!outils/codex-security/configs/albert-exemple.yaml
+!outils/codex-security/configs/albert-minimal.yaml
+!outils/codex-security/configs/*.template.yaml
+!outils/codex-security/configs/config-defaut.yaml
+!outils/codex-security/configs/scaleway-deepseek-exemple.yaml
+!outils/codex-security/configs/scaleway-deepseek-minimal.yaml
+
 # Artefacts laissés par Shannon dans la cible de fumée
 outils/shannon/smoke-target/.shannon/
 outils/shannon/smoke-target/.playwright/
