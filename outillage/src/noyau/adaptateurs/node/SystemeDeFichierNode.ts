@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { SystemeDeFichier } from "../../ports/SystemeDeFichier.ts";
 
@@ -26,5 +26,11 @@ export class SystemeDeFichierNode implements SystemeDeFichier {
 
   creeDossier(chemin: string): void {
     mkdirSync(resolve(this.#base, chemin), { recursive: true });
+  }
+
+  ecritFichierPrive(chemin: string, contenu: string): void {
+    const absolu = resolve(this.#base, chemin);
+    writeFileSync(absolu, contenu, { mode: 0o600 });
+    chmodSync(absolu, 0o600);
   }
 }
