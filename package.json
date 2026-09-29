@@ -9,7 +9,8 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "estimer-cout": "node outillage/src/composition/estimer-cout.ts"
+    "estimer-cout": "node outillage/src/composition/estimer-cout.ts",
+    "bootstrap": "node outillage/src/composition/bootstrap.ts"
   },
   "dependencies": {
     "commander": "^15.0.0"
