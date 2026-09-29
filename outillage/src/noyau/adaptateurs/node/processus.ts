@@ -1,11 +1,25 @@
-import { spawn } from "node:child_process";
+import { spawn, type StdioOptions } from "node:child_process";
 
-type Options = { cwd?: string; env?: NodeJS.ProcessEnv; silencieux?: boolean };
+// heritee : le terminal voit tout ; sansSortieStandard : seules les erreurs passent (« >/dev/null ») ;
+// silencieuse : rien ne passe.
+type Affichage = "heritee" | "sansSortieStandard" | "silencieuse";
 
-// Lance une commande en héritant du terminal et renvoie son code de sortie.
-export function lanceCommande(commande: string, args: string[], { cwd, env, silencieux }: Options = {}): Promise<number> {
+type Options = { cwd?: string; env?: NodeJS.ProcessEnv; affichage?: Affichage };
+
+const STDIO: Record<Affichage, StdioOptions> = {
+  heritee: "inherit",
+  sansSortieStandard: ["ignore", "ignore", "inherit"],
+  silencieuse: "ignore",
+};
+
+// Lance une commande et renvoie son code de sortie.
+export function lanceCommande(
+  commande: string,
+  args: string[],
+  { cwd, env, affichage = "heritee" }: Options = {},
+): Promise<number> {
   return new Promise((resoudre, rejeter) => {
-    const enfant = spawn(commande, args, { cwd, env, stdio: silencieux ? "ignore" : "inherit" });
+    const enfant = spawn(commande, args, { cwd, env, stdio: STDIO[affichage] });
     enfant.on("error", rejeter);
     enfant.on("close", (code) => resoudre(code ?? 1));
   });

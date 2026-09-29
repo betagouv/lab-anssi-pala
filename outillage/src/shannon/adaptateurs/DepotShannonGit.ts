@@ -21,7 +21,7 @@ export class DepotShannonGit implements DepotShannon {
 
   async patchApplicable(patch: string): Promise<boolean> {
     const code = await lanceCommande("git", ["-C", this.#source, "apply", "--check", join(this.#outil, patch)], {
-      silencieux: true,
+      affichage: "silencieuse",
     });
     return code === 0;
   }
