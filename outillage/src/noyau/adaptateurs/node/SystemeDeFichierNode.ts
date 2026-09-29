@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import type { SystemeDeFichier } from "../../ports/SystemeDeFichier.ts";
 
@@ -18,5 +18,13 @@ export class SystemeDeFichierNode implements SystemeDeFichier {
       if ((erreur as NodeJS.ErrnoException).code === "ENOENT") throw new Error(`Fichier introuvable : ${chemin}`);
       throw erreur;
     }
+  }
+
+  existe(chemin: string): boolean {
+    return existsSync(resolve(this.#base, chemin));
+  }
+
+  creeDossier(chemin: string): void {
+    mkdirSync(resolve(this.#base, chemin), { recursive: true });
   }
 }
