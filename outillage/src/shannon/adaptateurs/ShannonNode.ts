@@ -10,11 +10,13 @@ export class ShannonNode implements Shannon {
     this.#outil = outil;
   }
 
-  demarre({ url, depot, config, modelsConfig, workspace, environnement }: DemandeDeLancement): Promise<number> {
+  demarre({ url, depot, config, modelsConfig, workspace, pipelineTesting, environnement }: DemandeDeLancement): Promise<number> {
+    const scenario = config ? ["-c", config] : [];
     const descriptionPi = modelsConfig ? ["--models-config", modelsConfig] : [];
+    const mode = pipelineTesting ? ["--pipeline-testing"] : [];
     return lanceCommande(
       "node",
-      ["shannon", "start", "-u", url, "-r", depot, "-c", config, ...descriptionPi, "--follow", "-w", workspace],
+      ["shannon", "start", "-u", url, "-r", depot, ...scenario, ...descriptionPi, ...mode, "--follow", "-w", workspace],
       { cwd: join(this.#outil, "source"), env: environnement },
     );
   }

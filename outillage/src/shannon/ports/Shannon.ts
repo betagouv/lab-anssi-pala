@@ -2,10 +2,13 @@ export type DemandeDeLancement = {
   // URL de l'app telle que le conteneur Shannon la voit.
   url: string;
   depot: string;
-  config: string;
+  // Config de scénario ; aucune pour un passage de fumée.
+  config?: string;
   // Description pi du modèle (models.<fournisseur>.json), si Shannon ne le connaît pas nativement.
   modelsConfig?: string;
   workspace: string;
+  // Prompts minimaux (--pipeline-testing) : vérifie la chaîne sans produire de rapport valide.
+  pipelineTesting?: boolean;
   // Environnement du processus Shannon (clé et modèle compris).
   environnement: Record<string, string | undefined>;
 };

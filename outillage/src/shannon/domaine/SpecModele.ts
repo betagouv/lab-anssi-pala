@@ -16,12 +16,24 @@ export class SpecModele {
     return new SpecModele(imposee || configuree || SpecModele.PAR_DEFAUT);
   }
 
+  // Modèle désigné sans repli : aucun fournisseur n'est privilégié par défaut.
+  static exigee(designee?: string): SpecModele {
+    if (!designee) {
+      throw new Error(
+        "Erreur : SHANNON_AI_MODEL non renseigné (outils/shannon/shannon.env), ex. albert:openai/gpt-oss-120b",
+      );
+    }
+    return new SpecModele(designee);
+  }
+
   get fournisseur(): string {
     return this.valeur.split(":")[0];
   }
 
-  // Nom du fichier de description pi, pour les fournisseurs qui en ont besoin.
-  get descriptionPi(): string | undefined {
-    return DESCRIPTIONS_PI[this.fournisseur];
+  // Chemin de la description pi dans le dossier des configs Shannon, pour les fournisseurs qui en
+  // ont besoin ; aucun pour un modèle que Shannon connaît nativement.
+  descriptionPiDans(dossierConfigs: string): string | undefined {
+    const fichier = DESCRIPTIONS_PI[this.fournisseur];
+    return fichier && `${dossierConfigs}/${fichier}`;
   }
 }
