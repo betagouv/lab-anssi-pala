@@ -16,7 +16,8 @@
     "scan": "node outillage/src/composition/scan.ts",
     "validate": "node outillage/src/composition/validate.ts",
     "shannon": "node outillage/src/composition/shannon.ts",
-    "shannon-smoke": "node outillage/src/composition/shannon-smoke.ts"
+    "shannon-smoke": "node outillage/src/composition/shannon-smoke.ts",
+    "check-tool-calls": "node outillage/src/composition/check-tool-calls.ts"
   },
   "dependencies": {
     "commander": "^15.0.0"
