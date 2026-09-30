@@ -12,4 +12,8 @@ export class ConsoleNode implements Console {
   signaleErreur(ligne: string): void {
     process.stderr.write(`${ligne}\n`);
   }
+
+  trace(ligne: string): void {
+    process.stderr.write(`${ligne}\n`);
+  }
 }

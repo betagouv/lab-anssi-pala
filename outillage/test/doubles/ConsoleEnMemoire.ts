@@ -3,6 +3,7 @@ import type { Console } from "../../src/noyau/ports/Console.ts";
 export class ConsoleEnMemoire implements Console {
   readonly lignes: string[] = [];
   readonly erreurs: string[] = [];
+  readonly traces: string[] = [];
   #ligneEnCours = "";
 
   affiche(ligne: string): void {
@@ -16,5 +17,9 @@ export class ConsoleEnMemoire implements Console {
 
   signaleErreur(ligne: string): void {
     this.erreurs.push(ligne);
+  }
+
+  trace(ligne: string): void {
+    this.traces.push(ligne);
   }
 }

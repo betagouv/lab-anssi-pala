@@ -34,6 +34,10 @@ export class SystemeDeFichierNode implements SystemeDeFichier {
     chmodSync(absolu, 0o700);
   }
 
+  ecritFichier(chemin: string, contenu: string): void {
+    writeFileSync(resolve(this.#base, chemin), contenu);
+  }
+
   ecritFichierPrive(chemin: string, contenu: string): void {
     const absolu = resolve(this.#base, chemin);
     writeFileSync(absolu, contenu, { mode: 0o600 });

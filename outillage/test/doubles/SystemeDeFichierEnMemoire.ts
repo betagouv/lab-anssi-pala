@@ -30,6 +30,10 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
     this.dossiersPrives.add(chemin);
   }
 
+  ecritFichier(chemin: string, contenu: string): void {
+    this.fichiers.set(chemin, contenu);
+  }
+
   ecritFichierPrive(chemin: string, contenu: string): void {
     this.fichiers.set(chemin, contenu);
     this.fichiersPrives.add(chemin);
