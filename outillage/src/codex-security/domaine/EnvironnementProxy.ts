@@ -1,6 +1,8 @@
 // Environnement du proxy LiteLLM (outils/codex-security/codex-security.env), dérivé du .env racine,
 // source de vérité des clés. Seul le proxy lit les clés des fournisseurs ; Codex ne reçoit que le
 // jeton local.
+import { parseEnv } from "node:util";
+
 type Variables = Record<string, string | undefined>;
 
 export class EnvironnementProxy {
@@ -22,6 +24,16 @@ export class EnvironnementProxy {
       // Facultative : n'est utilisée que par le modèle deepseek-v4-flash-0731 du proxy.
       ...(racine.SCALEWAY_DEEPSEEK_API_KEY && { SCALEWAY_DEEPSEEK_API_KEY: racine.SCALEWAY_DEEPSEEK_API_KEY }),
     });
+  }
+
+  // Relit un environnement déjà généré.
+  static depuisContenu(contenu: string): EnvironnementProxy {
+    return new EnvironnementProxy(parseEnv(contenu) as Record<string, string>);
+  }
+
+  // Seule clé transmise à Codex ; les clés des fournisseurs restent dans le proxy.
+  get jetonLocal(): string | undefined {
+    return this.#variables.LITELLM_MASTER_KEY;
   }
 
   // Fournisseurs vers lesquels le proxy peut router, selon les clés présentes. Aucune clé affichée.

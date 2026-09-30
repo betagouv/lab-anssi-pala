@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { executeCommande } from "../../noyau/adaptateurs/node/processus.ts";
-import type { CliCodexSecurity } from "../ports/CliCodexSecurity.ts";
+import { executeCommande, lanceCommande } from "../../noyau/adaptateurs/node/processus.ts";
+import type { CliCodexSecurity, DemandeDeScan } from "../ports/CliCodexSecurity.ts";
 
 // CLI installée par npm dans outils/codex-security/node_modules (version figée par package-lock.json).
 export class CliCodexSecurityNpm implements CliCodexSecurity {
@@ -26,5 +26,9 @@ export class CliCodexSecurityNpm implements CliCodexSecurity {
 
   version(): string {
     return execFileSync(this.#executable, ["--version"], { encoding: "utf8" }).trim();
+  }
+
+  scanne({ cible, config, options }: DemandeDeScan): Promise<number> {
+    return lanceCommande(this.#executable, ["scan", cible, "-c", config, "--headless", ...options]);
   }
 }

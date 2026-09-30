@@ -4,6 +4,7 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   readonly fichiers: Map<string, string>;
   readonly dossiers = new Set<string>();
   readonly fichiersPrives = new Set<string>();
+  readonly dossiersPrives = new Set<string>();
 
   constructor(fichiers: Record<string, string> = {}) {
     this.fichiers = new Map(Object.entries(fichiers));
@@ -22,6 +23,11 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   creeDossier(chemin: string): void {
     const segments = chemin.split("/");
     segments.forEach((_, i) => this.dossiers.add(segments.slice(0, i + 1).join("/")));
+  }
+
+  creeDossierPrive(chemin: string): void {
+    this.creeDossier(chemin);
+    this.dossiersPrives.add(chemin);
   }
 
   ecritFichierPrive(chemin: string, contenu: string): void {

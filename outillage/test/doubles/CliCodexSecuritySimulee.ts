@@ -1,13 +1,20 @@
-import type { CliCodexSecurity } from "../../src/codex-security/ports/CliCodexSecurity.ts";
+import type { CliCodexSecurity, DemandeDeScan } from "../../src/codex-security/ports/CliCodexSecurity.ts";
 
 export class CliCodexSecuritySimulee implements CliCodexSecurity {
   #installee: boolean;
   readonly #version: string;
+  readonly #statutDuScan: number;
   installations = 0;
+  readonly scans: DemandeDeScan[] = [];
 
-  constructor({ installee = true, version = "0.1.30" }: { installee?: boolean; version?: string } = {}) {
+  constructor({
+    installee = true,
+    version = "0.1.30",
+    statutDuScan = 0,
+  }: { installee?: boolean; version?: string; statutDuScan?: number } = {}) {
     this.#installee = installee;
     this.#version = version;
+    this.#statutDuScan = statutDuScan;
   }
 
   estInstallee(): boolean {
@@ -21,5 +28,10 @@ export class CliCodexSecuritySimulee implements CliCodexSecurity {
 
   version(): string {
     return this.#version;
+  }
+
+  async scanne(demande: DemandeDeScan): Promise<number> {
+    this.scans.push(demande);
+    return this.#statutDuScan;
   }
 }

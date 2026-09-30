@@ -28,6 +28,12 @@ export class SystemeDeFichierNode implements SystemeDeFichier {
     mkdirSync(resolve(this.#base, chemin), { recursive: true });
   }
 
+  creeDossierPrive(chemin: string): void {
+    const absolu = resolve(this.#base, chemin);
+    mkdirSync(absolu, { recursive: true });
+    chmodSync(absolu, 0o700);
+  }
+
   ecritFichierPrive(chemin: string, contenu: string): void {
     const absolu = resolve(this.#base, chemin);
     writeFileSync(absolu, contenu, { mode: 0o600 });
