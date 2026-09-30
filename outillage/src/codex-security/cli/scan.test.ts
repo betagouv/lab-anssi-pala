@@ -30,4 +30,29 @@ describe("scan (ligne de commande)", () => {
     expect(code).toBe(3);
     expect(cli.scans[0].options).toEqual(["--verbose", "--dry-run", "--scan-prompt-file", "consignes.md"]);
   });
+
+  test("affiche sa propre aide, avec les options ajoutées par défaut, sans lancer de scan", async () => {
+    const cli = new CliCodexSecuritySimulee();
+    const console = new ConsoleEnMemoire();
+
+    const code = await scan(["--help"], {
+      racine: "/depot",
+      cli,
+      systemeDeFichier: new SystemeDeFichierEnMemoire(),
+      reseau: new ReseauSimule(),
+      horloge: new HorlogeFigee(new Date(2026, 8, 30)),
+      environnement: new EnvironnementEnMemoire(),
+      estimation: new EstimationCoutSimulee(),
+      console,
+    });
+
+    expect(code).toBe(0);
+    expect(cli.scans).toEqual([]);
+    expect(console.lignes.map((l) => l.message)).toEqual(
+      expect.arrayContaining([
+        "  --scan-prompt-file outils/codex-security/configs/consignes-scan.md",
+        "  --verbose",
+      ]),
+    );
+  });
 });
