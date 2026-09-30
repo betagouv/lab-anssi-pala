@@ -87,8 +87,8 @@ describe("LanceScan", () => {
     expect(cli.scans[0]).toMatchObject({
       cible: CIBLE,
       config: "/depot/outils/codex-security/configs/config-defaut.yaml",
-      options: ["--verbose", "--mode", "deep"],
     });
+    expect(cli.scans[0].options).toEqual(expect.arrayContaining(["--verbose", "--mode", "deep"]));
     expect(console.lignes.map(l => l.message).slice(0, 2)).toEqual([
       `Cible  : ${CIBLE}`,
       "Config : /depot/outils/codex-security/configs/config-defaut.yaml",
@@ -179,5 +179,31 @@ describe("LanceScan", () => {
 
     expect(statut).toBe(3);
     expect(console.erreurs.map(l => l.message)).toEqual(["Estimation du coût impossible : Fichier introuvable : scan.stdout.log"]);
+  });
+
+  test("suit par défaut les consignes de scan du dépôt, sans lesquelles DeepSeek n'écrit pas findings.json", async () => {
+    const cli = new CliCodexSecuritySimulee();
+
+    await unScan({ cli }).execute({ options: ["--dry-run"] });
+
+    expect(cli.scans[0].options).toEqual(
+      expect.arrayContaining(["--scan-prompt-file", "/depot/outils/codex-security/configs/consignes-scan.md"]),
+    );
+  });
+
+  test("demande par défaut un log bavard, dont le relevé TOKENS permet d'estimer le coût", async () => {
+    const cli = new CliCodexSecuritySimulee();
+
+    await unScan({ cli }).execute({ options: [] });
+
+    expect(cli.scans[0].options).toContain("--verbose");
+  });
+
+  test("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {
+    const cli = new CliCodexSecuritySimulee();
+
+    await unScan({ cli }).execute({ options: ["--scan-prompt-file=/mes-consignes.md"] });
+
+    expect(cli.scans[0].options).toEqual(["--verbose", "--scan-prompt-file=/mes-consignes.md"]);
   });
 });

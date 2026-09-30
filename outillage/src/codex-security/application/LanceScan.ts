@@ -1,5 +1,6 @@
 // Lance un scan Codex Security sur la copie de travail d'une cible, via le proxy LiteLLM local, puis
 // en estime le coût. Portage TS de run-scan.sh.
+import { join } from "node:path";
 import type { Console } from "../../noyau/ports/Console.ts";
 import type { SystemeDeFichier } from "../../noyau/ports/SystemeDeFichier.ts";
 import { ConfigScan } from "../domaine/ConfigScan.ts";
@@ -15,6 +16,7 @@ export interface EstimationCout {
 export type Dependances = DependancesExecution & { estimation: EstimationCout; console: Console };
 
 export class LanceScan {
+  readonly #racine: string;
   readonly #execution: PrepareExecutionCodex;
   readonly #cli: CliCodexSecurity;
   readonly #systemeDeFichier: SystemeDeFichier;
@@ -22,6 +24,7 @@ export class LanceScan {
   readonly #console: Console;
 
   constructor(dependances: Dependances) {
+    this.#racine = dependances.racine;
     this.#execution = new PrepareExecutionCodex(dependances);
     this.#cli = dependances.cli;
     this.#systemeDeFichier = dependances.systemeDeFichier;
@@ -40,11 +43,25 @@ export class LanceScan {
       config,
       sortie: sortie.chemin,
       journal: sortie.journal,
-      options,
+      options: this.#optionsDuScan(options),
       environnement,
     });
     this.#estimeLeCout(config, sortie);
     return statut;
+  }
+
+  // Options ajoutées par défaut, chacune sauf si l'utilisateur la fournit déjà :
+  // - les consignes du dépôt : sans elles, DeepSeek ne parvient pas à écrire findings.json
+  //   (voir configs/consignes-scan.md et le README) ;
+  // - --verbose : seul le log bavard porte le relevé TOKENS qui permet d'estimer le coût.
+  #optionsDuScan(options: string[]): string[] {
+    const consignes = join(this.#racine, "outils/codex-security/configs/consignes-scan.md");
+    const fournie = (option: string) => options.some((o) => o === option || o.startsWith(`${option}=`));
+    return [
+      ...(fournie("--scan-prompt-file") ? [] : ["--scan-prompt-file", consignes]),
+      ...(fournie("--verbose") ? [] : ["--verbose"]),
+      ...options,
+    ];
   }
 
   // Best-effort : n'affecte jamais le statut du scan.
