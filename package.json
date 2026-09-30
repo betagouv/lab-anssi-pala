@@ -13,7 +13,8 @@
     "bootstrap": "node outillage/src/composition/bootstrap.ts",
     "generate-env": "node outillage/src/composition/generate-env.ts",
     "start-proxy": "node outillage/src/composition/start-proxy.ts",
-    "scan": "node outillage/src/composition/scan.ts"
+    "scan": "node outillage/src/composition/scan.ts",
+    "validate": "node outillage/src/composition/validate.ts"
   },
   "dependencies": {
     "commander": "^15.0.0"
