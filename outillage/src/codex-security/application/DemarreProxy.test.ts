@@ -65,7 +65,7 @@ describe("DemarreProxy", () => {
 
     await unDemarrage({ console }).execute();
 
-    expect(console.lignes).toContain(
+    expect(console.lignes.map(l => l.message)).toContain(
       "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README.",
     );
   });
@@ -78,7 +78,7 @@ describe("DemarreProxy", () => {
     await unDemarrage({ conteneur, console, environnement }).execute();
 
     expect(conteneur.configuration?.baseDeDonnees).toBe("postgresql://budget");
-    expect(console.lignes).toContain("Budget : enforcement actif (DATABASE_URL fournie).");
+    expect(console.lignes.map(l => l.message)).toContain("Budget : enforcement actif (DATABASE_URL fournie).");
   });
 
   test("attend que le proxy réponde, toutes les 2 secondes, puis annonce qu'il est prêt", async () => {
@@ -90,7 +90,7 @@ describe("DemarreProxy", () => {
 
     expect(reseau.urlsInterrogees).toEqual(Array(3).fill("http://127.0.0.1:4000/health/liveliness"));
     expect(attente.attentes).toEqual([2000, 2000]);
-    expect(console.lignes.at(-1)).toBe("Attente du proxy LiteLLM.. : prêt sur http://127.0.0.1:4000/v1");
+    expect(console.lignes.map(l => l.message).at(-1)).toBe("Attente du proxy LiteLLM.. : prêt sur http://127.0.0.1:4000/v1");
   });
 
   test("abandonne après 60 tentatives sans réponse du proxy", async () => {

@@ -96,7 +96,7 @@ describe("GenereEnvironnementProxy", () => {
 
     uneGeneration({ console }).execute();
 
-    expect(console.lignes).toEqual([
+    expect(console.lignes.map(l => l.message)).toEqual([
       "Généré: outils/codex-security/codex-security.env",
       "  Fournisseurs configurés pour le proxy : Albert (https://albert.example/v1) ; Scaleway absent (SCALEWAY_DEEPSEEK_API_KEY non renseignée dans .env)",
     ]);
@@ -108,7 +108,7 @@ describe("GenereEnvironnementProxy", () => {
 
     uneGeneration({ systemeDeFichier, console }).execute();
 
-    expect(console.lignes[1]).toBe(
+    expect(console.lignes.map(l => l.message)[1]).toBe(
       "  Fournisseurs configurés pour le proxy : Albert (https://albert.example/v1) + Scaleway (DeepSeek)",
     );
   });

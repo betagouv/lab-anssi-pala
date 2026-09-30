@@ -89,7 +89,7 @@ describe("LanceScan", () => {
       config: "/depot/outils/codex-security/configs/config-defaut.yaml",
       options: ["--verbose", "--mode", "deep"],
     });
-    expect(console.lignes.slice(0, 2)).toEqual([
+    expect(console.lignes.map(l => l.message).slice(0, 2)).toEqual([
       `Cible  : ${CIBLE}`,
       "Config : /depot/outils/codex-security/configs/config-defaut.yaml",
     ]);
@@ -116,7 +116,7 @@ describe("LanceScan", () => {
 
     expect(cli.scans[0]).toMatchObject({ sortie, journal: `${sortie}.stdout.log` });
     expect(systemeDeFichier.dossiersPrives).toContain(sortie);
-    expect(console.lignes[2]).toBe(`Sortie : ${sortie}`);
+    expect(console.lignes.map(l => l.message)[2]).toBe(`Sortie : ${sortie}`);
   });
 
   test("CODEX_OUTPUT impose la sortie, sans y placer le log même avec un / final", async () => {
@@ -178,6 +178,6 @@ describe("LanceScan", () => {
     const statut = await unScan({ cli, estimation, console }).execute({ options: [] });
 
     expect(statut).toBe(3);
-    expect(console.erreurs).toEqual(["Estimation du coût impossible : Fichier introuvable : scan.stdout.log"]);
+    expect(console.erreurs.map(l => l.message)).toEqual(["Estimation du coût impossible : Fichier introuvable : scan.stdout.log"]);
   });
 });

@@ -35,7 +35,7 @@ describe("bootstrap (ligne de commande)", () => {
     const code = await bootstrap(["--project", "app"], dependances({ git, console }));
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("Erreur : --project fourni sans --url.");
+    expect(console.erreurs.map(l => l.message)[0]).toBe("Erreur : --project fourni sans --url.");
     expect(git.sousModulesInitialises).toBe(false);
   });
 
@@ -45,7 +45,7 @@ describe("bootstrap (ligne de commande)", () => {
     const code = await bootstrap(["--url", "https://git.example/app.git"], dependances({ console }));
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("Erreur : --url fourni sans --project.");
+    expect(console.erreurs.map(l => l.message)[0]).toBe("Erreur : --url fourni sans --project.");
   });
 
   test("affiche l'aide, avec des exemples, sans rien préparer", async () => {
@@ -56,7 +56,7 @@ describe("bootstrap (ligne de commande)", () => {
 
     expect(code).toBe(0);
     expect(git.sousModulesInitialises).toBe(false);
-    expect(console.lignes).toEqual(
+    expect(console.lignes.map(l => l.message)).toEqual(
       expect.arrayContaining([
         "  pnpm bootstrap --project cible-exemple --url https://github.com/betagouv/cible-exemple.git",
       ]),

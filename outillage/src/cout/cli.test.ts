@@ -16,7 +16,7 @@ describe("estimer-cout (ligne de commande)", () => {
     );
 
     expect(code).toBe(0);
-    expect(console.lignes.slice(1, 3)).toEqual([
+    expect(console.lignes.map(l => l.message).slice(1, 3)).toEqual([
       "  Modèle    : openai/gpt-oss-120b (fournisseur albert)",
       "  Tokens    : 10 entrée (dont 0 en cache), 5 sortie",
     ]);
@@ -33,7 +33,7 @@ describe("estimer-cout (ligne de commande)", () => {
     );
 
     expect(code).toBe(0);
-    expect(console.lignes.slice(1, 3)).toEqual([
+    expect(console.lignes.map(l => l.message).slice(1, 3)).toEqual([
       "  Modèle    : deepseek-v4-flash-albert (fournisseur albert)",
       "  Tokens    : 12 entrée (dont 2 en cache), 3 sortie",
     ]);
@@ -45,7 +45,7 @@ describe("estimer-cout (ligne de commande)", () => {
     const code = await estimerCout(["--provider", "albert"], { systemeDeFichier: new SystemeDeFichierEnMemoire(), console });
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("Erreur : fournir --codex-log ou --shannon-session");
+    expect(console.erreurs.map(l => l.message)[0]).toBe("Erreur : fournir --codex-log ou --shannon-session");
   });
 
   test("signale une option inconnue comme une erreur d'usage (code 2)", async () => {
@@ -54,7 +54,7 @@ describe("estimer-cout (ligne de commande)", () => {
     const code = await estimerCout(["--inconnue"], { systemeDeFichier: new SystemeDeFichierEnMemoire(), console });
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("error: unknown option '--inconnue'");
+    expect(console.erreurs.map(l => l.message)[0]).toBe("error: unknown option '--inconnue'");
   });
 
   test("signale un fichier introuvable et sort en erreur (code 1)", async () => {
@@ -63,6 +63,6 @@ describe("estimer-cout (ligne de commande)", () => {
     const code = await estimerCout(["--codex-log", "absent.log"], { systemeDeFichier: new SystemeDeFichierEnMemoire(), console });
 
     expect(code).toBe(1);
-    expect(console.erreurs).toEqual(["Fichier introuvable : absent.log"]);
+    expect(console.erreurs.map(l => l.message)).toEqual(["Fichier introuvable : absent.log"]);
   });
 });

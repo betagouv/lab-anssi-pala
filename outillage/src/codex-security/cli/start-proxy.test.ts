@@ -21,6 +21,6 @@ describe("start-proxy (ligne de commande)", () => {
     });
 
     expect(code).toBe(1);
-    expect(console.erreurs).toEqual(["Erreur: le proxy ne répond pas — voir docker logs codex-security-litellm"]);
+    expect(console.erreurs.map(l => l.message)).toEqual(["Erreur: le proxy ne répond pas — voir docker logs codex-security-litellm"]);
   });
 });

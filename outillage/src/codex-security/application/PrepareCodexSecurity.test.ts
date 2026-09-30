@@ -11,7 +11,7 @@ describe("PrepareCodexSecurity", () => {
     await new PrepareCodexSecurity({ cli, console }).prepare();
 
     expect(cli.estInstallee()).toBe(true);
-    expect(console.lignes).toEqual(["    installé : @openai/codex-security 0.1.30"]);
+    expect(console.lignes.map(l => l.message)).toEqual(["    installé : @openai/codex-security 0.1.30"]);
   });
 
   test("ne réinstalle pas une CLI déjà présente", async () => {

@@ -35,7 +35,7 @@ describe("shannon (ligne de commande)", () => {
     const code = await shannon(["--project", "app", "--url", "http://localhost:8081"], dependances({ console }));
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("error: required option '--config <fichier>' not specified");
+    expect(console.erreurs.map(e => e.message)[0]).toBe("error: required option '--config <fichier>' not specified");
   });
 
   test("transmet le dépôt, le workspace, la description pi et le modèle demandés", async () => {
@@ -90,6 +90,6 @@ describe("shannon (ligne de commande)", () => {
 
     expect(code).toBe(0);
     expect(lanceur.lancements).toEqual([]);
-    expect(console.lignes).toContain("  pnpm shannon --project <nom> --url http://localhost:8081 \\");
+    expect(console.lignes.map(l => l.message)).toContain("  pnpm shannon --project <nom> --url http://localhost:8081 \\");
   });
 });

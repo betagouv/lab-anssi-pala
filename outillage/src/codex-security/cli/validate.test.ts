@@ -34,7 +34,7 @@ describe("validate (ligne de commande)", () => {
     const code = await validate([], dependances({ console }));
 
     expect(code).toBe(2);
-    expect(console.erreurs[0]).toBe("error: required option '--finding-file <fichier>' not specified");
+    expect(console.erreurs.map(l => l.message)[0]).toBe("error: required option '--finding-file <fichier>' not specified");
   });
 
   test("lit un --finding-file relatif depuis le répertoire d'appel", async () => {

@@ -54,7 +54,7 @@ describe("VerifieAppelsOutils", () => {
     const statut = await uneVerification({ console }).execute({});
 
     expect(statut).toBe(0);
-    expect(console.lignes.slice(-2)).toEqual([
+    expect(console.lignes.map(l => l.message).slice(-2)).toEqual([
       "Emission de tool_calls valides : 1/1",
       "Enchainement multi-tour        : 1/1",
     ]);
@@ -65,7 +65,7 @@ describe("VerifieAppelsOutils", () => {
 
     await uneVerification({ console, environnement: new EnvironnementEnMemoire({ RUNS: "3" }) }).execute({});
 
-    expect(console.lignes.slice(-6)).toEqual([
+    expect(console.lignes.map(l => l.message).slice(-6)).toEqual([
       'essai 1: emission=OK  multi-tour=OK  {"finish":"tool_calls","tokens":42}',
       'essai 2: emission=OK  multi-tour=OK  {"finish":"tool_calls","tokens":42}',
       'essai 3: emission=OK  multi-tour=OK  {"finish":"tool_calls","tokens":42}',
@@ -90,7 +90,7 @@ describe("VerifieAppelsOutils", () => {
     const statut = await uneVerification({ apiChat, console }).execute({});
 
     expect(statut).toBe(1);
-    expect(console.lignes).toContain(`essai 1: emission=KO  multi-tour=KO  {"emission":"${raison}"}`);
+    expect(console.lignes.map(l => l.message)).toContain(`essai 1: emission=KO  multi-tour=KO  {"emission":"${raison}"}`);
   });
 
   test("valide le multi-tour quand le modèle enchaîne un nouvel appel valide au lieu de répondre", async () => {
@@ -101,7 +101,7 @@ describe("VerifieAppelsOutils", () => {
     const statut = await uneVerification({ apiChat: new ApiChatSimulee([executeLs, executeCat]), console }).execute({});
 
     expect(statut).toBe(0);
-    expect(console.lignes).toContain("essai 1: emission=OK  multi-tour=OK  {}");
+    expect(console.lignes.map(l => l.message)).toContain("essai 1: emission=OK  multi-tour=OK  {}");
   });
 
   test("refuse le multi-tour quand le modèle ne répond pas et n'enchaîne aucun appel valide", async () => {
@@ -111,7 +111,7 @@ describe("VerifieAppelsOutils", () => {
 
     await uneVerification({ apiChat: new ApiChatSimulee([executeLs, rienDExploitable]), console }).execute({});
 
-    expect(console.lignes).toContain(
+    expect(console.lignes.map(l => l.message)).toContain(
       `essai 1: emission=OK  multi-tour=KO  {"multitour":"ni reponse ni nouvel appel valide (parametre 'command' absent ou vide)"}`,
     );
   });
@@ -126,7 +126,7 @@ describe("VerifieAppelsOutils", () => {
       console,
     }).execute({});
 
-    expect(console.lignes).toEqual(
+    expect(console.lignes.map(l => l.message)).toEqual(
       expect.arrayContaining([
         'essai 1: emission=KO  multi-tour=KO  {"emission":"http_401: clé invalide"}',
         'essai 2: emission=OK  multi-tour=KO  {"multitour":"reseau: TimeoutError"}',
@@ -139,7 +139,7 @@ describe("VerifieAppelsOutils", () => {
 
     await uneVerification({ console }).execute({});
 
-    expect(console.lignes.slice(0, 2)).toEqual(["Modèle openai/gpt-oss-120b sur https://albert.example/v1, 1 essai(s)", ""]);
+    expect(console.lignes.map(l => l.message).slice(0, 2)).toEqual(["Modèle openai/gpt-oss-120b sur https://albert.example/v1, 1 essai(s)", ""]);
   });
 
   test("vérifie le modèle désigné au lancement, chez son propre fournisseur", async () => {

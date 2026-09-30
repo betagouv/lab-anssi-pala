@@ -17,7 +17,7 @@ describe("EstimeCout", () => {
       modele: "deepseek-v4-flash-0731",
     });
 
-    expect(sortie.lignes).toEqual([
+    expect(sortie.lignes.map(l => l.message)).toEqual([
       "--- Coût estimé ---",
       "  Modèle    : deepseek-v4-flash-0731 (fournisseur scaleway_deepseek)",
       "  Tokens    : 1,126,328 entrée (dont 348,672 en cache), 31,639 sortie",
@@ -36,7 +36,7 @@ describe("EstimeCout", () => {
       modele: "deepseek-v4-flash-albert",
     });
 
-    expect(sortie.lignes.slice(3)).toEqual([
+    expect(sortie.lignes.map(l => l.message).slice(3)).toEqual([
       "  Coût      : 0 € — Albert (DINUM), service gratuit",
       "  Note      : Albert sous-estime les tokens de sortie (raisonnement/outils non comptés).",
     ]);
@@ -52,7 +52,7 @@ describe("EstimeCout", () => {
       modele: "modele-inconnu",
     });
 
-    expect(sortie.lignes.slice(3)).toEqual([
+    expect(sortie.lignes.map(l => l.message).slice(3)).toEqual([
       "  Coût      : tarif inconnu pour « modele-inconnu » — compléter TARIFS dans outillage/src/cout/domaine/Tarifs.ts",
     ]);
   });
@@ -67,7 +67,7 @@ describe("EstimeCout", () => {
       modele: "deepseek-v4-flash-albert",
     });
 
-    expect(sortie.lignes).toEqual([
+    expect(sortie.lignes.map(l => l.message)).toEqual([
       "--- Coût estimé ---",
       "  tokens indisponibles (run non terminé ?) : coût non calculable",
     ]);
@@ -83,7 +83,7 @@ describe("EstimeCout", () => {
       modele: "deepseek-v4-flash-albert",
     });
 
-    expect(sortie.lignes.at(-1)).toBe("  tokens indisponibles (run non terminé ?) : coût non calculable");
+    expect(sortie.lignes.map(l => l.message).at(-1)).toBe("  tokens indisponibles (run non terminé ?) : coût non calculable");
   });
 
   test("retient le dernier relevé complet, même si « TOKENS » est mentionné ensuite", () => {
@@ -97,7 +97,7 @@ describe("EstimeCout", () => {
       modele: "deepseek-v4-flash-albert",
     });
 
-    expect(sortie.lignes[2]).toBe("  Tokens    : 1,126,328 entrée (dont 348,672 en cache), 31,639 sortie");
+    expect(sortie.lignes.map(l => l.message)[2]).toBe("  Tokens    : 1,126,328 entrée (dont 348,672 en cache), 31,639 sortie");
   });
 
   test("estime le coût d'un pentest Shannon en sommant les tokens de tous ses agents", () => {
@@ -117,7 +117,7 @@ describe("EstimeCout", () => {
       specModele: "scaleway:glm-5.2",
     });
 
-    expect(sortie.lignes).toEqual([
+    expect(sortie.lignes.map(l => l.message)).toEqual([
       "--- Coût estimé ---",
       "  Modèle    : glm-5.2 (fournisseur scaleway)",
       "  Tokens    : 1,000,000 entrée (dont 0 en cache), 100,000 sortie",

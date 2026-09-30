@@ -1,8 +1,10 @@
-import type { Console } from "../../ports/Console.ts";
+import {type Console, type Couleur, couleurs} from "../../ports/Console.ts";
+
+const RESET = '\x1b[0m'
 
 export class ConsoleNode implements Console {
-  affiche(ligne: string): void {
-    process.stdout.write(`${ligne}\n`);
+  affiche(ligne: string, couleur: Couleur = 'NOIR'): void {
+    process.stdout.write(`${couleurs[couleur]}${ligne}${RESET}\n`);
   }
 
   ecrit(texte: string): void {

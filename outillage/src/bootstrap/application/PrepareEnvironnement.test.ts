@@ -55,7 +55,7 @@ describe("PrepareEnvironnement", () => {
     });
 
     expect(git.clonages).toEqual([]);
-    expect(console.lignes).toContain("    conservé : cible/copies/app (déjà présent)");
+    expect(console.lignes.map(ligne => ligne.message)).toContain("    conservé : cible/copies/app (déjà présent)");
   });
 
   test("annonce le clonage de la cible, avec la branche demandée, puis la copie créée", async () => {
@@ -65,7 +65,7 @@ describe("PrepareEnvironnement", () => {
       cible: new Cible({ nom: "app", url: "https://git.example/app.git", branche: "main" }),
     });
 
-    expect(console.lignes).toEqual(
+    expect(console.lignes.map(ligne => ligne.message)).toEqual(
       expect.arrayContaining([
         "    clone de la cible « app » depuis https://git.example/app.git (branche main)",
         "    créé : cible/copies/app",
@@ -80,7 +80,7 @@ describe("PrepareEnvironnement", () => {
     await unePreparation({ git, console }).execute({});
 
     expect(git.clonages).toEqual([]);
-    expect(console.lignes).toContain(
+    expect(console.lignes.map(ligne => ligne.message)).toContain(
       "    (aucune cible demandée : passer --project <nom> --url <git-url> pour en cloner une)",
     );
   });
@@ -94,7 +94,7 @@ describe("PrepareEnvironnement", () => {
     await unePreparation({ console, outils: [codex, shannon] }).execute({});
 
     expect(journal).toEqual(["codex-security", "shannon"]);
-    expect(console.lignes).toEqual(expect.arrayContaining(["==> Préparation de codex-security", "==> Préparation de shannon"]));
+    expect(console.lignes.map(ligne => ligne.message)).toEqual(expect.arrayContaining(["==> Préparation de codex-security", "==> Préparation de shannon"]));
   });
 
   test("récapitule les fichiers d'environnement à renseigner, présents ou à créer", async () => {
@@ -107,7 +107,7 @@ describe("PrepareEnvironnement", () => {
 
     await unePreparation({ console, systemeDeFichier, outils }).execute({});
 
-    expect(console.lignes.slice(-5)).toEqual([
+    expect(console.lignes.slice(-5).map(ligne => ligne.message)).toEqual([
       "==> Terminé. Fichiers d'environnement à renseigner (non versionnés) :",
       "    .env                             (depuis .env.example — clé Albert commune)",
       "    outils/codex-security/codex-security.env (depuis codex-security.env.template — à créer)",
@@ -121,7 +121,7 @@ describe("PrepareEnvironnement", () => {
 
     await unePreparation({ console }).execute({ cible: new Cible({ nom: "app", url: "https://git.example/app.git" }) });
 
-    expect(console.lignes.slice(-6)).toEqual([
+    expect(console.lignes.slice(-6).map(ligne => ligne.message)).toEqual([
       "",
       "==> Cible prête : cible/copies/app",
       '    Codex Security :',

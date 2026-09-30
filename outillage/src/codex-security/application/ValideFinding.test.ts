@@ -85,7 +85,7 @@ describe("ValideFinding", () => {
 
     await uneValidation({ horloge, validation, console }).execute({ findingFile: "finding.json" });
 
-    expect(console.lignes).toEqual([
+    expect(console.lignes.map(l => l.message)).toEqual([
       '{"disposition":"confirmed","outputDir":"/depot/resultats/brut/codex-security/validate-20260930-140509","durationSeconds":43}',
     ]);
   });

@@ -11,7 +11,7 @@ describe("PrepareShannon", () => {
     await new PrepareShannon({ depot, console }).prepare();
 
     expect(depot.patchsAppliques).toEqual(["patches/bash-timeout-30s.patch"]);
-    expect(console.lignes).toEqual(["    patch appliqué : patches/bash-timeout-30s.patch"]);
+    expect(console.lignes.map(l => l.message)).toEqual(["    patch appliqué : patches/bash-timeout-30s.patch"]);
   });
 
   test("laisse un patch déjà appliqué (ou non applicable en l'état) et le signale", async () => {
@@ -24,7 +24,7 @@ describe("PrepareShannon", () => {
     await new PrepareShannon({ depot, console }).prepare();
 
     expect(depot.patchsAppliques).toEqual([]);
-    expect(console.lignes).toEqual([
+    expect(console.lignes.map(l => l.message)).toEqual([
       "    patch déjà appliqué (ou non applicable en l'état) : patches/bash-timeout-30s.patch",
     ]);
   });
