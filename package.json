@@ -12,7 +12,8 @@
     "estimer-cout": "node outillage/src/composition/estimer-cout.ts",
     "bootstrap": "node outillage/src/composition/bootstrap.ts",
     "generate-env": "node outillage/src/composition/generate-env.ts",
-    "start-proxy": "node outillage/src/composition/start-proxy.ts"
+    "start-proxy": "node outillage/src/composition/start-proxy.ts",
+    "scan": "node outillage/src/composition/scan.ts"
   },
   "dependencies": {
     "commander": "^15.0.0"

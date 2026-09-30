@@ -7,9 +7,12 @@ import type { CliCodexSecurity, DemandeDeScan } from "../ports/CliCodexSecurity.
 // CLI installée par npm dans outils/codex-security/node_modules (version figée par package-lock.json).
 export class CliCodexSecurityNpm implements CliCodexSecurity {
   readonly #outil: string;
+  readonly #repertoireAppel: string;
 
-  constructor(outil: string) {
+  // repertoireAppel : les chemins relatifs des options (--scan-prompt-file…) s'entendent depuis là.
+  constructor(outil: string, repertoireAppel = process.cwd()) {
     this.#outil = outil;
+    this.#repertoireAppel = repertoireAppel;
   }
 
   get #executable(): string {
@@ -28,7 +31,11 @@ export class CliCodexSecurityNpm implements CliCodexSecurity {
     return execFileSync(this.#executable, ["--version"], { encoding: "utf8" }).trim();
   }
 
-  scanne({ cible, config, options }: DemandeDeScan): Promise<number> {
-    return lanceCommande(this.#executable, ["scan", cible, "-c", config, "--headless", ...options]);
+  scanne({ cible, config, sortie, journal, options, environnement }: DemandeDeScan): Promise<number> {
+    return lanceCommande(
+      this.#executable,
+      ["scan", cible, "-c", config, "--output-dir", sortie, "--headless", ...options],
+      { cwd: this.#repertoireAppel, env: environnement, journal },
+    );
   }
 }

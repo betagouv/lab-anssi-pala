@@ -1,10 +1,17 @@
 import { spawn, type StdioOptions } from "node:child_process";
+import { createWriteStream } from "node:fs";
 
 // heritee : le terminal voit tout ; sansSortieStandard : seules les erreurs passent (« >/dev/null ») ;
 // silencieuse : rien ne passe.
 type Affichage = "heritee" | "sansSortieStandard" | "silencieuse";
 
-type Options = { cwd?: string; env?: NodeJS.ProcessEnv; affichage?: Affichage };
+type Options = {
+  cwd?: string;
+  env?: NodeJS.ProcessEnv;
+  affichage?: Affichage;
+  // Équivalent de `2>&1 | tee <journal>` : sorties affichées ET journalisées.
+  journal?: string;
+};
 
 const STDIO: Record<Affichage, StdioOptions> = {
   heritee: "inherit",
@@ -16,12 +23,23 @@ const STDIO: Record<Affichage, StdioOptions> = {
 export function lanceCommande(
   commande: string,
   args: string[],
-  { cwd, env, affichage = "heritee" }: Options = {},
+  { cwd, env, affichage = "heritee", journal }: Options = {},
 ): Promise<number> {
   return new Promise((resoudre, rejeter) => {
-    const enfant = spawn(commande, args, { cwd, env, stdio: STDIO[affichage] });
+    const stdio: StdioOptions = journal ? ["inherit", "pipe", "pipe"] : STDIO[affichage];
+    const enfant = spawn(commande, args, { cwd, env, stdio });
+    const fichier = journal ? createWriteStream(journal) : undefined;
+    for (const flux of fichier ? [enfant.stdout, enfant.stderr] : []) {
+      flux?.on("data", (morceau: Buffer) => {
+        process.stdout.write(morceau);
+        fichier?.write(morceau);
+      });
+    }
     enfant.on("error", rejeter);
-    enfant.on("close", (code) => resoudre(code ?? 1));
+    enfant.on("close", (code) => {
+      if (fichier) fichier.end(() => resoudre(code ?? 1));
+      else resoudre(code ?? 1);
+    });
   });
 }
 
