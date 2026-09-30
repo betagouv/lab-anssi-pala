@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, it } from "vitest";
 import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
 import { GitSimule } from "../../../test/doubles/GitSimule.ts";
 import { PreparationOutilSimulee } from "../../../test/doubles/PreparationOutilSimulee.ts";
@@ -130,4 +130,16 @@ describe("PrepareEnvironnement", () => {
       "    Shannon        : pnpm shannon --project app --url <url-app> --config <fichier>",
     ]);
   });
+
+  it('colore la sortie du bootstrap', async () => {
+    const laConsole = new ConsoleEnMemoire();
+
+    await unePreparation({ console: laConsole }).execute({ cible: new Cible({ nom: "app", url: "https://git.example/app.git" }) });
+
+    let lesDernieresLignes = laConsole.lignes.slice(-6);
+
+    expect(lesDernieresLignes[1].couleur).toBe('VERT')
+    expect(lesDernieresLignes.slice(2, 4).every(l => l.couleur === 'BLEU')).toBe(true)
+    expect(lesDernieresLignes.slice(5).every(l => l.couleur === 'JAUNE')).toBe(true)
+  })
 });
