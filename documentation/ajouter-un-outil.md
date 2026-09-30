@@ -36,7 +36,9 @@ Hors du dossier de l'outil :
    Utiliser dans `.gitmodules` une URL utilisable par les autres contributeurs, pas un
    alias SSH personnel.
 2. Créer `README.md` et `<outil>.env.template` ; si nécessaire `bootstrap.sh`
-   (exécutable, idempotent), il sera appelé automatiquement par `scripts/bootstrap.sh`.
+   (exécutable, idempotent), il sera appelé automatiquement par `scripts/bootstrap.sh`. Pour la
+   chaîne TypeScript, écrire une `PreparationOutil` (`outillage/src/<outil>/application/`, testée
+   avec des doubles) et l'inscrire au registre de `outillage/src/composition/bootstrap.ts`.
 3. Scripts de lancement : calculer les chemins à partir de l'emplacement du script
    (`outil="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"`), jamais depuis le
    répertoire courant.

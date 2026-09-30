@@ -11,7 +11,8 @@ Les commits exacts de la cible et des outils sont fixés par les sous-modules
 | git | 2.50.1 (Apple Git-155) | |
 | docker | 29.4.3 (build 055a478) | daemon actif |
 | docker compose | v5.1.3 | plugin CLI |
-| node / pnpm | requis pour Shannon | |
+| node / pnpm | requis pour Shannon | Node.js ≥ 24 pour l'outillage TypeScript (exécution directe des `.ts`) |
+| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15 | outillage TypeScript (`package.json` racine) |
 | python (hôte) | 3.9.6 | scripts utilitaires (`check_tool_calls.py`) |
 
 ## Cible — Cible / la cible
