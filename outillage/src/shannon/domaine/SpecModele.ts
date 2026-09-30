@@ -30,6 +30,11 @@ export class SpecModele {
     return this.valeur.split(":")[0];
   }
 
+  // Identifiant du modèle chez son fournisseur (partie après « fournisseur: »).
+  get identifiant(): string {
+    return this.valeur.split(":").slice(1).join(":");
+  }
+
   // Chemin de la description pi dans le dossier des configs Shannon, pour les fournisseurs qui en
   // ont besoin ; aucun pour un modèle que Shannon connaît nativement.
   descriptionPiDans(dossierConfigs: string): string | undefined {
