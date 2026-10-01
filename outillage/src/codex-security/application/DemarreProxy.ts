@@ -64,7 +64,7 @@ export class DemarreProxy {
     this.#console.affiche(
       baseDeDonnees
         ? "Budget : enforcement actif (DATABASE_URL fournie)."
-        : "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README.",
+        : "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README.", 'ORANGE'
     );
   }
 
@@ -75,13 +75,13 @@ export class DemarreProxy {
 
   // Jusqu'à 60 tentatives espacées de 2 s (environ 2 minutes).
   async #attendsLeProxy(port: string): Promise<void> {
-    this.#console.ecrit("Attente du proxy LiteLLM");
+    this.#console.ecrit("Attente du proxy LiteLLM", 'GRIS');
     for (let tentative = 1; tentative <= 60; tentative++) {
       if (await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`)) {
-        this.#console.affiche(` : prêt sur http://127.0.0.1:${port}/v1`);
+        this.#console.affiche(` : prêt sur http://127.0.0.1:${port}/v1`, 'VERT');
         return;
       }
-      this.#console.ecrit(".");
+      this.#console.ecrit(".", 'GRIS');
       await this.#attente.attends(2000);
     }
     this.#console.affiche("");

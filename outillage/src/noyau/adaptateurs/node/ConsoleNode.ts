@@ -28,8 +28,8 @@ export class ConsoleNode implements Console {
     this.#sortie.write(`${couleurs[couleur]}${ligne}${RESET}\n`);
   }
 
-  ecrit(texte: string): void {
-    this.#sortie.write(texte);
+  ecrit(texte: string, couleur: Couleur = 'NOIR'): void {
+    this.#sortie.write(`${couleurs[couleur]}${texte}${RESET}`);
   }
 
   signaleErreur(ligne: string): void {

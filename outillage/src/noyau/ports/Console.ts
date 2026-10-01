@@ -24,7 +24,7 @@ export interface Console {
     affiche(ligne: string, couleur?: Couleur): void;
 
     // Écrit sans aller à la ligne (progression) ; la ligne est terminée par le prochain affiche.
-    ecrit(texte: string): void;
+    ecrit(texte: string, couleur?: Couleur): void;
 
     signaleErreur(ligne: string): void;
 

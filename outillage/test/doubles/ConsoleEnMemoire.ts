@@ -20,7 +20,7 @@ export class ConsoleEnMemoire implements Console {
     this.#ligneEnCours = "";
   }
 
-  ecrit(texte: string): void {
+  ecrit(texte: string, couleur: Couleur = 'NOIR'): void {
     this.#ligneEnCours += texte;
   }
 
