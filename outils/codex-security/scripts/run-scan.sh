@@ -5,7 +5,7 @@
 # Usage : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh [options…]
 #   ex. : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh --dry-run
 # Variables :
-#   CODEX_TARGET  dépôt à scanner (OBLIGATOIRE ; cloné par scripts/bootstrap.sh dans cible/copies/<nom>)
+#   CODEX_TARGET  dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
 #   CODEX_CONFIG  fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
 #                 pour un scan ciblé, copier configs/config-cible.template.yaml et y fixer scope.paths)
 #   CODEX_OUTPUT  dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)

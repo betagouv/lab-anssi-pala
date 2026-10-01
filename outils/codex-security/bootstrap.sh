@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Préparation propre à Codex Security, appelée par scripts/bootstrap.sh (idempotent) :
+# Préparation propre à Codex Security, appelée par outillage/bash/bootstrap.sh (idempotent) :
 #   - installe la CLI publiée sur npm, à la version figée dans package-lock.json.
 #
 # La cible à scanner n'est plus préparée ici : le bootstrap racine clone la cible dans

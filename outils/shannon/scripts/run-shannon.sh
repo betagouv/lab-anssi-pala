@@ -75,7 +75,7 @@ workspace="${workspace:-$projet-$(date +%s)}"
 
 [ -f "$env_file" ] || { echo "Fichier manquant : $env_file (depuis shannon.env.template)" >&2; exit 1; }
 [ -f "$config" ] || { echo "Config manquante : $config" >&2; exit 1; }
-[ -d "$repo" ] || { echo "Dépôt de référence manquant : $repo (cloner via scripts/bootstrap.sh --project $projet --url <git-url>)" >&2; exit 1; }
+[ -d "$repo" ] || { echo "Dépôt de référence manquant : $repo (cloner via outillage/bash/bootstrap.sh --project $projet --url <git-url>)" >&2; exit 1; }
 [ -f "$shannon_dir/apps/cli/dist/index.mjs" ] || { echo "CLI Shannon non construite (cd outils/shannon/source && pnpm build)" >&2; exit 1; }
 
 # L'instance doit être joignable sur l'hôte avant le lancement.

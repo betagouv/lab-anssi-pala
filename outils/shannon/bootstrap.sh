@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Préparation propre à Shannon, appelée par scripts/bootstrap.sh après l'initialisation
+# Préparation propre à Shannon, appelée par outillage/bash/bootstrap.sh après l'initialisation
 # des sous-modules : réapplique les patchs locaux sur outils/shannon/source (idempotent).
 set -euo pipefail
 

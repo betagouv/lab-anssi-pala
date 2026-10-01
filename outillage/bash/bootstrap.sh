@@ -10,16 +10,16 @@
 # Idempotent : peut être relancé sans effet de bord (cible déjà clonée = conservée).
 set -euo pipefail
 
-racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 usage() {
   cat <<'USAGE'
 Prépare l'environnement d'audit (sous-modules des outils, clone de la cible, outils).
 
 Usage :
-  bash scripts/bootstrap.sh --project <nom> --url <git-url> [--branch <branche>]
-  bash scripts/bootstrap.sh [--project <nom> --url <git-url>]   # cible optionnelle
-  bash scripts/bootstrap.sh --help
+  bash outillage/bash/bootstrap.sh --project <nom> --url <git-url> [--branch <branche>]
+  bash outillage/bash/bootstrap.sh [--project <nom> --url <git-url>]   # cible optionnelle
+  bash outillage/bash/bootstrap.sh --help
 
 Options :
   --project <nom>   nom court de la cible ; la copie de travail est cible/copies/<nom>
@@ -31,8 +31,8 @@ Sans --project/--url, le script se limite aux sous-modules des outils et à leur
 (utile pour réinitialiser l'outillage sans (re)cloner de cible).
 
 Exemples :
-  bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git
-  bash scripts/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
+  bash outillage/bash/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git
+  bash outillage/bash/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
 
 Après le bootstrap, les outils ciblent la copie cible/copies/<nom> (rappel en fin d'exécution) :
 CODEX_TARGET pour Codex Security ; pour Shannon, run-shannon.sh --project <nom> l'utilise par défaut.
