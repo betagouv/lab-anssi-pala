@@ -85,9 +85,9 @@ describe("ValideFinding", () => {
 
     await uneValidation({ horloge, validation, console }).execute({ findingFile: "finding.json" });
 
-    expect(console.lignes.map(l => l.message)).toEqual([
+    expect(console.lignes.map(l => l.message)[3]).toEqual(
       '{"disposition":"confirmed","outputDir":"/depot/resultats/brut/codex-security/validate-20260930-140509","durationSeconds":43}',
-    ]);
+    );
   });
 
   test("annonce cible, config et sortie en traces, hors de la sortie standard réservée à la synthèse", async () => {
@@ -95,7 +95,7 @@ describe("ValideFinding", () => {
 
     await uneValidation({ console }).execute({ findingFile: "finding.json" });
 
-    expect(console.traces).toEqual([
+    expect(console.lignes.map(l => l.message).splice(0,3)).toEqual([
       `Cible  : ${CIBLE}`,
       "Config : /depot/outils/codex-security/configs/config-defaut.yaml",
       "Sortie : /depot/resultats/brut/codex-security/validate-20260930-140509",

@@ -26,9 +26,9 @@ export class ValideFinding {
 
   async execute({ findingFile }: { findingFile: string }): Promise<void> {
     const { cible, config, sortie, environnement } = await this.#execution.pour("validate");
-    this.#console.trace(`Cible  : ${cible}`);
-    this.#console.trace(`Config : ${config}`);
-    this.#console.trace(`Sortie : ${sortie.chemin}`);
+    this.#console.affiche(`Cible  : ${cible}`, 'VIOLET');
+    this.#console.affiche(`Config : ${config}`, 'ORANGE');
+    this.#console.affiche(`Sortie : ${sortie.chemin}`, 'BLEU');
 
     const finding = this.#litFinding(findingFile);
     const { resultat, dureeSecondes } = await this.#valideEnMesurant({
@@ -65,7 +65,7 @@ export class ValideFinding {
     };
     this.#systemeDeFichier.ecritFichier(join(sortie, "validation-result.json"), `${JSON.stringify(resume, null, 2)}\n`);
     this.#systemeDeFichier.ecritFichier(join(sortie, "validation-report.md"), resultat.rapport);
-    this.#console.affiche(JSON.stringify(synthese));
+    this.#console.affiche(JSON.stringify(synthese), 'VERT');
   }
 
   #litFinding(findingFile: string): object {
