@@ -4,7 +4,7 @@
 # brouillon de scan).
 #
 # Usage :
-#   bash outils/codex-security/scripts/validate.sh --finding-file <finding.json>
+#   bash outillage/bash/codex-security/validate.sh --finding-file <finding.json>
 # Variables : CODEX_TARGET, CODEX_CONFIG, LITELLM_PORT (voir env-runtime.sh),
 #             CODEX_OUTPUT (défaut resultats/brut/codex-security/validate-<horodatage>, doit être vide)
 set -euo pipefail

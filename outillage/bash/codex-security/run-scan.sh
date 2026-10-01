@@ -2,8 +2,8 @@
 # Lance un scan Codex Security sur une copie de la cible, via le proxy LiteLLM local
 # (voir start-proxy.sh, à lancer d'abord). Modèle par défaut : DeepSeek servi par Albert.
 #
-# Usage : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh [options…]
-#   ex. : CODEX_TARGET=$PWD/cible/copies/<nom> bash outils/codex-security/scripts/run-scan.sh --dry-run
+# Usage : CODEX_TARGET=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh [options…]
+#   ex. : CODEX_TARGET=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh --dry-run
 # Variables :
 #   CODEX_TARGET  dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
 #   CODEX_CONFIG  fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;

@@ -10,11 +10,11 @@
 #
 # Le jeton local est conservé s'il existe déjà, pour ne pas invalider un proxy en marche.
 #
-# Usage : ./outils/codex-security/scripts/generate-env.sh
+# Usage : ./outillage/bash/codex-security/generate-env.sh
 set -euo pipefail
 
-OUTIL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ROOT_DIR="$(cd "$OUTIL_DIR/../.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+OUTIL_DIR="$ROOT_DIR/outils/codex-security"
 ROOT_ENV="$ROOT_DIR/.env"
 OUT_ENV="$OUTIL_DIR/codex-security.env"
 
