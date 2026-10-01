@@ -29,8 +29,8 @@ export class GenereEnvironnementProxy {
   execute(): void {
     const environnement = EnvironnementProxy.depuis(this.#variablesDeLaRacine(), this.#jetonLocal());
     this.#systemeDeFichier.ecritFichierPrive(EnvironnementProxy.CHEMIN, environnement.contenu);
-    this.#console.affiche(`Généré: ${EnvironnementProxy.CHEMIN}`);
-    this.#console.affiche(`  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`);
+    this.#console.affiche(`Généré: ${EnvironnementProxy.CHEMIN}`, 'VERT');
+    this.#console.affiche(`  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`, 'BLEU');
   }
 
   // Comme `set -a; source .env` : le .env racine complète et surcharge l'environnement du shell.
