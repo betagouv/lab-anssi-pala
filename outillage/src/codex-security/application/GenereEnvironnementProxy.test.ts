@@ -74,7 +74,7 @@ describe("GenereEnvironnementProxy", () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
 
     expect(() => uneGeneration({ systemeDeFichier }).execute()).toThrow(
-      "Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.example)",
+      "Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)",
     );
   });
 

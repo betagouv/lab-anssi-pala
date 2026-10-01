@@ -109,7 +109,7 @@ describe("PrepareEnvironnement", () => {
 
     expect(console.lignes.slice(-5).map(ligne => ligne.message)).toEqual([
       "==> Terminé. Fichiers d'environnement à renseigner (non versionnés) :",
-      "    .env                             (depuis .env.example — clé Albert commune)",
+      "    .env                             (depuis .env.template)",
       "    outils/codex-security/codex-security.env (depuis codex-security.env.template — à créer)",
       "    outils/shannon/shannon.env       (depuis shannon.env.template — présent)",
       "    ainsi que les configs Shannon remplies, depuis outils/shannon/configs/*.template.yaml.",

@@ -1,7 +1,7 @@
 # Secrets et environnements (jamais versionnés — voir .env.example / *.template)
 .env
 .env.*
-!.env.example
+!.env.template
 outils/*/*.env
 
 # Sources amont des OUTILS en sous-modules : le contenu vit dans le sous-module, pas ici

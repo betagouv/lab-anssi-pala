@@ -67,7 +67,7 @@ export class PrepareEnvironnement {
 
   #recapituleFichiersEnvironnement(): void {
     this.#console.affiche("==> Terminé. Fichiers d'environnement à renseigner (non versionnés) :", 'ORANGE');
-    this.#console.affiche("    .env                             (depuis .env.example — clé Albert commune)", 'BLEU');
+    this.#console.affiche("    .env                             (depuis .env.template)", 'BLEU');
     for (const { fichierEnvironnement: fichier } of this.#outils) {
       const etat = this.#systemeDeFichier.existe(fichier) ? "présent" : "à créer";
       const modele = `${fichier.split("/").at(-1)}.template`;

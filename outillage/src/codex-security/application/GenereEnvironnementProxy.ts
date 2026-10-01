@@ -36,7 +36,7 @@ export class GenereEnvironnementProxy {
   // Comme `set -a; source .env` : le .env racine complète et surcharge l'environnement du shell.
   #variablesDeLaRacine(): Record<string, string | undefined> {
     if (!this.#systemeDeFichier.existe(".env")) {
-      throw new Error("Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.example)");
+      throw new Error("Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)");
     }
     return { ...this.#environnement.variables(), ...parseEnv(this.#systemeDeFichier.lit(".env")) };
   }

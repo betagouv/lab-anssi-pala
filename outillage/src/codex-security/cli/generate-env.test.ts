@@ -17,6 +17,6 @@ describe("generate-env (ligne de commande)", () => {
     });
 
     expect(code).toBe(1);
-    expect(console.erreurs.map(l => l.message)).toEqual(["Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.example)"]);
+    expect(console.erreurs.map(l => l.message)).toEqual(["Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)"]);
   });
 });
