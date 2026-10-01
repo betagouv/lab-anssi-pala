@@ -10,7 +10,7 @@ scan:
   mode: standard
   scope:
     # Relatif au dépôt scanné. Exemple de périmètre : 5 fichiers, ~260 lignes.
-    paths: [src/chemin/exemple]
+    paths: [CHEMIN_A_SCANNER]
 codex:
   model: gpt-oss-120b
   model_provider: albert
