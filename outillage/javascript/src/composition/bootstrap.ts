@@ -9,7 +9,11 @@ import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichier
 import { DepotShannonGit } from "../shannon/adaptateurs/DepotShannonGit.ts";
 import { PrepareShannon } from "../shannon/application/PrepareShannon.ts";
 
+<<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");
+=======
+const racine = join(import.meta.dirname, '../../../..');
+>>>>>>> Stashed changes
 const console = new ConsoleNode();
 
 process.exitCode = await bootstrap(process.argv.slice(2), {

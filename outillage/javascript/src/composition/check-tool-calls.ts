@@ -6,7 +6,11 @@ import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichier
 import { ApiChatFetch } from "../shannon/adaptateurs/ApiChatFetch.ts";
 import { checkToolCalls } from "../shannon/cli/check-tool-calls.ts";
 
+<<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");
+=======
+const racine = join(import.meta.dirname, '../../../..');
+>>>>>>> Stashed changes
 
 process.exitCode = await checkToolCalls(process.argv.slice(2), {
   racine,

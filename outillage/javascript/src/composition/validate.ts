@@ -1,30 +1,35 @@
-// Racine de composition : lance un scan Codex Security depuis la racine du dépôt.
+// Racine de composition : valide un finding avec Codex Security depuis la racine du dépôt.
 import { join } from "node:path";
 import { CliCodexSecurityNpm } from "../codex-security/adaptateurs/CliCodexSecurityNpm.ts";
-import { scan } from "../codex-security/cli/scan.ts";
-import { EstimeCout } from "../cout/application/EstimeCout.ts";
+import { ValidationCodexSdk } from "../codex-security/adaptateurs/ValidationCodexSdk.ts";
+import { validate } from "../codex-security/cli/validate.ts";
 import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
 import { ReseauFetch } from "../noyau/adaptateurs/node/ReseauFetch.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 
+<<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");
+const outil = join(racine, "outils/codex-security");
+=======
+const racine = join(import.meta.dirname, '../../../..');
+const outil = join(racine, 'outils/codex-security');
+>>>>>>> Stashed changes
 // pnpm exécute depuis la racine du paquet mais garde le répertoire d'appel dans INIT_CWD.
 const repertoireAppel = process.env.INIT_CWD || process.cwd();
-const console = new ConsoleNode();
-const systemeDeFichier = new SystemeDeFichierNode(racine);
 
-process.exitCode = await scan(process.argv.slice(2), {
+process.exitCode = await validate(process.argv.slice(2), {
   racine,
-  cli: new CliCodexSecurityNpm(join(racine, "outils/codex-security"), repertoireAppel),
-  systemeDeFichier,
+  repertoireAppel,
+  cli: new CliCodexSecurityNpm(outil, repertoireAppel),
+  validation: new ValidationCodexSdk(outil),
+  systemeDeFichier: new SystemeDeFichierNode(racine),
   reseau: new ReseauFetch(5000),
   horloge: new HorlogeSysteme(),
   environnement: new EnvironnementProcessus({
     chemins: ["CODEX_TARGET", "CODEX_CONFIG", "CODEX_OUTPUT"],
     depuis: repertoireAppel,
   }),
-  estimation: new EstimeCout({ systemeDeFichier, console }),
-  console,
+  console: new ConsoleNode(),
 });

@@ -10,7 +10,11 @@ import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementP
 import { ReseauFetch } from "../noyau/adaptateurs/node/ReseauFetch.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 
+<<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");
+=======
+const racine = join(import.meta.dirname, '../../../..');
+>>>>>>> Stashed changes
 const console = new ConsoleNode();
 const environnement = new EnvironnementProcessus();
 

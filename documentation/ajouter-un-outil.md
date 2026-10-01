@@ -41,7 +41,7 @@ Hors du dossier de l'outil :
 2. Créer `README.md` et `<outil>.env.template` ; si nécessaire
    `outillage/bash/<outil>/bootstrap.sh` (exécutable, idempotent), il sera appelé
    automatiquement par `outillage/bash/bootstrap.sh`. Pour la chaîne TypeScript, écrire une
-   `PreparationOutil` (`outillage/src/<outil>/application/`, testée avec des doubles) et l'inscrire au registre de `outillage/src/composition/bootstrap.ts`.
+   `PreparationOutil` (`../outillage/javascript/src/<outil>/application/`, testée avec des doubles) et l'inscrire au registre de `../outillage/javascript/src/composition/bootstrap.ts`.
 3. Scripts de lancement bash (`outillage/bash/<outil>/`) : calculer les chemins à partir de
    l'emplacement du script (`racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"`,
    puis `outil="$racine/outils/<outil>"`), jamais depuis le répertoire courant.

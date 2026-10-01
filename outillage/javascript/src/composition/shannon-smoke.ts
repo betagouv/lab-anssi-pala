@@ -8,8 +8,13 @@ import { ServeurCibleFumeeHttp } from "../shannon/adaptateurs/ServeurCibleFumeeH
 import { ShannonDirenv } from "../shannon/adaptateurs/ShannonDirenv.ts";
 import { shannonSmoke } from "../shannon/cli/shannon-smoke.ts";
 
+<<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");
 const outil = join(racine, "outils/shannon");
+=======
+const racine = join(import.meta.dirname, '../../../..');
+const outil = join(racine, 'outils/shannon');
+>>>>>>> Stashed changes
 
 process.exitCode = await shannonSmoke(process.argv.slice(2), {
   racine,

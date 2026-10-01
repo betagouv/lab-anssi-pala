@@ -7,7 +7,13 @@ import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementP
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 
 process.exitCode = await genereEnv(process.argv.slice(2), {
+<<<<<<< Updated upstream
   systemeDeFichier: new SystemeDeFichierNode(join(import.meta.dirname, "../../..")),
+=======
+  systemeDeFichier: new SystemeDeFichierNode(
+    join(import.meta.dirname, '../../../..')
+  ),
+>>>>>>> Stashed changes
   generateurDeJeton: new GenerateurDeJetonAleatoire(),
   environnement: new EnvironnementProcessus(),
   console: new ConsoleNode(),
