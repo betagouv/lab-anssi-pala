@@ -33,10 +33,10 @@ export class ConsoleNode implements Console {
   }
 
   signaleErreur(ligne: string): void {
-    this.#erreurs.write(`${ligne}\n`);
+    this.#erreurs.write(`${couleurs['ROUGE']}${ligne}${RESET}\n`);
   }
 
   trace(ligne: string): void {
-    this.#erreurs.write(`${ligne}\n`);
+    this.#erreurs.write(`${couleurs['ROUGE']}${ligne}${RESET}\n`);
   }
 }

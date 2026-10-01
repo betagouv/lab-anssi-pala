@@ -34,9 +34,9 @@ export class LanceScan {
 
   async execute({ options }: { options: string[] }): Promise<number> {
     const { cible, config, sortie, environnement } = await this.#execution.pour("scan");
-    this.#console.affiche(`Cible  : ${cible}`);
-    this.#console.affiche(`Config : ${config}`);
-    this.#console.affiche(`Sortie : ${sortie.chemin}`);
+    this.#console.affiche(`Cible  : ${cible}`, 'VIOLET');
+    this.#console.affiche(`Config : ${config}`, 'ORANGE');
+    this.#console.affiche(`Sortie : ${sortie.chemin}`, 'BLEU');
 
     const statut = await this.#cli.scanne({
       cible,

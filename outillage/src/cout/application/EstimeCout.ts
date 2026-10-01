@@ -30,33 +30,34 @@ export class EstimeCout {
   }
 
   #rapporte(releve: ReleveDeTokens | null, fournisseur: string, modele: string): void {
-    this.#console.affiche("--- Coût estimé ---");
+    this.#console.affiche("--- Coût estimé ---", 'GRIS');
     if (!releve) {
-      this.#console.affiche("  tokens indisponibles (run non terminé ?) : coût non calculable");
+      this.#console.affiche("  tokens indisponibles (run non terminé ?) : coût non calculable", 'ORANGE');
       return;
     }
-    this.#console.affiche(`  Modèle    : ${modele} (fournisseur ${fournisseur})`);
+    this.#console.affiche(`  Modèle    : ${modele} (fournisseur ${fournisseur})`, 'BLEU');
     this.#console.affiche(
-      `  Tokens    : ${milliers(releve.entreeTotale)} entrée (dont ${milliers(releve.cache)} en cache), ${milliers(releve.sortie)} sortie`,
+      `  Tokens    : ${milliers(releve.entreeTotale)} entrée (dont ${milliers(releve.cache)} en cache), ${milliers(releve.sortie)} sortie`, 'VIOLET'
     );
     if (estGratuit(fournisseur)) {
-      this.#console.affiche("  Coût      : 0 € — Albert (DINUM), service gratuit");
-      this.#console.affiche("  Note      : Albert sous-estime les tokens de sortie (raisonnement/outils non comptés).");
+      this.#console.affiche("  Coût      : 0 € — Albert (DINUM), service gratuit", 'VERT');
+      this.#console.affiche("  Note      : Albert sous-estime les tokens de sortie (raisonnement/outils non comptés).", 'GRIS');
       return;
     }
     const tarif = TARIFS[modele];
     if (!tarif) {
       this.#console.affiche(
-        `  Coût      : tarif inconnu pour « ${modele} » — compléter TARIFS dans outillage/src/cout/domaine/Tarifs.ts`,
+        `  Coût      : tarif inconnu pour « ${modele} » — compléter TARIFS dans outillage/src/cout/domaine/Tarifs.ts`, 'ROUGE',
       );
       return;
     }
     const cout = releve.coutAu(tarif);
     this.#console.affiche(
       `  Coût      : ~${cout.toFixed(2)} € (${tarif.note} : ${tarif.entree} €/M entrée, ${tarif.sortie} €/M sortie)`,
+        cout > 10 ? 'ROUGE' : 'VERT'
     );
     this.#console.affiche(
-      "  Note      : estimation haute (cache compté au tarif d'entrée) ; à confronter au relevé du fournisseur.",
+      "  Note      : estimation haute (cache compté au tarif d'entrée) ; à confronter au relevé du fournisseur.", 'ORANGE'
     );
   }
 }
