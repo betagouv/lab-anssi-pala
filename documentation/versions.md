@@ -1,27 +1,18 @@
 # Versions
 
-Les commits exacts de la cible et des outils sont fixés par les sous-modules
-(`git submodule status`) ; ce document en garde la trace lisible.
+Les commits exacts de la cible et des outils sont fixés par les sous-modules (`git submodule status`) ; ce document en
+garde la trace lisible.
 
 ## Environnement hôte
 
-| Outil | Version | Notes |
-|---|---|---|
-| OS | macOS (Darwin 25.6.0, arm64) | Docker Desktop pour macOS |
-| git | 2.50.1 (Apple Git-155) | |
-| docker | 29.4.3 (build 055a478) | daemon actif |
-| docker compose | v5.1.3 | plugin CLI |
-| node / pnpm | requis pour Shannon | Node.js ≥ 24 pour l'outillage TypeScript (exécution directe des `.ts`) |
-| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15 | outillage TypeScript (`package.json` racine) |
-| python (hôte) | 3.9.6 | scripts utilitaires (`check_tool_calls.py`) |
+| Outil                           | Version                | Notes                                                                  |
+|---------------------------------|------------------------|------------------------------------------------------------------------|
+| docker                          | 29.4.3 (build 055a478) | daemon actif                                                           |
+| docker compose                  | v5.1.3                 | plugin CLI                                                             |
+| node / pnpm                     | requis pour Shannon    | Node.js ≥ 24 pour l'outillage TypeScript (exécution directe des `.ts`) |
+| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | outillage TypeScript (`package.json` racine)                           |
+| python (hôte)                   | 3.9.6                  | scripts utilitaires (`check_tool_calls.py`)                            |
 
-## Cible — Cible / la cible
-
-- Dépôt : https://github.com/betagouv/cible-exemple.git
-- Chemin local : `cible/cible-exemple/` (sous-module)
-- Branche : `main`
-- Commit : `224ba638b3486104cb9d4f4468ff5750378d11a4`
-- Copies de scan : `cible/copies/` (non versionnées, voir `scripts/bootstrap.sh`)
 
 > **un outil tiers** (un éditeur tiers, `outil-tiers 1.0.0`, sous-module supprimé le 28/09/2026 après
 > évaluation) a été écarté ; les runs restent tracés dans `resultats/rapports/`.
