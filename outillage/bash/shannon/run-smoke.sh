@@ -2,12 +2,12 @@
 # Passage de vérification de Shannon (--pipeline-testing) contre une cible locale triviale.
 # La clé Albert est lue dans outils/shannon/shannon.env (ignoré par git) ; elle n'est jamais affichée.
 #
-# Usage : bash outils/shannon/scripts/run-smoke.sh
+# Usage : bash outillage/bash/shannon/run-smoke.sh
 # Variables : SMOKE_PORT (défaut 8080), SMOKE_WORKSPACE (défaut : nom unique horodaté),
 #             SMOKE_REAL=1 (vrais prompts au lieu de --pipeline-testing)
 set -euo pipefail
 
-outil="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+outil="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/outils/shannon"
 shannon_dir="$outil/source"
 env_file="$outil/shannon.env"
 port="${SMOKE_PORT:-8080}"

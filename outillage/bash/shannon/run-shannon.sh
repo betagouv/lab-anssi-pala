@@ -10,8 +10,8 @@
 #   - CLI Shannon construite (pnpm build) et Temporal lancé (docker compose up -d temporal).
 set -euo pipefail
 
-outil="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-racine="$(cd "$outil/../.." && pwd)"
+racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+outil="$racine/outils/shannon"
 shannon_dir="$outil/source"
 env_file="$outil/shannon.env"
 
@@ -20,8 +20,8 @@ usage() {
 Lance un pentest Shannon contre une application en marche.
 
 Usage :
-  bash outils/shannon/scripts/run-shannon.sh --project <nom> --url <url-app> --config <fichier> [options]
-  bash outils/shannon/scripts/run-shannon.sh --help
+  bash outillage/bash/shannon/run-shannon.sh --project <nom> --url <url-app> --config <fichier> [options]
+  bash outillage/bash/shannon/run-shannon.sh --help
 
 Obligatoire :
   --project <nom>       nom de la cible ; dépôt de référence par défaut : cible/copies/<nom>
@@ -42,7 +42,7 @@ inaccessibles). L'instance doit tourner AVANT le lancement.
 Exemple :
   cp outils/shannon/configs/config-authentification-cible.template.yaml \
      outils/shannon/configs/config-<nom>-authentification.yaml   # puis renseigner url/identifiants
-  bash outils/shannon/scripts/run-shannon.sh --project <nom> --url http://localhost:8081 \
+  bash outillage/bash/shannon/run-shannon.sh --project <nom> --url http://localhost:8081 \
      --config outils/shannon/configs/config-<nom>-authentification.yaml
 USAGE
 }
