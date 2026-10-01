@@ -44,7 +44,7 @@ export class VerifieAppelsOutils {
     const variables = this.#variables();
     const destinataire = this.#destinataire(variables, modele, modelsConfig);
     const essais = Number(variables.RUNS || "5");
-    this.#console.affiche(`Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`);
+    this.#console.affiche(`Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`, 'BLEU');
     this.#console.affiche("");
 
     const resultats: ResultatEssai[] = [];
@@ -52,8 +52,10 @@ export class VerifieAppelsOutils {
       const resultat = await this.#unEssai(destinataire);
       resultats.push(resultat);
       const etat = (ok: boolean) => (ok ? "OK" : "KO");
+      const emission = etat(resultat.emission);
+      const multitour = etat(resultat.multitour);
       this.#console.affiche(
-        `essai ${numero}: emission=${etat(resultat.emission)}  multi-tour=${etat(resultat.multitour)}  ${JSON.stringify(resultat.details)}`,
+        `essai ${numero}: emission=${emission}  multi-tour=${multitour}  ${JSON.stringify(resultat.details)}`, emission && multitour ? 'VERT' : 'ROUGE'
       );
     }
     return this.#bilan(resultats);
@@ -81,8 +83,8 @@ export class VerifieAppelsOutils {
     const emissions = resultats.filter((r) => r.emission).length;
     const multitours = resultats.filter((r) => r.multitour).length;
     this.#console.affiche("");
-    this.#console.affiche(`Emission de tool_calls valides : ${emissions}/${resultats.length}`);
-    this.#console.affiche(`Enchainement multi-tour        : ${multitours}/${resultats.length}`);
+    this.#console.affiche(`Emission de tool_calls valides : ${emissions}/${resultats.length}`, emissions === resultats.length ? 'VERT' : 'ROUGE');
+    this.#console.affiche(`Enchainement multi-tour        : ${multitours}/${resultats.length}`, multitours === resultats.length ? 'VERT' : 'ROUGE');
     return emissions === resultats.length && multitours === resultats.length ? 0 : 1;
   }
 
