@@ -1,1 +1,1 @@
-# Les cibles à scanner sont clonées ici par scripts/bootstrap.sh (cible/copies/<nom>), jamais versionnées.
+# Les cibles à scanner sont clonées ici par outillage/bash/bootstrap.sh (cible/copies/<nom>), jamais versionnées.

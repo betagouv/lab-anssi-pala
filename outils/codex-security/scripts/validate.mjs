@@ -5,7 +5,7 @@
 // (model_providers) y est donc impossible. La méthode validate() du SDK, elle, applique les
 // codexOverrides du constructeur, issus ici de loadProjectConfig().
 //
-// Usage (via validate.sh, qui prépare l'environnement) :
+// Usage (via outillage/bash/codex-security/validate.sh, qui prépare l'environnement) :
 //   node validate.mjs --config FILE --repository DIR --output DIR --finding-file finding.json
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -8,7 +8,7 @@ outils/*/*.env
 #   outils/<outil>/source  -> voir .gitmodules
 
 # Cibles à scanner : jamais versionnées (dépôt agnostique). Elles sont clonées au lancement
-# par scripts/bootstrap.sh dans cible/copies/<nom>. Tout cible/ est ignoré sauf ce fichier.
+# par outillage/bash/bootstrap.sh dans cible/copies/<nom>. Tout cible/ est ignoré sauf ce fichier.
 cible/*
 !cible/.gitkeep
 

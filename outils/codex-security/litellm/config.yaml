@@ -2,7 +2,7 @@
 # Codex (>= 0.1xx : `wire_api = "chat"` n'est plus supporté), et la traduit vers
 # /v1/chat/completions d'Albert, qui n'expose pas /v1/responses (404).
 #
-# Lancé par outils/codex-security/scripts/start-proxy.sh, exposé sur 127.0.0.1 uniquement.
+# Lancé par outillage/bash/codex-security/start-proxy.sh, exposé sur 127.0.0.1 uniquement.
 # La clé Albert reste dans le proxy ; Codex ne connaît que LITELLM_MASTER_KEY (jeton local).
 model_list:
   - model_name: gpt-oss-120b

@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
 #
-# Config PAR DÉFAUT de run-scan.sh (utilisée quand CODEX_CONFIG n'est pas fourni).
+# Config PAR DÉFAUT de outillage/bash/codex-security/run-scan.sh (utilisée quand CODEX_CONFIG n'est pas fourni).
 # DeepSeek V4 Flash servi par Albert (fonctionne avec la seule clé Albert ; le proxy force
 # tool_choice auto). gpt-oss-120b n'est plus le défaut : il n'écrit pas les artefacts du scan.
 #
