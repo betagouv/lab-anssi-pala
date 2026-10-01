@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Prépare l'environnement de travail : sous-modules des outils, clone de la cible à scanner,
-# et préparation propre à chaque outil (outils/<outil>/bootstrap.sh, s'il existe).
+# et préparation propre à chaque outil (outillage/bash/<outil>/bootstrap.sh, s'il existe).
 #
 # Le dépôt est agnostique de la cible : celle-ci n'est plus figée en sous-module, mais fournie
 # au lancement (--project + --url). La cible est clonée dans cible/copies/<nom> (avec .git, non
@@ -81,7 +81,7 @@ else
   echo "    (aucune cible demandée : passer --project <nom> --url <git-url> pour en cloner une)"
 fi
 
-for bootstrap_outil in outils/*/bootstrap.sh; do
+for bootstrap_outil in outillage/bash/*/bootstrap.sh; do
   [ -f "$bootstrap_outil" ] || continue
   echo "==> Préparation de $(basename "$(dirname "$bootstrap_outil")")"
   bash "$bootstrap_outil"

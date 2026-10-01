@@ -8,7 +8,8 @@
 # resultats/ est en dehors, la contrainte est donc satisfaite.
 set -euo pipefail
 
-outil="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+outil="$racine/outils/codex-security"
 
 if [ ! -x "$outil/node_modules/.bin/codex-security" ]; then
   (cd "$outil" && npm ci --no-fund --no-audit)

@@ -3,7 +3,8 @@
 # des sous-modules : réapplique les patchs locaux sur outils/shannon/source (idempotent).
 set -euo pipefail
 
-outil="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+outil="$racine/outils/shannon"
 
 for patch in "$outil"/patches/*.patch; do
   [ -f "$patch" ] || continue
