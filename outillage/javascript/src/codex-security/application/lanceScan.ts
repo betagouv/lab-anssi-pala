@@ -6,7 +6,7 @@ import type { SystemeDeFichier } from "../../noyau/ports/SystemeDeFichier.ts";
 import { ConfigScan } from "../domaine/ConfigScan.ts";
 import type { DossierDeSortie } from "../domaine/DossierDeSortie.ts";
 import type { CliCodexSecurity } from "../ports/CliCodexSecurity.ts";
-import { type DependancesExecution, PrepareExecutionCodex } from "./PrepareExecutionCodex.ts";
+import { type DependancesExecution, PrepareExecutionCodex } from "./prepareExecutionCodex.ts";
 
 // Estimation du coût d'un scan à partir de son log (voir EstimeCout).
 export interface EstimationCout {

@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { CliCodexSecuritySimulee } from "../../../test/doubles/CliCodexSecuritySimulee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { HorlogeFigee } from "../../../test/doubles/HorlogeFigee.ts";
-import { ReseauSimule } from "../../../test/doubles/ReseauSimule.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { ValidationCodexSimulee } from "../../../test/doubles/ValidationCodexSimulee.ts";
-import { type DependancesCli, validate } from "./validate.ts";
+import { CliCodexSecuritySimulee } from "../../doubles/CliCodexSecuritySimulee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
+import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { ValidationCodexSimulee } from "../../doubles/ValidationCodexSimulee.ts";
+import { type DependancesCli, validate } from "../../../src/codex-security/cli/validate.ts";
 
 function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({

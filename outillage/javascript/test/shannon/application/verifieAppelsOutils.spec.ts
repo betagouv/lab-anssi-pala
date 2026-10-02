@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ApiChatSimulee } from "../../../test/doubles/ApiChatSimulee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { type Dependances, VerifieAppelsOutils } from "./VerifieAppelsOutils.ts";
+import { ApiChatSimulee } from "../../doubles/ApiChatSimulee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { type Dependances, VerifieAppelsOutils } from "../../../src/shannon/application/verifieAppelsOutils.ts";
 
 const DESCRIPTION_ALBERT = JSON.stringify({ providers: { albert: { baseUrl: "https://albert.example/v1" } } });
 

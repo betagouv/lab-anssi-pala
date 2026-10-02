@@ -3,7 +3,7 @@ import { Command } from "commander";
 import { ErreurUsage, executeCommande } from "../noyau/ligne-de-commande.ts";
 import type { Console } from "../noyau/ports/Console.ts";
 import type { SystemeDeFichier } from "../noyau/ports/SystemeDeFichier.ts";
-import { EstimeCout } from "./application/EstimeCout.ts";
+import { EstimeCout } from "./application/estimeCout.ts";
 
 type Dependances = { systemeDeFichier: SystemeDeFichier; console: Console };
 

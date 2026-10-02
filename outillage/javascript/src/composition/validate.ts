@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { CliCodexSecurityNpm } from "../codex-security/adaptateurs/CliCodexSecurityNpm.ts";
 import { ValidationCodexSdk } from "../codex-security/adaptateurs/ValidationCodexSdk.ts";
 import { validate } from "../codex-security/cli/validate.ts";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
 import { ReseauFetch } from "../noyau/adaptateurs/node/ReseauFetch.ts";

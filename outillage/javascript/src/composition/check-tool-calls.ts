@@ -1,6 +1,6 @@
 // Racine de composition : vérifie les appels d'outils du modèle de Shannon.
 import { join } from "node:path";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 import { ApiChatFetch } from "../shannon/adaptateurs/ApiChatFetch.ts";

@@ -1,7 +1,7 @@
 // Adaptateur de ligne de commande du scan Codex Security (run-scan.sh).
 import { Command } from "commander";
 import { executeCommande } from "../../noyau/ligne-de-commande.ts";
-import { type Dependances, LanceScan } from "../application/LanceScan.ts";
+import { type Dependances, LanceScan } from "../application/lanceScan.ts";
 
 const AIDE = `Usage : CODEX_TARGET="$PWD/cible/copies/<nom>" [CODEX_CONFIG=…] pnpm scan [options de codex-security scan…]
 

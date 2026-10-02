@@ -2,7 +2,7 @@
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { executeCommande } from "../../noyau/ligne-de-commande.ts";
-import { type Dependances, VerifieAppelsOutils } from "../application/VerifieAppelsOutils.ts";
+import { type Dependances, VerifieAppelsOutils } from "../application/verifieAppelsOutils.ts";
 
 export type DependancesCli = Dependances & { repertoireAppel: string };
 

@@ -1,7 +1,7 @@
 // Adaptateur de ligne de commande du passage de fumée Shannon (run-smoke.sh).
 import { Command } from "commander";
 import { executeCommande } from "../../noyau/ligne-de-commande.ts";
-import { type Dependances, LancePassageDeFumee } from "../application/LancePassageDeFumee.ts";
+import { type Dependances, LancePassageDeFumee } from "../application/lancePassageDeFumee.ts";
 
 export async function shannonSmoke(argv: string[], dependances: Dependances): Promise<number> {
   const programme = new Command("shannon-smoke")

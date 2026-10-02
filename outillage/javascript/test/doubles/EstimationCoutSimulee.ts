@@ -1,5 +1,5 @@
-import type { EstimationCout } from "../../src/codex-security/application/LanceScan.ts";
-import type { EstimationCoutShannon } from "../../src/shannon/application/LancePentest.ts";
+import type { EstimationCout } from "../../src/codex-security/application/lanceScan.ts";
+import type { EstimationCoutShannon } from "../../src/shannon/application/lancePentest.ts";
 
 type DemandeCodex = { log: string; fournisseur: string; modele: string };
 type DemandeShannon = { session: string; specModele: string };

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../test/doubles/ConsoleEnMemoire.ts";
-import { SystemeDeFichierEnMemoire } from "../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { estimerCout } from "./cli.ts";
+import { ConsoleEnMemoire } from "../doubles/ConsoleEnMemoire.ts";
+import { SystemeDeFichierEnMemoire } from "../doubles/SystemeDeFichierEnMemoire.ts";
+import { estimerCout } from "../../src/cout/cli.ts";
 
 const SESSION = JSON.stringify({ metrics: { agents: { recon: { total_input_tokens: 10, total_output_tokens: 5 } } } });
 

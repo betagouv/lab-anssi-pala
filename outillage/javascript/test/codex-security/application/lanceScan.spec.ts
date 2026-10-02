@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { CliCodexSecuritySimulee } from "../../../test/doubles/CliCodexSecuritySimulee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { EstimationCoutSimulee } from "../../../test/doubles/EstimationCoutSimulee.ts";
-import { HorlogeFigee } from "../../../test/doubles/HorlogeFigee.ts";
-import { ReseauSimule } from "../../../test/doubles/ReseauSimule.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { type Dependances, LanceScan } from "./LanceScan.ts";
+import { CliCodexSecuritySimulee } from "../../doubles/CliCodexSecuritySimulee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { EstimationCoutSimulee } from "../../doubles/EstimationCoutSimulee.ts";
+import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
+import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { type Dependances, LanceScan } from "../../../src/codex-security/application/lanceScan.ts";
 
 const CIBLE = "/depot/cible/copies/app";
 

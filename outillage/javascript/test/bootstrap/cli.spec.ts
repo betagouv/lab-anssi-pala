@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../test/doubles/ConsoleEnMemoire.ts";
-import { GitSimule } from "../../test/doubles/GitSimule.ts";
-import { SystemeDeFichierEnMemoire } from "../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import type { Dependances } from "./application/PrepareEnvironnement.ts";
-import { bootstrap } from "./cli.ts";
+import { ConsoleEnMemoire } from "../doubles/ConsoleEnMemoire.ts";
+import { GitSimule } from "../doubles/GitSimule.ts";
+import { SystemeDeFichierEnMemoire } from "../doubles/SystemeDeFichierEnMemoire.ts";
+import type { Dependances } from "../../src/bootstrap/application/prepareEnvironnement.ts";
+import { bootstrap } from "../../src/bootstrap/cli.ts";
 
 function dependances(doubles: Partial<Dependances> = {}): Dependances {
   return {

@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { HorlogeFigee } from "../../../test/doubles/HorlogeFigee.ts";
-import { ServeurCibleFumeeSimule } from "../../../test/doubles/ServeurCibleFumeeSimule.ts";
-import { ShannonSimule } from "../../../test/doubles/ShannonSimule.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { type Dependances, LancePassageDeFumee } from "./LancePassageDeFumee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
+import { ServeurCibleFumeeSimule } from "../../doubles/ServeurCibleFumeeSimule.ts";
+import { ShannonSimule } from "../../doubles/ShannonSimule.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { type Dependances, LancePassageDeFumee } from "../../../src/shannon/application/lancePassageDeFumee.ts";
 
 // shannon.env renseigné (modèle servi par Albert) et CLI Shannon construite.
 function unDepotPret() {

@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { GenerateurDeJetonFige } from "../../../test/doubles/GenerateurDeJetonFige.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { genereEnv } from "./generate-env.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { GenerateurDeJetonFige } from "../../doubles/GenerateurDeJetonFige.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { genereEnv } from "../../../src/codex-security/cli/generate-env.ts";
 
 describe("generate-env (ligne de commande)", () => {
   test("signale l'erreur et sort en code 1 quand la génération échoue", async () => {

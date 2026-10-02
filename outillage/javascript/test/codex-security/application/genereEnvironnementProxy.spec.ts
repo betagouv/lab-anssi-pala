@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { GenerateurDeJetonFige } from "../../../test/doubles/GenerateurDeJetonFige.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { type Dependances, GenereEnvironnementProxy } from "./GenereEnvironnementProxy.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { GenerateurDeJetonFige } from "../../doubles/GenerateurDeJetonFige.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { type Dependances, GenereEnvironnementProxy } from "../../../src/codex-security/application/genereEnvironnementProxy.ts";
 
 const ENV_PROXY = "outils/codex-security/codex-security.env";
 const ENV_RACINE = "ALBERT_API_KEY=cle-albert\nALBERT_BASE_URL=https://albert.example/v1\n";

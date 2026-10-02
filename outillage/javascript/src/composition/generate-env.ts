@@ -2,7 +2,7 @@
 import { join } from "node:path";
 import { GenerateurDeJetonAleatoire } from "../codex-security/adaptateurs/GenerateurDeJetonAleatoire.ts";
 import { genereEnv } from "../codex-security/cli/generate-env.ts";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 

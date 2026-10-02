@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { DepotShannonSimule } from "../../../test/doubles/DepotShannonSimule.ts";
-import { PrepareShannon } from "./PrepareShannon.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { DepotShannonSimule } from "../../doubles/DepotShannonSimule.ts";
+import { PrepareShannon } from "../../../src/shannon/application/prepareShannon.ts";
 
 describe("PrepareShannon", () => {
   test("applique les patchs locaux sur les sources de Shannon et l'annonce", async () => {

@@ -2,10 +2,10 @@
 import { join } from "node:path";
 import { ConteneurProxyDocker } from "../codex-security/adaptateurs/ConteneurProxyDocker.ts";
 import { GenerateurDeJetonAleatoire } from "../codex-security/adaptateurs/GenerateurDeJetonAleatoire.ts";
-import { GenereEnvironnementProxy } from "../codex-security/application/GenereEnvironnementProxy.ts";
+import { GenereEnvironnementProxy } from "../codex-security/application/genereEnvironnementProxy.ts";
 import { startProxy } from "../codex-security/cli/start-proxy.ts";
 import { AttenteTemporisee } from "../noyau/adaptateurs/node/AttenteTemporisee.ts";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { ReseauFetch } from "../noyau/adaptateurs/node/ReseauFetch.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";

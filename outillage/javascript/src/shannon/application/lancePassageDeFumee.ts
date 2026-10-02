@@ -9,7 +9,7 @@ import type { SystemeDeFichier } from "../../noyau/ports/SystemeDeFichier.ts";
 import { SpecModele } from "../domaine/SpecModele.ts";
 import type { ServeurCibleFumee } from "../ports/ServeurCibleFumee.ts";
 import type { Shannon } from "../ports/Shannon.ts";
-import { InstallationShannon } from "./InstallationShannon.ts";
+import { InstallationShannon } from "./installationShannon.ts";
 
 export type Dependances = {
   // Racine absolue du dépôt d'audit.

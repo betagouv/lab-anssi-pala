@@ -1,7 +1,7 @@
 // Adaptateur de ligne de commande du démarrage du proxy LiteLLM (start-proxy.sh).
 import { Command } from "commander";
 import { executeCommande } from "../../noyau/ligne-de-commande.ts";
-import { DemarreProxy, type Dependances } from "../application/DemarreProxy.ts";
+import { DemarreProxy, type Dependances } from "../application/demarreProxy.ts";
 
 export async function startProxy(argv: string[], dependances: Dependances): Promise<number> {
   const programme = new Command("start-proxy")

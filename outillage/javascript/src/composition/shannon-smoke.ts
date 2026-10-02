@@ -1,6 +1,6 @@
 // Racine de composition : passage de fumée Shannon depuis la racine du dépôt.
 import { join } from "node:path";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";

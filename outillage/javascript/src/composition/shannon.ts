@@ -1,7 +1,7 @@
 // Racine de composition : lance un pentest Shannon depuis la racine du dépôt.
 import { join } from "node:path";
-import { EstimeCout } from "../cout/application/EstimeCout.ts";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { EstimeCout } from "../cout/application/estimeCout.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
 import { ReseauFetch } from "../noyau/adaptateurs/node/ReseauFetch.ts";

@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { AttenteInstantanee } from "../../../test/doubles/AttenteInstantanee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { ConteneurProxySimule } from "../../../test/doubles/ConteneurProxySimule.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { GenerationEnvironnementSimulee } from "../../../test/doubles/GenerationEnvironnementSimulee.ts";
-import { ReseauSimule } from "../../../test/doubles/ReseauSimule.ts";
-import { type Dependances, DemarreProxy } from "./DemarreProxy.ts";
+import { AttenteInstantanee } from "../../doubles/AttenteInstantanee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { ConteneurProxySimule } from "../../doubles/ConteneurProxySimule.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { GenerationEnvironnementSimulee } from "../../doubles/GenerationEnvironnementSimulee.ts";
+import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
+import { type Dependances, DemarreProxy } from "../../../src/codex-security/application/demarreProxy.ts";
 
 function unDemarrage(doubles: Partial<Dependances> = {}) {
   return new DemarreProxy({

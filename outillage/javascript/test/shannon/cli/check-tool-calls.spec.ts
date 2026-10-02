@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { ApiChatSimulee } from "../../../test/doubles/ApiChatSimulee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { checkToolCalls } from "./check-tool-calls.ts";
+import { ApiChatSimulee } from "../../doubles/ApiChatSimulee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { checkToolCalls } from "../../../src/shannon/cli/check-tool-calls.ts";
 
 describe("check-tool-calls (ligne de commande)", () => {
   test("vérifie le modèle et la description pi désignés (chemin relatif au répertoire d'appel)", async () => {

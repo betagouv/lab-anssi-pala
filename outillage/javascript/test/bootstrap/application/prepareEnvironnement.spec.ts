@@ -1,10 +1,10 @@
 import { describe, expect, test, it } from "vitest";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { GitSimule } from "../../../test/doubles/GitSimule.ts";
-import { PreparationOutilSimulee } from "../../../test/doubles/PreparationOutilSimulee.ts";
-import { SystemeDeFichierEnMemoire } from "../../../test/doubles/SystemeDeFichierEnMemoire.ts";
-import { Cible } from "../domaine/Cible.ts";
-import { type Dependances, PrepareEnvironnement } from "./PrepareEnvironnement.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { GitSimule } from "../../doubles/GitSimule.ts";
+import { PreparationOutilSimulee } from "../../doubles/PreparationOutilSimulee.ts";
+import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
+import { Cible } from "../../../src/bootstrap/domaine/Cible.ts";
+import { type Dependances, PrepareEnvironnement } from "../../../src/bootstrap/application/prepareEnvironnement.ts";
 
 // Cas d'usage avec un double par défaut pour chaque dépendance : chaque test ne fournit que ceux
 // dont il observe les effets.

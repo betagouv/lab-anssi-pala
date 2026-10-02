@@ -1,7 +1,7 @@
 // Adaptateur de ligne de commande du bootstrap (équivalent de scripts/bootstrap.sh).
 import { Command } from "commander";
 import { ErreurUsage, executeCommande } from "../noyau/ligne-de-commande.ts";
-import { type Dependances, PrepareEnvironnement } from "./application/PrepareEnvironnement.ts";
+import { type Dependances, PrepareEnvironnement } from "./application/prepareEnvironnement.ts";
 import { Cible } from "./domaine/Cible.ts";
 
 type Options = { project?: string; url?: string; branch?: string };

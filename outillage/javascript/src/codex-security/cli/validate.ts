@@ -2,7 +2,7 @@
 import { resolve } from "node:path";
 import { Command } from "commander";
 import { executeCommande } from "../../noyau/ligne-de-commande.ts";
-import { type Dependances, ValideFinding } from "../application/ValideFinding.ts";
+import { type Dependances, ValideFinding } from "../application/valideFinding.ts";
 
 export type DependancesCli = Dependances & { repertoireAppel: string };
 

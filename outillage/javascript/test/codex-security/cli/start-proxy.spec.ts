@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { AttenteInstantanee } from "../../../test/doubles/AttenteInstantanee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { ConteneurProxySimule } from "../../../test/doubles/ConteneurProxySimule.ts";
-import { EnvironnementEnMemoire } from "../../../test/doubles/EnvironnementEnMemoire.ts";
-import { GenerationEnvironnementSimulee } from "../../../test/doubles/GenerationEnvironnementSimulee.ts";
-import { ReseauSimule } from "../../../test/doubles/ReseauSimule.ts";
-import { startProxy } from "./start-proxy.ts";
+import { AttenteInstantanee } from "../../doubles/AttenteInstantanee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { ConteneurProxySimule } from "../../doubles/ConteneurProxySimule.ts";
+import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
+import { GenerationEnvironnementSimulee } from "../../doubles/GenerationEnvironnementSimulee.ts";
+import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
+import { startProxy } from "../../../src/codex-security/cli/start-proxy.ts";
 
 describe("start-proxy (ligne de commande)", () => {
   test("signale l'échec du démarrage et sort en code 1", async () => {

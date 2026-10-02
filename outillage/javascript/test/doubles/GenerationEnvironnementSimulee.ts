@@ -1,4 +1,4 @@
-import type { GenerationEnvironnement } from "../../src/codex-security/application/DemarreProxy.ts";
+import type { GenerationEnvironnement } from "../../src/codex-security/application/demarreProxy.ts";
 
 export class GenerationEnvironnementSimulee implements GenerationEnvironnement {
   readonly #journal: string[];

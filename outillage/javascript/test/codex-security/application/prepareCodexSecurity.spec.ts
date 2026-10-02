@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { CliCodexSecuritySimulee } from "../../../test/doubles/CliCodexSecuritySimulee.ts";
-import { ConsoleEnMemoire } from "../../../test/doubles/ConsoleEnMemoire.ts";
-import { PrepareCodexSecurity } from "./PrepareCodexSecurity.ts";
+import { CliCodexSecuritySimulee } from "../../doubles/CliCodexSecuritySimulee.ts";
+import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
+import { PrepareCodexSecurity } from "../../../src/codex-security/application/prepareCodexSecurity.ts";
 
 describe("PrepareCodexSecurity", () => {
   test("installe la CLI Codex Security absente et annonce sa version", async () => {

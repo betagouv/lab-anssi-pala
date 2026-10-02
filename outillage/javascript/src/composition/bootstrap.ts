@@ -3,11 +3,11 @@ import { join } from "node:path";
 import { GitEnLigneDeCommande } from "../bootstrap/adaptateurs/GitEnLigneDeCommande.ts";
 import { bootstrap } from "../bootstrap/cli.ts";
 import { CliCodexSecurityNpm } from "../codex-security/adaptateurs/CliCodexSecurityNpm.ts";
-import { PrepareCodexSecurity } from "../codex-security/application/PrepareCodexSecurity.ts";
-import { ConsoleNode } from "../noyau/adaptateurs/node/ConsoleNode.ts";
+import { PrepareCodexSecurity } from "../codex-security/application/prepareCodexSecurity.ts";
+import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { SystemeDeFichierNode } from "../noyau/adaptateurs/node/SystemeDeFichierNode.ts";
 import { DepotShannonGit } from "../shannon/adaptateurs/DepotShannonGit.ts";
-import { PrepareShannon } from "../shannon/application/PrepareShannon.ts";
+import { PrepareShannon } from "../shannon/application/prepareShannon.ts";
 
 <<<<<<< Updated upstream
 const racine = join(import.meta.dirname, "../../..");

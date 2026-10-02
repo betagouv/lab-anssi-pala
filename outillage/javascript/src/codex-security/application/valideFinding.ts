@@ -5,7 +5,7 @@ import type { Console } from "../../noyau/ports/Console.ts";
 import type { Horloge } from "../../noyau/ports/Horloge.ts";
 import type { SystemeDeFichier } from "../../noyau/ports/SystemeDeFichier.ts";
 import type { DemandeDeValidation, ResultatDeValidation, ValidationCodex } from "../ports/ValidationCodex.ts";
-import { type DependancesExecution, PrepareExecutionCodex } from "./PrepareExecutionCodex.ts";
+import { type DependancesExecution, PrepareExecutionCodex } from "./prepareExecutionCodex.ts";
 
 export type Dependances = DependancesExecution & { validation: ValidationCodex; console: Console };
 
