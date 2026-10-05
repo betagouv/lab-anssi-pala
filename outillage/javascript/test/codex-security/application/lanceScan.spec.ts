@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { CliCodexSecuritySimulee } from "../../doubles/CliCodexSecuritySimulee.ts";
 import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
 import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
-import { EstimationCoutSimulee } from "../../doubles/EstimationCoutSimulee.ts";
+import { EstimationDuCoutSimulee } from "../../doubles/EstimationDuCoutSimulee.ts";
 import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
 import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
 import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
@@ -10,11 +10,11 @@ import { type Dependances, LanceScan } from "../../../src/codex-security/applica
 
 const CIBLE = "/depot/cible/copies/app";
 
-// Un dépôt prêt à scanner : environnement du proxy généré, cible clonée, config par défaut présente.
 function unDepotPret() {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     "outils/codex-security/codex-security.env": "ALBERT_API_KEY=cle-albert\nLITELLM_MASTER_KEY=sk-local-jeton\n",
     "/depot/outils/codex-security/configs/config-defaut.yaml": "codex:\n  model: deepseek-v4-flash-albert\n  model_provider: albert\n",
+    "/depot/resultats/brut/codex-security/scan-20260930-140509.stdout.log": "LOG: \n TOKENS   100,000 uncached input, 10,000 cache reads, 0 cache writes, 10,500 output, 120,500 total"
   });
   systemeDeFichier.creeDossier(CIBLE);
   return systemeDeFichier;
@@ -28,7 +28,7 @@ function unScan(doubles: Partial<Dependances> = {}) {
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     environnement: new EnvironnementEnMemoire({ CODEX_TARGET: CIBLE }),
-    estimation: new EstimationCoutSimulee(),
+    estimation: new EstimationDuCoutSimulee(),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
@@ -157,25 +157,29 @@ describe("LanceScan", () => {
   });
 
   test("estime le coût du scan à partir de son log, avec le modèle et le fournisseur de la config", async () => {
-    const estimation = new EstimationCoutSimulee();
+    const estimation = new EstimationDuCoutSimulee();
 
     await unScan({ estimation }).execute({ options: [] });
 
-    expect(estimation.demandes).toEqual([
+    expect(estimation.releves).toEqual([
       {
-        log: "/depot/resultats/brut/codex-security/scan-20260930-140509.stdout.log",
+        cache: 10000,
+        entree: 100000,
         fournisseur: "albert",
         modele: "deepseek-v4-flash-albert",
+        sortie: 10500
       },
     ]);
   });
 
   test("renvoie le statut du scan même quand l'estimation du coût échoue", async () => {
     const cli = new CliCodexSecuritySimulee({ statutDuScan: 3 });
-    const estimation = new EstimationCoutSimulee({ echec: new Error("Fichier introuvable : scan.stdout.log") });
     const console = new ConsoleEnMemoire();
+    const estimation = new EstimationDuCoutSimulee({ console });
 
-    const statut = await unScan({ cli, estimation, console }).execute({ options: [] });
+    const statut = await unScan({ cli, estimation, console }).execute({ options: [] }, () => {
+      throw new Error("Fichier introuvable : scan.stdout.log")
+    });
 
     expect(statut).toBe(3);
     expect(console.erreurs.map(l => l.message)).toEqual(["Estimation du coût impossible : Fichier introuvable : scan.stdout.log"]);

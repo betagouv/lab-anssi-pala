@@ -1,6 +1,6 @@
 // Racine de composition : lance un pentest Shannon depuis la racine du dépôt.
 import { join } from "node:path";
-import { EstimeCout } from "../cout/application/estimeCout.ts";
+import { EstimationDuCout } from "../cout/application/estimationDuCout.ts";
 import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
@@ -26,6 +26,6 @@ process.exitCode = await shannon(process.argv.slice(2), {
   reseau: new ReseauFetch(5000),
   horloge: new HorlogeSysteme(),
   environnement: new EnvironnementProcessus(),
-  estimation: new EstimeCout({ systemeDeFichier, console }),
+  estimation: new EstimationDuCout({ console }),
   console,
 });

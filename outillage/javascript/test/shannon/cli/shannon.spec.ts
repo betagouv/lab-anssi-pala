@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
 import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
-import { EstimationCoutSimulee } from "../../doubles/EstimationCoutSimulee.ts";
+import { EstimationDuCoutSimulee } from "../../doubles/EstimationDuCoutSimulee.ts";
 import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
 import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
 import { ShannonSimule } from "../../doubles/ShannonSimule.ts";
@@ -22,7 +22,7 @@ function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(1_790_000_000_000)),
     environnement: new EnvironnementEnMemoire(),
-    estimation: new EstimationCoutSimulee(),
+    estimation: new EstimationDuCoutSimulee(),
     console: new ConsoleEnMemoire(),
     ...doubles,
   };

@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { CliCodexSecuritySimulee } from "../../doubles/CliCodexSecuritySimulee.ts";
 import { ConsoleEnMemoire } from "../../doubles/ConsoleEnMemoire.ts";
 import { EnvironnementEnMemoire } from "../../doubles/EnvironnementEnMemoire.ts";
-import { EstimationCoutSimulee } from "../../doubles/EstimationCoutSimulee.ts";
+import { EstimationDuCoutSimulee } from "../../doubles/EstimationDuCoutSimulee.ts";
 import { HorlogeFigee } from "../../doubles/HorlogeFigee.ts";
 import { ReseauSimule } from "../../doubles/ReseauSimule.ts";
 import { SystemeDeFichierEnMemoire } from "../../doubles/SystemeDeFichierEnMemoire.ts";
@@ -23,7 +23,7 @@ describe("scan (ligne de commande)", () => {
       reseau: new ReseauSimule(),
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       environnement: new EnvironnementEnMemoire({ CODEX_TARGET: "/depot/cible/copies/app" }),
-      estimation: new EstimationCoutSimulee(),
+      estimation: new EstimationDuCoutSimulee(),
       console: new ConsoleEnMemoire(),
     });
 
@@ -42,7 +42,7 @@ describe("scan (ligne de commande)", () => {
       reseau: new ReseauSimule(),
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       environnement: new EnvironnementEnMemoire(),
-      estimation: new EstimationCoutSimulee(),
+      estimation: new EstimationDuCoutSimulee(),
       console,
     });
 

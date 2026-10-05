@@ -2,7 +2,7 @@
 import { join } from "node:path";
 import { CliCodexSecurityNpm } from "../codex-security/adaptateurs/CliCodexSecurityNpm.ts";
 import { scan } from "../codex-security/cli/scan.ts";
-import { EstimeCout } from "../cout/application/estimeCout.ts";
+import { EstimationDuCout } from "../cout/application/estimationDuCout.ts";
 import { ConsoleNode } from "../noyau/adaptateurs/node/consoleNode.ts";
 import { EnvironnementProcessus } from "../noyau/adaptateurs/node/EnvironnementProcessus.ts";
 import { HorlogeSysteme } from "../noyau/adaptateurs/node/HorlogeSysteme.ts";
@@ -29,6 +29,6 @@ process.exitCode = await scan(process.argv.slice(2), {
     chemins: ["CODEX_TARGET", "CODEX_CONFIG", "CODEX_OUTPUT"],
     depuis: repertoireAppel,
   }),
-  estimation: new EstimeCout({ systemeDeFichier, console }),
+  estimation: new EstimationDuCout({ console }),
   console,
 });

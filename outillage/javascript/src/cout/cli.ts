@@ -1,9 +1,10 @@
 // Adaptateur de ligne de commande de l'estimation de coût (équivalent de scripts/estimer-cout.py).
-import { Command } from "commander";
-import { ErreurUsage, executeCommande } from "../noyau/ligne-de-commande.ts";
-import type { Console } from "../noyau/ports/Console.ts";
-import type { SystemeDeFichier } from "../noyau/ports/SystemeDeFichier.ts";
-import { EstimeCout } from "./application/estimeCout.ts";
+import {Command} from "commander";
+import {ErreurUsage, executeCommande} from "../noyau/ligne-de-commande.ts";
+import type {Console} from "../noyau/ports/Console.ts";
+import type {SystemeDeFichier} from "../noyau/ports/SystemeDeFichier.ts";
+import {EstimationDuCout} from "./application/estimationDuCout.ts";
+import {unReleveDeConsommationDeTokensCodex, unReleveDeConsommationDeTokensShannon} from "./domaine/consommationDeTokens.ts";
 
 type Dependances = { systemeDeFichier: SystemeDeFichier; console: Console };
 
@@ -15,7 +16,7 @@ type Options = {
   modelSpec?: string;
 };
 
-export async function estimerCout(argv: string[], dependances: Dependances): Promise<number> {
+export const estimerCout = async (argv: string[], dependances: Dependances): Promise<number> => {
   const programme = new Command("estimer-cout")
     .description("Estime le coût d'un run à partir des tokens consommés")
     .option("--codex-log <fichier>", "log Codex Security (ligne « TOKENS … », mode --verbose)")
@@ -26,14 +27,16 @@ export async function estimerCout(argv: string[], dependances: Dependances): Pro
 
   return executeCommande(programme, argv, dependances.console, () => {
     const options = programme.opts<Options>();
-    const estimation = new EstimeCout(dependances);
+    const estimation = new EstimationDuCout(dependances);
     if (options.codexLog) {
-      estimation.surLogCodex({ log: options.codexLog, fournisseur: options.provider, modele: options.model });
+      const consommation = unReleveDeConsommationDeTokensCodex(dependances.systemeDeFichier.lit(options.codexLog), options.provider, options.model);
+      estimation.rapporte(consommation);
     } else if (options.shannonSession) {
-      estimation.surSessionShannon({ session: options.shannonSession, specModele: options.modelSpec ?? "" });
+      const consommation  = unReleveDeConsommationDeTokensShannon(dependances.systemeDeFichier.lit(options.shannonSession), options.modelSpec ?? "");
+      estimation.rapporte(consommation);
     } else {
       throw new ErreurUsage("Erreur : fournir --codex-log ou --shannon-session");
     }
     return 0;
   });
-}
+};

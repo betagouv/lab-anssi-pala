@@ -7,20 +7,17 @@ import { ConfigScan } from "../domaine/ConfigScan.ts";
 import type { DossierDeSortie } from "../domaine/DossierDeSortie.ts";
 import type { CliCodexSecurity } from "../ports/CliCodexSecurity.ts";
 import { type DependancesExecution, PrepareExecutionCodex } from "./prepareExecutionCodex.ts";
+import type {EstimationDuCout} from "../../cout/application/estimationDuCout.ts";
+import {type ConsommationDeTokens, unReleveDeConsommationDeTokensCodex} from "../../cout/domaine/consommationDeTokens.ts";
 
-// Estimation du coût d'un scan à partir de son log (voir EstimeCout).
-export interface EstimationCout {
-  surLogCodex(demande: { log: string; fournisseur: string; modele: string }): void;
-}
-
-export type Dependances = DependancesExecution & { estimation: EstimationCout; console: Console };
+export type Dependances = DependancesExecution & { estimation: EstimationDuCout; console: Console };
 
 export class LanceScan {
   readonly #racine: string;
   readonly #execution: PrepareExecutionCodex;
   readonly #cli: CliCodexSecurity;
   readonly #systemeDeFichier: SystemeDeFichier;
-  readonly #estimation: EstimationCout;
+  readonly #estimation: EstimationDuCout;
   readonly #console: Console;
 
   constructor(dependances: Dependances) {
@@ -32,7 +29,7 @@ export class LanceScan {
     this.#console = dependances.console;
   }
 
-  async execute({ options }: { options: string[] }): Promise<number> {
+  async execute({ options }: { options: string[] }, releveDeTokens : (log: string, fournisseur: string, modele: string) => ConsommationDeTokens | null = unReleveDeConsommationDeTokensCodex): Promise<number> {
     const { cible, config, sortie, environnement } = await this.#execution.pour("scan");
     this.#console.affiche(`Cible  : ${cible}`, 'VIOLET');
     this.#console.affiche(`Config : ${config}`, 'ORANGE');
@@ -46,14 +43,10 @@ export class LanceScan {
       options: this.#optionsDuScan(options),
       environnement,
     });
-    this.#estimeLeCout(config, sortie);
+    this.#estimeLeCout(config, sortie, releveDeTokens);
     return statut;
   }
 
-  // Options ajoutées par défaut, chacune sauf si l'utilisateur la fournit déjà :
-  // - les consignes du dépôt : sans elles, DeepSeek ne parvient pas à écrire findings.json
-  //   (voir configs/consignes-scan.md et le README) ;
-  // - --verbose : seul le log bavard porte le relevé TOKENS qui permet d'estimer le coût.
   #optionsDuScan(options: string[]): string[] {
     const consignes = join(this.#racine, "outils/codex-security/configs/consignes-scan.md");
     const fournie = (option: string) => options.some((o) => o === option || o.startsWith(`${option}=`));
@@ -64,11 +57,11 @@ export class LanceScan {
     ];
   }
 
-  // Best-effort : n'affecte jamais le statut du scan.
-  #estimeLeCout(config: string, sortie: DossierDeSortie): void {
+  #estimeLeCout(config: string, sortie: DossierDeSortie, releveDeTokens: (log: string, fournisseur: string, modele: string) => (ConsommationDeTokens | null)): void {
     try {
       const { modele, fournisseur } = ConfigScan.depuisYaml(this.#systemeDeFichier.lit(config));
-      this.#estimation.surLogCodex({ log: sortie.journal, fournisseur, modele });
+      const consommation = releveDeTokens(this.#systemeDeFichier.lit(sortie.journal), fournisseur, modele);
+      this.#estimation.rapporte(consommation)
     } catch (erreur) {
       this.#console.signaleErreur(`Estimation du coût impossible : ${erreur instanceof Error ? erreur.message : erreur}`);
     }
