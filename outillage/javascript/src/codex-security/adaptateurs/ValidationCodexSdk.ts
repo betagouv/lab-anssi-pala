@@ -1,6 +1,10 @@
-import { join } from "node:path";
-import { pathToFileURL } from "node:url";
-import type { DemandeDeValidation, ResultatDeValidation, ValidationCodex } from "../ports/ValidationCodex.ts";
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import type {
+  DemandeDeValidation,
+  ResultatDeValidation,
+  ValidationCodex,
+} from '../ports/ValidationCodex.ts';
 
 // Surface du SDK @openai/codex-security utilisée ici.
 type Sdk = {
@@ -8,7 +12,12 @@ type Sdk = {
   CodexSecurity: new (config: unknown) => SecuriteCodex;
 };
 type SecuriteCodex = {
-  validate(options: { repositoryPath: string; finding: object; outputDir: string; auth: "api-key" }): Promise<{
+  validate(options: {
+    repositoryPath: string;
+    finding: object;
+    outputDir: string;
+    auth: 'api-key';
+  }): Promise<{
     disposition: string;
     threadId: string | null;
     outputDir: string;
@@ -28,16 +37,29 @@ export class ValidationCodexSdk implements ValidationCodex {
     this.#outil = outil;
   }
 
-  async valide({ cible, config, finding, sortie, environnement }: DemandeDeValidation): Promise<ResultatDeValidation> {
+  async valide({
+    cible,
+    config,
+    finding,
+    sortie,
+    environnement,
+  }: DemandeDeValidation): Promise<ResultatDeValidation> {
     // Le SDK tourne dans ce processus et y lit jeton local et identité Codex isolée.
     delete process.env.OPENAI_API_KEY;
     Object.assign(process.env, environnement);
     const sdk: Sdk = await import(
-      pathToFileURL(join(this.#outil, "node_modules/@openai/codex-security/dist/index.js")).href
+      pathToFileURL(
+        join(this.#outil, 'node_modules/@openai/codex-security/dist/index.js')
+      ).href
     );
     const { config: configuration } = await sdk.loadProjectConfig(config);
     this.#securite = new sdk.CodexSecurity(configuration);
-    const resultat = await this.#securite.validate({ repositoryPath: cible, finding, outputDir: sortie, auth: "api-key" });
+    const resultat = await this.#securite.validate({
+      repositoryPath: cible,
+      finding,
+      outputDir: sortie,
+      auth: 'api-key',
+    });
     return {
       disposition: resultat.disposition,
       threadId: resultat.threadId,

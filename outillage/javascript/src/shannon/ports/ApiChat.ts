@@ -1,4 +1,8 @@
-export type AppelOutilChat = { id: string; type?: string; function?: { name?: string; arguments?: string } };
+export type AppelOutilChat = {
+  id: string;
+  type?: string;
+  function?: { name?: string; arguments?: string };
+};
 
 export type MessageChat = {
   role: string;
@@ -15,9 +19,15 @@ export type DemandeChat = {
   messages: MessageChat[];
 };
 
-export type ReponseChat = { message: MessageChat; finDeReponse?: string; tokensDeSortie?: number };
+export type ReponseChat = {
+  message: MessageChat;
+  finDeReponse?: string;
+  tokensDeSortie?: number;
+};
 
 // Une complétion, ou l'erreur réseau/HTTP qui l'a empêchée.
 export interface ApiChat {
-  complete(demande: DemandeChat): Promise<{ reponse: ReponseChat } | { erreur: string }>;
+  complete(
+    demande: DemandeChat
+  ): Promise<{ reponse: ReponseChat } | { erreur: string }>;
 }

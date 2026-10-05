@@ -5,7 +5,15 @@ export class Cible {
   readonly url: string;
   readonly branche?: string;
 
-  constructor({ nom, url, branche }: { nom: string; url: string; branche?: string }) {
+  constructor({
+    nom,
+    url,
+    branche,
+  }: {
+    nom: string;
+    url: string;
+    branche?: string;
+  }) {
     this.nom = nom;
     this.url = url;
     this.branche = branche;

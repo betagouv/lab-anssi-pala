@@ -1,12 +1,12 @@
 // Environnement du proxy LiteLLM (outils/codex-security/codex-security.env), dérivé du .env racine,
 // source de vérité des clés. Seul le proxy lit les clés des fournisseurs ; Codex ne reçoit que le
 // jeton local.
-import { parseEnv } from "node:util";
+import { parseEnv } from 'node:util';
 
 type Variables = Record<string, string | undefined>;
 
 export class EnvironnementProxy {
-  static readonly CHEMIN = "outils/codex-security/codex-security.env";
+  static readonly CHEMIN = 'outils/codex-security/codex-security.env';
 
   readonly #variables: Record<string, string>;
 
@@ -15,14 +15,18 @@ export class EnvironnementProxy {
   }
 
   static depuis(racine: Variables, jetonLocal: string): EnvironnementProxy {
-    if (!racine.ALBERT_API_KEY) throw new Error("Erreur: ALBERT_API_KEY manquant ou vide dans .env");
-    if (!racine.ALBERT_BASE_URL) throw new Error("Erreur: ALBERT_BASE_URL manquant dans .env");
+    if (!racine.ALBERT_API_KEY)
+      throw new Error('Erreur: ALBERT_API_KEY manquant ou vide dans .env');
+    if (!racine.ALBERT_BASE_URL)
+      throw new Error('Erreur: ALBERT_BASE_URL manquant dans .env');
     return new EnvironnementProxy({
       ALBERT_API_KEY: racine.ALBERT_API_KEY,
       ALBERT_BASE_URL: racine.ALBERT_BASE_URL,
       LITELLM_MASTER_KEY: jetonLocal,
       // Facultative : n'est utilisée que par le modèle deepseek-v4-flash-0731 du proxy.
-      ...(racine.SCALEWAY_DEEPSEEK_API_KEY && { SCALEWAY_DEEPSEEK_API_KEY: racine.SCALEWAY_DEEPSEEK_API_KEY }),
+      ...(racine.SCALEWAY_DEEPSEEK_API_KEY && {
+        SCALEWAY_DEEPSEEK_API_KEY: racine.SCALEWAY_DEEPSEEK_API_KEY,
+      }),
     });
   }
 
@@ -47,6 +51,6 @@ export class EnvironnementProxy {
   get contenu(): string {
     return `${Object.entries(this.#variables)
       .map(([nom, valeur]) => `${nom}=${valeur}`)
-      .join("\n")}\n`;
+      .join('\n')}\n`;
   }
 }

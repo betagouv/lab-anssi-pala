@@ -8,7 +8,7 @@
 `HTTP 200`. Extrait pertinent (modèles utilisés) :
 
 | id retourné par l'API                            | alias(es)                            | type              | contexte max |
-|--------------------------------------------------|--------------------------------------|-------------------|--------------|
+| ------------------------------------------------ | ------------------------------------ | ----------------- | ------------ |
 | `openai/gpt-oss-120b`                            | `openweight-large`                   | `text-generation` | 131072       |
 | `deepseek-v4-flash` (en test jusq’au 01/10/2026) | `deepseek-ai/DeepSeek-V4-Flash-0731` | `text-generation` | 131072       |
 
@@ -43,10 +43,9 @@ Réponse (extrait) : `{"content":"OK", ..., "finish_reason":"stop"}`.
 ## Résumé
 
 | Vérification                              | Résultat |
-|-------------------------------------------|----------|
+| ----------------------------------------- | -------- |
 | Endpoint joignable                        | OK       |
 | Authentification (clé Albert)             | OK       |
 | Chat `openai/gpt-oss-120b`                | OK       |
 | Chat `deepseek-ai/DeepSeek-V4-Flash-0731` | OK       |
 | `/v1/models` liste bien les deux modèles  | OK       |
-

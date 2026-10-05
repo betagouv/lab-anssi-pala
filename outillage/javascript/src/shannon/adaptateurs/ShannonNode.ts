@@ -1,6 +1,6 @@
-import { join } from "node:path";
-import { lanceCommande } from "../../noyau/adaptateurs/node/processus.ts";
-import type { DemandeDeLancement, Shannon } from "../ports/Shannon.ts";
+import { join } from 'node:path';
+import { lanceCommande } from '../../noyau/adaptateurs/node/processus.ts';
+import type { DemandeDeLancement, Shannon } from '../ports/Shannon.ts';
 
 // CLI Shannon lancée depuis ses sources (outils/shannon/source) directement avec node, suivie jusqu'au bout.
 export class ShannonNode implements Shannon {
@@ -10,14 +10,35 @@ export class ShannonNode implements Shannon {
     this.#outil = outil;
   }
 
-  demarre({ url, depot, config, modelsConfig, workspace, pipelineTesting, environnement }: DemandeDeLancement): Promise<number> {
-    const scenario = config ? ["-c", config] : [];
-    const descriptionPi = modelsConfig ? ["--models-config", modelsConfig] : [];
-    const mode = pipelineTesting ? ["--pipeline-testing"] : [];
+  demarre({
+    url,
+    depot,
+    config,
+    modelsConfig,
+    workspace,
+    pipelineTesting,
+    environnement,
+  }: DemandeDeLancement): Promise<number> {
+    const scenario = config ? ['-c', config] : [];
+    const descriptionPi = modelsConfig ? ['--models-config', modelsConfig] : [];
+    const mode = pipelineTesting ? ['--pipeline-testing'] : [];
     return lanceCommande(
-      "node",
-      ["shannon", "start", "-u", url, "-r", depot, ...scenario, ...descriptionPi, ...mode, "--follow", "-w", workspace],
-      { cwd: join(this.#outil, "source"), env: environnement },
+      'node',
+      [
+        'shannon',
+        'start',
+        '-u',
+        url,
+        '-r',
+        depot,
+        ...scenario,
+        ...descriptionPi,
+        ...mode,
+        '--follow',
+        '-w',
+        workspace,
+      ],
+      { cwd: join(this.#outil, 'source'), env: environnement }
     );
   }
 }

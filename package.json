@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "estimer-cout": "node outillage/javascript/src/composition/estimer-cout.ts",
     "bootstrap": "node outillage/javascript/src/composition/bootstrap.ts",
+    "format:corrige": "prettier --write .",
+    "format:verifie": "prettier --check .",
     "generate-env": "node outillage/javascript/src/composition/generate-env.ts",
     "start-proxy": "node outillage/javascript/src/composition/start-proxy.ts",
     "scan": "node outillage/javascript/src/composition/scan.ts",
@@ -23,6 +25,7 @@
     "commander": "^15.0.0"
   },
   "devDependencies": {
+    "prettier": "^3.9.9",
     "@types/node": "24.19.0",
     "typescript": "7.0.2",
     "vitest": "5.0.2"

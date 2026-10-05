@@ -1,4 +1,4 @@
-import type { ServeurCibleFumee } from "../../src/shannon/ports/ServeurCibleFumee.ts";
+import type { ServeurCibleFumee } from '../../src/shannon/ports/ServeurCibleFumee.ts';
 
 export class ServeurCibleFumeeSimule implements ServeurCibleFumee {
   readonly #journal: string[];
@@ -15,6 +15,6 @@ export class ServeurCibleFumeeSimule implements ServeurCibleFumee {
 
   async arrete(): Promise<void> {
     this.enService = false;
-    this.#journal.push("cible arrêtée");
+    this.#journal.push('cible arrêtée');
   }
 }

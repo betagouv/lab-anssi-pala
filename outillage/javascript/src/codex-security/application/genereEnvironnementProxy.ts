@@ -1,10 +1,10 @@
 // Génère l'environnement du proxy LiteLLM à partir du .env racine. Portage TS de generate-env.sh.
-import { parseEnv } from "node:util";
-import type { Console } from "../../noyau/ports/Console.ts";
-import type { Environnement } from "../../noyau/ports/Environnement.ts";
-import type { SystemeDeFichier } from "../../noyau/ports/SystemeDeFichier.ts";
-import { EnvironnementProxy } from "../domaine/EnvironnementProxy.ts";
-import type { GenerateurDeJeton } from "../ports/GenerateurDeJeton.ts";
+import { parseEnv } from 'node:util';
+import type { Console } from '../../noyau/ports/Console.ts';
+import type { Environnement } from '../../noyau/ports/Environnement.ts';
+import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
+import { EnvironnementProxy } from '../domaine/EnvironnementProxy.ts';
+import type { GenerateurDeJeton } from '../ports/GenerateurDeJeton.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -19,7 +19,12 @@ export class GenereEnvironnementProxy {
   readonly #environnement: Environnement;
   readonly #console: Console;
 
-  constructor({ systemeDeFichier, generateurDeJeton, environnement, console }: Dependances) {
+  constructor({
+    systemeDeFichier,
+    generateurDeJeton,
+    environnement,
+    console,
+  }: Dependances) {
     this.#systemeDeFichier = systemeDeFichier;
     this.#generateurDeJeton = generateurDeJeton;
     this.#environnement = environnement;
@@ -27,18 +32,32 @@ export class GenereEnvironnementProxy {
   }
 
   execute(): void {
-    const environnement = EnvironnementProxy.depuis(this.#variablesDeLaRacine(), this.#jetonLocal());
-    this.#systemeDeFichier.ecritFichierPrive(EnvironnementProxy.CHEMIN, environnement.contenu);
+    const environnement = EnvironnementProxy.depuis(
+      this.#variablesDeLaRacine(),
+      this.#jetonLocal()
+    );
+    this.#systemeDeFichier.ecritFichierPrive(
+      EnvironnementProxy.CHEMIN,
+      environnement.contenu
+    );
     this.#console.affiche(`Généré: ${EnvironnementProxy.CHEMIN}`, 'VERT');
-    this.#console.affiche(`  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`, 'BLEU');
+    this.#console.affiche(
+      `  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`,
+      'BLEU'
+    );
   }
 
   // Comme `set -a; source .env` : le .env racine complète et surcharge l'environnement du shell.
   #variablesDeLaRacine(): Record<string, string | undefined> {
-    if (!this.#systemeDeFichier.existe(".env")) {
-      throw new Error("Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)");
+    if (!this.#systemeDeFichier.existe('.env')) {
+      throw new Error(
+        'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
+      );
     }
-    return { ...this.#environnement.variables(), ...parseEnv(this.#systemeDeFichier.lit(".env")) };
+    return {
+      ...this.#environnement.variables(),
+      ...parseEnv(this.#systemeDeFichier.lit('.env')),
+    };
   }
 
   // Le jeton existant est conservé pour ne pas invalider un proxy en marche.
@@ -48,7 +67,9 @@ export class GenereEnvironnementProxy {
 
   #jetonExistant(): string | undefined {
     if (!this.#systemeDeFichier.existe(EnvironnementProxy.CHEMIN)) return undefined;
-    const jeton = parseEnv(this.#systemeDeFichier.lit(EnvironnementProxy.CHEMIN)).LITELLM_MASTER_KEY;
-    return jeton?.startsWith("sk-") ? jeton : undefined;
+    const jeton = parseEnv(
+      this.#systemeDeFichier.lit(EnvironnementProxy.CHEMIN)
+    ).LITELLM_MASTER_KEY;
+    return jeton?.startsWith('sk-') ? jeton : undefined;
   }
 }

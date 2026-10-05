@@ -1,12 +1,12 @@
 // Préparation propre à Shannon, appelée par le bootstrap après l'initialisation des sous-modules :
 // réapplique les patchs locaux sur les sources amont. Portage TS de outils/shannon/bootstrap.sh.
-import type { PreparationOutil } from "../../bootstrap/domaine/PreparationOutil.ts";
-import type { Console } from "../../noyau/ports/Console.ts";
-import type { DepotShannon } from "../ports/DepotShannon.ts";
+import type { PreparationOutil } from '../../bootstrap/domaine/PreparationOutil.ts';
+import type { Console } from '../../noyau/ports/Console.ts';
+import type { DepotShannon } from '../ports/DepotShannon.ts';
 
 export class PrepareShannon implements PreparationOutil {
-  readonly nom = "shannon";
-  readonly fichierEnvironnement = "outils/shannon/shannon.env";
+  readonly nom = 'shannon';
+  readonly fichierEnvironnement = 'outils/shannon/shannon.env';
   readonly #depot: DepotShannon;
   readonly #console: Console;
 
@@ -22,7 +22,10 @@ export class PrepareShannon implements PreparationOutil {
         await this.#depot.appliquePatch(patch);
         this.#console.affiche(`    patch appliqué : ${patch}`, 'VERT');
       } else {
-        this.#console.affiche(`    patch déjà appliqué (ou non applicable en l'état) : ${patch}`, 'VERT');
+        this.#console.affiche(
+          `    patch déjà appliqué (ou non applicable en l'état) : ${patch}`,
+          'VERT'
+        );
       }
     }
   }

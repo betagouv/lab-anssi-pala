@@ -1,4 +1,4 @@
-import type { GenerationEnvironnement } from "../../src/codex-security/application/demarreProxy.ts";
+import type { GenerationEnvironnement } from '../../src/codex-security/application/demarreProxy.ts';
 
 export class GenerationEnvironnementSimulee implements GenerationEnvironnement {
   readonly #journal: string[];
@@ -8,6 +8,6 @@ export class GenerationEnvironnementSimulee implements GenerationEnvironnement {
   }
 
   execute(): void {
-    this.#journal.push("environnement généré");
+    this.#journal.push('environnement généré');
   }
 }

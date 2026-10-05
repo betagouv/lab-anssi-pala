@@ -1,5 +1,5 @@
-import type { Cible } from "../../src/bootstrap/domaine/Cible.ts";
-import type { Git } from "../../src/bootstrap/ports/Git.ts";
+import type { Cible } from '../../src/bootstrap/domaine/Cible.ts';
+import type { Git } from '../../src/bootstrap/ports/Git.ts';
 
 export class GitSimule implements Git {
   sousModulesInitialises = false;
@@ -10,6 +10,10 @@ export class GitSimule implements Git {
   }
 
   async cloneCible(cible: Cible): Promise<void> {
-    this.clonages.push({ url: cible.url, branche: cible.branche, copie: cible.copieDeTravail });
+    this.clonages.push({
+      url: cible.url,
+      branche: cible.branche,
+      copie: cible.copieDeTravail,
+    });
   }
 }

@@ -1,4 +1,8 @@
-import type { ApiChat, DemandeChat, ReponseChat } from "../../src/shannon/ports/ApiChat.ts";
+import type {
+  ApiChat,
+  DemandeChat,
+  ReponseChat,
+} from '../../src/shannon/ports/ApiChat.ts';
 
 type Resultat = { reponse: ReponseChat } | { erreur: string };
 
@@ -15,17 +19,33 @@ export class ApiChatSimulee implements ApiChat {
   async complete(demande: DemandeChat): Promise<Resultat> {
     this.demandes.push(demande);
     if (this.#script) return this.#script.shift()!;
-    const resultatOutilRecu = demande.messages.at(-1)?.role === "tool";
+    const resultatOutilRecu = demande.messages.at(-1)?.role === 'tool';
     return resultatOutilRecu
-      ? { reponse: { message: { role: "assistant", content: "Le répertoire contient README.md et src." } } }
+      ? {
+          reponse: {
+            message: {
+              role: 'assistant',
+              content: 'Le répertoire contient README.md et src.',
+            },
+          },
+        }
       : {
           reponse: {
             message: {
-              role: "assistant",
+              role: 'assistant',
               content: null,
-              tool_calls: [{ id: "appel-1", type: "function", function: { name: "execute", arguments: '{"command":"ls /workspace"}' } }],
+              tool_calls: [
+                {
+                  id: 'appel-1',
+                  type: 'function',
+                  function: {
+                    name: 'execute',
+                    arguments: '{"command":"ls /workspace"}',
+                  },
+                },
+              ],
             },
-            finDeReponse: "tool_calls",
+            finDeReponse: 'tool_calls',
             tokensDeSortie: 42,
           },
         };

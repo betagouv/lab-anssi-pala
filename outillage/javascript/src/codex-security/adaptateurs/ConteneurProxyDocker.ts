@@ -1,8 +1,11 @@
-import { join } from "node:path";
-import { executeCommande, lanceCommande } from "../../noyau/adaptateurs/node/processus.ts";
-import type { ConfigurationProxy, ConteneurProxy } from "../ports/ConteneurProxy.ts";
+import { join } from 'node:path';
+import {
+  executeCommande,
+  lanceCommande,
+} from '../../noyau/adaptateurs/node/processus.ts';
+import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy.ts';
 
-const NOM = "codex-security-litellm";
+const NOM = 'codex-security-litellm';
 
 // Conteneur docker du proxy : environnement codex-security.env, configuration litellm/ montée en
 // lecture seule, port publié sur 127.0.0.1 uniquement.
@@ -14,21 +17,31 @@ export class ConteneurProxyDocker implements ConteneurProxy {
   }
 
   async supprime(): Promise<void> {
-    await lanceCommande("docker", ["rm", "-f", NOM], { affichage: "silencieuse" });
+    await lanceCommande('docker', ['rm', '-f', NOM], { affichage: 'silencieuse' });
   }
 
   demarre({ port, image, baseDeDonnees }: ConfigurationProxy): Promise<void> {
     return executeCommande(
-      "docker",
+      'docker',
       [
-        "run", "-d", "--name", NOM,
-        "--env-file", join(this.#outil, "codex-security.env"),
-        ...(baseDeDonnees ? ["-e", `DATABASE_URL=${baseDeDonnees}`] : []),
-        "-v", `${join(this.#outil, "litellm")}:/app/proxy-config:ro`,
-        "-p", `127.0.0.1:${port}:4000`,
-        image, "--config", "/app/proxy-config/config.yaml", "--port", "4000",
+        'run',
+        '-d',
+        '--name',
+        NOM,
+        '--env-file',
+        join(this.#outil, 'codex-security.env'),
+        ...(baseDeDonnees ? ['-e', `DATABASE_URL=${baseDeDonnees}`] : []),
+        '-v',
+        `${join(this.#outil, 'litellm')}:/app/proxy-config:ro`,
+        '-p',
+        `127.0.0.1:${port}:4000`,
+        image,
+        '--config',
+        '/app/proxy-config/config.yaml',
+        '--port',
+        '4000',
       ],
-      { affichage: "sansSortieStandard" },
+      { affichage: 'sansSortieStandard' }
     );
   }
 }

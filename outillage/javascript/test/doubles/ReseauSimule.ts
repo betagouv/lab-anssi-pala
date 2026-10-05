@@ -1,4 +1,4 @@
-import type { Reseau } from "../../src/noyau/ports/Reseau.ts";
+import type { Reseau } from '../../src/noyau/ports/Reseau.ts';
 
 // Répond selon une suite scriptée de réponses, puis en répétant la dernière (par défaut : répond).
 export class ReseauSimule implements Reseau {

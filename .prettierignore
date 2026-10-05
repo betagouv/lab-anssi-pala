@@ -1,0 +1,7 @@
+# Package Managers
+pnpm-lock.yaml
+
+# Miscellaneous
+.idea
+.claude
+/outils/

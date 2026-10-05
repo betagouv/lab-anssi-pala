@@ -6,13 +6,12 @@ garde la trace lisible.
 ## Environnement hôte
 
 | Outil                           | Version                | Notes                                                                  |
-|---------------------------------|------------------------|------------------------------------------------------------------------|
+| ------------------------------- | ---------------------- | ---------------------------------------------------------------------- |
 | docker                          | 29.4.3 (build 055a478) | daemon actif                                                           |
 | docker compose                  | v5.1.3                 | plugin CLI                                                             |
 | node / pnpm                     | requis pour Shannon    | Node.js ≥ 24 pour l'outillage TypeScript (exécution directe des `.ts`) |
 | typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | outillage TypeScript (`package.json` racine)                           |
 | python (hôte)                   | 3.9.6                  | scripts utilitaires (`check_tool_calls.py`)                            |
-
 
 > **un outil tiers** (un éditeur tiers, `outil-tiers 1.0.0`, sous-module supprimé le 28/09/2026 après
 > évaluation) a été écarté ; les runs restent tracés dans `resultats/rapports/`.

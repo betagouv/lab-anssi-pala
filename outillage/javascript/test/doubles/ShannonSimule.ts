@@ -1,4 +1,7 @@
-import type { DemandeDeLancement, Shannon } from "../../src/shannon/ports/Shannon.ts";
+import type {
+  DemandeDeLancement,
+  Shannon,
+} from '../../src/shannon/ports/Shannon.ts';
 
 // apresLeRun simule les effets du pentest (ex. la session écrite dans le workspace).
 export class ShannonSimule implements Shannon {

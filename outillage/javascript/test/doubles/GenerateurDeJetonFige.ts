@@ -1,4 +1,4 @@
-import type { GenerateurDeJeton } from "../../src/codex-security/ports/GenerateurDeJeton.ts";
+import type { GenerateurDeJeton } from '../../src/codex-security/ports/GenerateurDeJeton.ts';
 
 export class GenerateurDeJetonFige implements GenerateurDeJeton {
   readonly #jeton: string;

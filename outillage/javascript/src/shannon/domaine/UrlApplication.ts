@@ -8,6 +8,8 @@ export class UrlApplication {
   }
 
   get depuisLeConteneur(): string {
-    return this.surLHote.replace("localhost", "host.docker.internal").replace("127.0.0.1", "host.docker.internal");
+    return this.surLHote
+      .replace('localhost', 'host.docker.internal')
+      .replace('127.0.0.1', 'host.docker.internal');
   }
 }

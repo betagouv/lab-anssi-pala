@@ -1,11 +1,14 @@
-import type { DepotShannon } from "../../src/shannon/ports/DepotShannon.ts";
+import type { DepotShannon } from '../../src/shannon/ports/DepotShannon.ts';
 
 export class DepotShannonSimule implements DepotShannon {
   readonly #patchs: string[];
   readonly #dejaAppliques: Set<string>;
   readonly patchsAppliques: string[] = [];
 
-  constructor({ patchs = [], dejaAppliques = [] }: { patchs?: string[]; dejaAppliques?: string[] } = {}) {
+  constructor({
+    patchs = [],
+    dejaAppliques = [],
+  }: { patchs?: string[]; dejaAppliques?: string[] } = {}) {
     this.#patchs = patchs;
     this.#dejaAppliques = new Set(dejaAppliques);
   }

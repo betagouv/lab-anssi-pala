@@ -1,16 +1,24 @@
-import type { ApiChat, DemandeChat, MessageChat, ReponseChat } from "../ports/ApiChat.ts";
+import type {
+  ApiChat,
+  DemandeChat,
+  MessageChat,
+  ReponseChat,
+} from '../ports/ApiChat.ts';
 
 // Outil proposé au modèle : celui par lequel Shannon pilote le bac à sable.
 const OUTILS = [
   {
-    type: "function",
+    type: 'function',
     function: {
-      name: "execute",
-      description: "Exécute une commande shell dans le bac à sable et renvoie stdout, stderr et le code de sortie.",
+      name: 'execute',
+      description:
+        'Exécute une commande shell dans le bac à sable et renvoie stdout, stderr et le code de sortie.',
       parameters: {
-        type: "object",
-        properties: { command: { type: "string", description: "Commande shell à exécuter." } },
-        required: ["command"],
+        type: 'object',
+        properties: {
+          command: { type: 'string', description: 'Commande shell à exécuter.' },
+        },
+        required: ['command'],
       },
     },
   },
@@ -26,30 +34,53 @@ export class ApiChatFetch implements ApiChat {
   readonly #maxTokens: number;
   readonly #delaiMs: number;
 
-  constructor({ maxTokens = 4000, delaiMs = 120_000 }: { maxTokens?: number; delaiMs?: number } = {}) {
+  constructor({
+    maxTokens = 4000,
+    delaiMs = 120_000,
+  }: { maxTokens?: number; delaiMs?: number } = {}) {
     this.#maxTokens = maxTokens;
     this.#delaiMs = delaiMs;
   }
 
-  async complete({ url, cle, modele, messages }: DemandeChat): Promise<{ reponse: ReponseChat } | { erreur: string }> {
+  async complete({
+    url,
+    cle,
+    modele,
+    messages,
+  }: DemandeChat): Promise<{ reponse: ReponseChat } | { erreur: string }> {
     try {
       const reponse = await fetch(`${url}/chat/completions`, {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${cle}`,
-          "Content-Type": "application/json",
-          "User-Agent": "audit-check-tool-calls/1.0",
+          'Content-Type': 'application/json',
+          'User-Agent': 'audit-check-tool-calls/1.0',
         },
-        body: JSON.stringify({ model: modele, messages, tools: OUTILS, tool_choice: "auto", max_tokens: this.#maxTokens }),
+        body: JSON.stringify({
+          model: modele,
+          messages,
+          tools: OUTILS,
+          tool_choice: 'auto',
+          max_tokens: this.#maxTokens,
+        }),
         signal: AbortSignal.timeout(this.#delaiMs),
       });
-      if (!reponse.ok) return { erreur: `http_${reponse.status}: ${(await reponse.text()).slice(0, 200)}` };
+      if (!reponse.ok)
+        return {
+          erreur: `http_${reponse.status}: ${(await reponse.text()).slice(0, 200)}`,
+        };
       const { choices, usage } = (await reponse.json()) as Reponse;
       return {
-        reponse: { message: choices[0].message, finDeReponse: choices[0].finish_reason, tokensDeSortie: usage?.completion_tokens },
+        reponse: {
+          message: choices[0].message,
+          finDeReponse: choices[0].finish_reason,
+          tokensDeSortie: usage?.completion_tokens,
+        },
       };
     } catch (erreur) {
-      return { erreur: `reseau: ${erreur instanceof Error ? erreur.name : "Erreur"}` };
+      return {
+        erreur: `reseau: ${erreur instanceof Error ? erreur.name : 'Erreur'}`,
+      };
     }
   }
 }

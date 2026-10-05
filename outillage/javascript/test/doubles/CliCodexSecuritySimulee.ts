@@ -1,4 +1,7 @@
-import type { CliCodexSecurity, DemandeDeScan } from "../../src/codex-security/ports/CliCodexSecurity.ts";
+import type {
+  CliCodexSecurity,
+  DemandeDeScan,
+} from '../../src/codex-security/ports/CliCodexSecurity.ts';
 
 export class CliCodexSecuritySimulee implements CliCodexSecurity {
   #installee: boolean;
@@ -9,7 +12,7 @@ export class CliCodexSecuritySimulee implements CliCodexSecurity {
 
   constructor({
     installee = true,
-    version = "0.1.30",
+    version = '0.1.30',
     statutDuScan = 0,
   }: { installee?: boolean; version?: string; statutDuScan?: number } = {}) {
     this.#installee = installee;

@@ -1,23 +1,23 @@
-import type {Console, Couleur} from "../../src/noyau/ports/Console.ts";
+import type { Console, Couleur } from '../../src/noyau/ports/Console.ts';
 
 type Ligne = {
   message: string;
   couleur: string;
-}
+};
 
 type LigneEnErreur = Omit<Ligne, 'couleur'> & {
-  couleur: 'NOIR'
-}
+  couleur: 'NOIR';
+};
 
 export class ConsoleEnMemoire implements Console {
   readonly lignes: Ligne[] = [];
   readonly erreurs: LigneEnErreur[] = [];
   readonly traces: string[] = [];
-  #ligneEnCours = "";
+  #ligneEnCours = '';
 
   affiche(ligne: string, couleur: Couleur = 'NOIR'): void {
-    this.lignes.push({message: this.#ligneEnCours + ligne, couleur: couleur});
-    this.#ligneEnCours = "";
+    this.lignes.push({ message: this.#ligneEnCours + ligne, couleur: couleur });
+    this.#ligneEnCours = '';
   }
 
   ecrit(texte: string, couleur: Couleur = 'NOIR'): void {
@@ -25,7 +25,7 @@ export class ConsoleEnMemoire implements Console {
   }
 
   signaleErreur(ligne: string): void {
-    this.erreurs.push({message: ligne, couleur: 'NOIR'});
+    this.erreurs.push({ message: ligne, couleur: 'NOIR' });
   }
 
   trace(ligne: string): void {

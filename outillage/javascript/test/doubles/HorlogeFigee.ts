@@ -1,4 +1,4 @@
-import type { Horloge } from "../../src/noyau/ports/Horloge.ts";
+import type { Horloge } from '../../src/noyau/ports/Horloge.ts';
 
 // Horloge arrêtée ; seuls les doubles qui simulent un travail la font avancer.
 export class HorlogeFigee implements Horloge {

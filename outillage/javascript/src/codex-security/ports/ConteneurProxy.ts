@@ -1,4 +1,8 @@
-export type ConfigurationProxy = { port: string; image: string; baseDeDonnees?: string };
+export type ConfigurationProxy = {
+  port: string;
+  image: string;
+  baseDeDonnees?: string;
+};
 
 // Conteneur du proxy LiteLLM (Responses -> Chat Completions), exposé sur 127.0.0.1 uniquement.
 export interface ConteneurProxy {

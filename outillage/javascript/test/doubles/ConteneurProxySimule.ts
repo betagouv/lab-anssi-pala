@@ -1,4 +1,7 @@
-import type { ConfigurationProxy, ConteneurProxy } from "../../src/codex-security/ports/ConteneurProxy.ts";
+import type {
+  ConfigurationProxy,
+  ConteneurProxy,
+} from '../../src/codex-security/ports/ConteneurProxy.ts';
 
 export class ConteneurProxySimule implements ConteneurProxy {
   readonly #journal: string[];
@@ -9,11 +12,11 @@ export class ConteneurProxySimule implements ConteneurProxy {
   }
 
   async supprime(): Promise<void> {
-    this.#journal.push("conteneur supprimé");
+    this.#journal.push('conteneur supprimé');
   }
 
   async demarre(configuration: ConfigurationProxy): Promise<void> {
     this.configuration = configuration;
-    this.#journal.push("conteneur démarré");
+    this.#journal.push('conteneur démarré');
   }
 }

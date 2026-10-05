@@ -1,4 +1,4 @@
-import type { SystemeDeFichier } from "../../src/noyau/ports/SystemeDeFichier.ts";
+import type { SystemeDeFichier } from '../../src/noyau/ports/SystemeDeFichier.ts';
 
 export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   readonly fichiers: Map<string, string>;
@@ -21,8 +21,10 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   }
 
   creeDossier(chemin: string): void {
-    const segments = chemin.split("/");
-    segments.forEach((_, i) => this.dossiers.add(segments.slice(0, i + 1).join("/")));
+    const segments = chemin.split('/');
+    segments.forEach((_, i) =>
+      this.dossiers.add(segments.slice(0, i + 1).join('/'))
+    );
   }
 
   creeDossierPrive(chemin: string): void {

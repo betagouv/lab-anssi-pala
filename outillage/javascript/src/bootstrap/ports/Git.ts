@@ -1,4 +1,4 @@
-import type { Cible } from "../domaine/Cible.ts";
+import type { Cible } from '../domaine/Cible.ts';
 
 export interface Git {
   initialiseSousModules(): Promise<void>;

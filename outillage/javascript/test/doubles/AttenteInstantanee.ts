@@ -1,4 +1,4 @@
-import type { Attente } from "../../src/noyau/ports/Attente.ts";
+import type { Attente } from '../../src/noyau/ports/Attente.ts';
 
 // Ne fait pas attendre : consigne seulement les durées demandées.
 export class AttenteInstantanee implements Attente {
