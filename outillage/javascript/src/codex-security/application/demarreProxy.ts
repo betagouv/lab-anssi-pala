@@ -68,7 +68,7 @@ export class DemarreProxy {
 
   // LiteLLM n'applique le plafond de budget (litellm/config.yaml) qu'avec une base de données.
   #annonceBudget({ baseDeDonnees }: ConfigurationProxy): void {
-    this.#console.affiche(
+    this.#console.aLaLigne(
       baseDeDonnees
         ? 'Budget : enforcement actif (DATABASE_URL fournie).'
         : "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README.",
@@ -83,16 +83,16 @@ export class DemarreProxy {
 
   // Jusqu'à 60 tentatives espacées de 2 s (environ 2 minutes).
   async #attendsLeProxy(port: string): Promise<void> {
-    this.#console.ecrit('Attente du proxy LiteLLM', 'GRIS');
+    this.#console.sureUneSeuleLigne('Attente du proxy LiteLLM', 'GRIS');
     for (let tentative = 1; tentative <= 60; tentative++) {
       if (await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`)) {
-        this.#console.affiche(` : prêt sur http://127.0.0.1:${port}/v1`, 'VERT');
+        this.#console.aLaLigne(` : prêt sur http://127.0.0.1:${port}/v1`, 'VERT');
         return;
       }
-      this.#console.ecrit('.', 'GRIS');
+      this.#console.sureUneSeuleLigne('.', 'GRIS');
       await this.#attente.attends(2000);
     }
-    this.#console.affiche('');
+    this.#console.aLaLigne('');
     throw new Error(
       'Erreur: le proxy ne répond pas — voir docker logs codex-security-litellm'
     );

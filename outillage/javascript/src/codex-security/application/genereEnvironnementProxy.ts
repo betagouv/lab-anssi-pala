@@ -40,8 +40,8 @@ export class GenereEnvironnementProxy {
       EnvironnementProxy.CHEMIN,
       environnement.contenu
     );
-    this.#console.affiche(`Généré: ${EnvironnementProxy.CHEMIN}`, 'VERT');
-    this.#console.affiche(
+    this.#console.aLaLigne(`Généré: ${EnvironnementProxy.CHEMIN}`, 'VERT');
+    this.#console.aLaLigne(
       `  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`,
       'BLEU'
     );

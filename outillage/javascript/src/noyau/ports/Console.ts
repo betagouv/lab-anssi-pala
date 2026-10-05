@@ -22,13 +22,9 @@ export const couleurs: Record<Couleur, string> = {
 };
 
 export interface Console {
-  affiche(ligne: string, couleur?: Couleur): void;
+  aLaLigne(ligne: string, couleur?: Couleur): void;
 
-  // Écrit sans aller à la ligne (progression) ; la ligne est terminée par le prochain affiche.
-  ecrit(texte: string, couleur?: Couleur): void;
+  sureUneSeuleLigne(texte: string, couleur?: Couleur): void;
 
   signaleErreur(ligne: string): void;
-
-  // Information de déroulement, écrite hors de la sortie standard (réservée aux résultats).
-  trace(ligne: string): void;
 }

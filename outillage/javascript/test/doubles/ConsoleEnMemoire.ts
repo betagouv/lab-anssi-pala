@@ -15,12 +15,12 @@ export class ConsoleEnMemoire implements Console {
   readonly traces: string[] = [];
   #ligneEnCours = '';
 
-  affiche(ligne: string, couleur: Couleur = 'NOIR'): void {
+  aLaLigne(ligne: string, couleur: Couleur = 'NOIR'): void {
     this.lignes.push({ message: this.#ligneEnCours + ligne, couleur: couleur });
     this.#ligneEnCours = '';
   }
 
-  ecrit(texte: string, couleur: Couleur = 'NOIR'): void {
+  sureUneSeuleLigne(texte: string, couleur: Couleur = 'NOIR'): void {
     this.#ligneEnCours += texte;
   }
 

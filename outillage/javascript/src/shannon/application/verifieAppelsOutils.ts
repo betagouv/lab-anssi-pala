@@ -60,11 +60,11 @@ export class VerifieAppelsOutils {
     const variables = this.#variables();
     const destinataire = this.#destinataire(variables, modele, modelsConfig);
     const essais = Number(variables.RUNS || '5');
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`,
       'BLEU'
     );
-    this.#console.affiche('');
+    this.#console.aLaLigne('');
 
     const resultats: ResultatEssai[] = [];
     for (let numero = 1; numero <= essais; numero++) {
@@ -73,7 +73,7 @@ export class VerifieAppelsOutils {
       const etat = (ok: boolean) => (ok ? 'OK' : 'KO');
       const emission = etat(resultat.emission);
       const multitour = etat(resultat.multitour);
-      this.#console.affiche(
+      this.#console.aLaLigne(
         `essai ${numero}: emission=${emission}  multi-tour=${multitour}  ${JSON.stringify(resultat.details)}`,
         emission && multitour ? 'VERT' : 'ROUGE'
       );
@@ -114,12 +114,12 @@ export class VerifieAppelsOutils {
   #bilan(resultats: ResultatEssai[]): number {
     const emissions = resultats.filter((r) => r.emission).length;
     const multitours = resultats.filter((r) => r.multitour).length;
-    this.#console.affiche('');
-    this.#console.affiche(
+    this.#console.aLaLigne('');
+    this.#console.aLaLigne(
       `Emission de tool_calls valides : ${emissions}/${resultats.length}`,
       emissions === resultats.length ? 'VERT' : 'ROUGE'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `Enchainement multi-tour        : ${multitours}/${resultats.length}`,
       multitours === resultats.length ? 'VERT' : 'ROUGE'
     );

@@ -19,7 +19,7 @@ export class PrepareCodexSecurity implements PreparationOutil {
   async prepare(): Promise<void> {
     if (this.#cli.estInstallee()) return;
     await this.#cli.installe();
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `    installé : @openai/codex-security ${this.#cli.version()}`,
       'VERT'
     );

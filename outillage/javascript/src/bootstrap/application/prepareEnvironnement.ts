@@ -37,64 +37,64 @@ export class PrepareEnvironnement {
   }
 
   async #initialiseSousModules(): Promise<void> {
-    this.#console.affiche('==> Initialisation des sous-modules des outils');
+    this.#console.aLaLigne('==> Initialisation des sous-modules des outils');
     await this.#git.initialiseSousModules();
   }
 
   async #prepareCopiesDeScan(cible?: Cible): Promise<void> {
-    this.#console.affiche(
+    this.#console.aLaLigne(
       '==> Copies de scan (cible/copies/, non versionnées)',
       'GRIS'
     );
     this.#systemeDeFichier.creeDossier('cible/copies');
     if (!cible) {
-      this.#console.affiche(
+      this.#console.aLaLigne(
         '    (aucune cible demandée : passer --project <nom> --url <git-url> pour en cloner une)',
         'ROUGE'
       );
       return;
     }
     if (this.#systemeDeFichier.existe(cible.copieDeTravail)) {
-      this.#console.affiche(
+      this.#console.aLaLigne(
         `    conservé : ${cible.copieDeTravail} (déjà présent)`,
         'VERT'
       );
       return;
     }
     const branche = cible.branche ? ` (branche ${cible.branche})` : '';
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `    clone de la cible « ${cible.nom} » depuis ${cible.url}${branche}`,
       'GRIS'
     );
     await this.#git.cloneCible(cible);
-    this.#console.affiche(`    créé : ${cible.copieDeTravail}`, 'VERT');
+    this.#console.aLaLigne(`    créé : ${cible.copieDeTravail}`, 'VERT');
   }
 
   async #prepareOutils(): Promise<void> {
     for (const outil of this.#outils) {
-      this.#console.affiche(`==> Préparation de ${outil.nom}`, 'GRIS');
+      this.#console.aLaLigne(`==> Préparation de ${outil.nom}`, 'GRIS');
       await outil.prepare();
     }
   }
 
   #recapituleFichiersEnvironnement(): void {
-    this.#console.affiche(
+    this.#console.aLaLigne(
       "==> Terminé. Fichiers d'environnement à renseigner (non versionnés) :",
       'ORANGE'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       '    .env                             (depuis .env.template)',
       'BLEU'
     );
     for (const { fichierEnvironnement: fichier } of this.#outils) {
       const etat = this.#systemeDeFichier.existe(fichier) ? 'présent' : 'à créer';
       const modele = `${fichier.split('/').at(-1)}.template`;
-      this.#console.affiche(
+      this.#console.aLaLigne(
         `    ${fichier.padEnd(32)} (depuis ${modele} — ${etat})`,
         'BLEU'
       );
     }
-    this.#console.affiche(
+    this.#console.aLaLigne(
       '    ainsi que les configs Shannon remplies, depuis outils/shannon/configs/*.template.yaml.',
       'BLEU'
     );
@@ -102,18 +102,18 @@ export class PrepareEnvironnement {
 
   #rappelleCommentCibler(cible: Cible): void {
     const codexTarget = `CODEX_TARGET="$PWD/${cible.copieDeTravail}"`;
-    this.#console.affiche('');
-    this.#console.affiche(`==> Cible prête : ${cible.copieDeTravail}`, 'VERT');
-    this.#console.affiche(`    Codex Security :`, 'BLEU');
-    this.#console.affiche(
+    this.#console.aLaLigne('');
+    this.#console.aLaLigne(`==> Cible prête : ${cible.copieDeTravail}`, 'VERT');
+    this.#console.aLaLigne(`    Codex Security :`, 'BLEU');
+    this.#console.aLaLigne(
       `       Pour un scan par défaut : ${codexTarget} pnpm scan`,
       'BLEU'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `       Pour un scan avec configuration : ${codexTarget} CODEX_CONFIG="$PWD/outils/codex-security/configs/<fichier_config>.yaml" pnpm scan`,
       'BLEU'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `    Shannon        : pnpm shannon --project ${cible.nom} --url <url-app> --config <fichier>`,
       'JAUNE'
     );

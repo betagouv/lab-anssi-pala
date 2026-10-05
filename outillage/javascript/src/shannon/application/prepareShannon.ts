@@ -20,9 +20,9 @@ export class PrepareShannon implements PreparationOutil {
     for (const patch of this.#depot.patchsLocaux()) {
       if (await this.#depot.patchApplicable(patch)) {
         await this.#depot.appliquePatch(patch);
-        this.#console.affiche(`    patch appliqué : ${patch}`, 'VERT');
+        this.#console.aLaLigne(`    patch appliqué : ${patch}`, 'VERT');
       } else {
-        this.#console.affiche(
+        this.#console.aLaLigne(
           `    patch déjà appliqué (ou non applicable en l'état) : ${patch}`,
           'VERT'
         );

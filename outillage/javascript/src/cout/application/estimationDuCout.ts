@@ -14,9 +14,9 @@ export class EstimationDuCout {
   }
 
   rapporte(releve: ConsommationDeTokens | null): void {
-    this.#console.affiche('--- Coût estimé ---', 'GRIS');
+    this.#console.aLaLigne('--- Coût estimé ---', 'GRIS');
     if (!releve) {
-      this.#console.affiche(
+      this.#console.aLaLigne(
         '  tokens indisponibles (run non terminé ?) : coût non calculable',
         'ORANGE'
       );
@@ -29,20 +29,20 @@ export class EstimationDuCout {
 
     const fournisseur = releve.fournisseur;
     const modele = releve.modele;
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `  Modèle    : ${modele} (fournisseur ${fournisseur})`,
       'BLEU'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `  Tokens    : ${milliers(entreeTotale)} entrée (dont ${milliers(releve.cache)} en cache), ${milliers(releve.sortie)} sortie`,
       'VIOLET'
     );
     if (estGratuit(fournisseur)) {
-      this.#console.affiche(
+      this.#console.aLaLigne(
         '  Coût      : 0 € — Albert (DINUM), service gratuit',
         'VERT'
       );
-      this.#console.affiche(
+      this.#console.aLaLigne(
         '  Note      : Albert sous-estime les tokens de sortie (raisonnement/outils non comptés).',
         'GRIS'
       );
@@ -50,18 +50,18 @@ export class EstimationDuCout {
     }
     const tarif = TARIFS[modele];
     if (!tarif) {
-      this.#console.affiche(
+      this.#console.aLaLigne(
         `  Coût      : tarif inconnu pour « ${modele} » — compléter TARIFS dans outillage/src/cout/domaine/Tarifs.ts`,
         'ROUGE'
       );
       return;
     }
     const cout = coutAu(tarif);
-    this.#console.affiche(
+    this.#console.aLaLigne(
       `  Coût      : ~${cout.toFixed(2)} € (${tarif.note} : ${tarif.entree} €/M entrée, ${tarif.sortie} €/M sortie)`,
       cout > 10 ? 'ROUGE' : 'VERT'
     );
-    this.#console.affiche(
+    this.#console.aLaLigne(
       "  Note      : estimation haute (cache compté au tarif d'entrée) ; à confronter au relevé du fournisseur.",
       'ORANGE'
     );

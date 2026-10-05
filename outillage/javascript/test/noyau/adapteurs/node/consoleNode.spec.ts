@@ -11,7 +11,7 @@ describe('Console Node', () => {
     new ConsoleNode({
       sortie,
       erreurs: new PassThrough(),
-      auTubeFerme: () => (arretee = true),
+      fermeSurPipeTerminal: () => (arretee = true),
     });
 
     expect(() => sortie.emit('error', tubeFerme())).not.toThrow();
@@ -24,7 +24,7 @@ describe('Console Node', () => {
     new ConsoleNode({
       sortie,
       erreurs: new PassThrough(),
-      auTubeFerme: () => (arretee = true),
+      fermeSurPipeTerminal: () => (arretee = true),
     });
 
     expect(() =>

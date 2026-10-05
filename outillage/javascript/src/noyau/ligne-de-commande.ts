@@ -16,7 +16,7 @@ export async function executeCommande(
   action: () => number | Promise<number>
 ): Promise<number> {
   programme.exitOverride().configureOutput({
-    writeOut: (texte) => lignes(texte).forEach((ligne) => console.affiche(ligne)),
+    writeOut: (texte) => lignes(texte).forEach((ligne) => console.aLaLigne(ligne)),
     writeErr: (texte) =>
       lignes(texte).forEach((ligne) => console.signaleErreur(ligne)),
   });

@@ -29,7 +29,7 @@ export async function scan(
   dependances: Dependances
 ): Promise<number> {
   if (argv.includes('--help') || argv.includes('-h')) {
-    for (const ligne of AIDE.split('\n')) dependances.console.affiche(ligne);
+    for (const ligne of AIDE.split('\n')) dependances.console.aLaLigne(ligne);
     return 0;
   }
   // Toutes les options sont celles de `codex-security scan` : transmises telles quelles.
