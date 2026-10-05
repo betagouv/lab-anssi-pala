@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { GenerateurDeJetonFige } from '../../doubles/GenerateurDeJetonFige.ts';
@@ -6,7 +6,7 @@ import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoi
 import { genereEnv } from '../../../src/codex-security/cli/generate-env.ts';
 
 describe('generate-env (ligne de commande)', () => {
-  test("signale l'erreur et sort en code 1 quand la génération échoue", async () => {
+  it("signale l'erreur et sort en code 1 quand la génération échoue", async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await genereEnv([], {

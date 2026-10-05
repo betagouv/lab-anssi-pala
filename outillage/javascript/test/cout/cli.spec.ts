@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../doubles/SystemeDeFichierEnMemoire.ts';
 import { estimerCout } from '../../src/cout/cli.ts';
@@ -8,7 +8,7 @@ const SESSION = JSON.stringify({
 });
 
 describe('estimer-cout (ligne de commande)', () => {
-  test('estime une session Shannon désignée par --shannon-session et --model-spec', async () => {
+  it('estime une session Shannon désignée par --shannon-session et --model-spec', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       'session.json': SESSION,
     });
@@ -31,7 +31,7 @@ describe('estimer-cout (ligne de commande)', () => {
     ]);
   });
 
-  test('estime un log Codex désigné par --codex-log, --provider et --model', async () => {
+  it('estime un log Codex désigné par --codex-log, --provider et --model', async () => {
     const releve =
       '  TOKENS   10 uncached input, 2 cache reads, 0 cache writes, 3 output, 15 total';
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
@@ -58,7 +58,7 @@ describe('estimer-cout (ligne de commande)', () => {
     ]);
   });
 
-  test("refuse de s'exécuter sans source de tokens (erreur d'usage, code 2)", async () => {
+  it("refuse de s'exécuter sans source de tokens (erreur d'usage, code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await estimerCout(['--provider', 'albert'], {
@@ -72,7 +72,7 @@ describe('estimer-cout (ligne de commande)', () => {
     );
   });
 
-  test("signale une option inconnue comme une erreur d'usage (code 2)", async () => {
+  it("signale une option inconnue comme une erreur d'usage (code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await estimerCout(['--inconnue'], {
@@ -86,7 +86,7 @@ describe('estimer-cout (ligne de commande)', () => {
     );
   });
 
-  test('signale un fichier introuvable et sort en erreur (code 1)', async () => {
+  it('signale un fichier introuvable et sort en erreur (code 1)', async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await estimerCout(['--codex-log', 'absent.log'], {

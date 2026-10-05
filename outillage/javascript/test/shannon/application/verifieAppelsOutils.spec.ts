@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ApiChatSimulee } from '../../doubles/ApiChatSimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
@@ -12,29 +12,26 @@ const DESCRIPTION_ALBERT = JSON.stringify({
   providers: { albert: { baseUrl: 'https://albert.example/v1' } },
 });
 
-// Shannon configuré sur un modèle servi par Albert, décrit par sa description pi.
-function unDepotPret() {
-  return new SystemeDeFichierEnMemoire({
+const unDepotDeFichiersPret = () =>
+  new SystemeDeFichierEnMemoire({
     'outils/shannon/shannon.env':
       'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\nSHANNON_AI_API_KEY=cle-shannon\n',
     '/depot/outils/shannon/configs/models.albert.json': DESCRIPTION_ALBERT,
   });
-}
 
-function uneVerification(doubles: Partial<Dependances> = {}) {
-  return new VerifieAppelsOutils({
+const uneVerification = (doubles: Partial<Dependances> = {}) =>
+  new VerifieAppelsOutils({
     racine: '/depot',
     apiChat: new ApiChatSimulee(),
-    systemeDeFichier: unDepotPret(),
+    systemeDeFichier: unDepotDeFichiersPret(),
     environnement: new EnvironnementEnMemoire({ RUNS: '1' }),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
-}
 
-describe('VerifieAppelsOutils', () => {
-  test("exige la clé de Shannon, sans jamais l'afficher", async () => {
-    const systemeDeFichier = unDepotPret();
+describe('Verifie appels outils', () => {
+  it("exige la clé de Shannon, sans jamais l'afficher", async () => {
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       'outils/shannon/shannon.env',
       'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n'
@@ -45,7 +42,7 @@ describe('VerifieAppelsOutils', () => {
     );
   });
 
-  test("interroge le modèle de Shannon chez son fournisseur, à l'URL de sa description pi", async () => {
+  it("interroge le modèle de Shannon chez son fournisseur, à l'URL de sa description pi", async () => {
     const apiChat = new ApiChatSimulee();
 
     await uneVerification({ apiChat }).execute({});
@@ -57,7 +54,7 @@ describe('VerifieAppelsOutils', () => {
     });
   });
 
-  test("valide émission et multi-tour quand le modèle appelle l'outil puis répond à son résultat", async () => {
+  it("valide émission et multi-tour quand le modèle appelle l'outil puis répond à son résultat", async () => {
     const console = new ConsoleEnMemoire();
 
     const statut = await uneVerification({ console }).execute({});
@@ -69,7 +66,7 @@ describe('VerifieAppelsOutils', () => {
     ]);
   });
 
-  test('répète la sonde RUNS fois, avec une ligne par essai puis le bilan', async () => {
+  it('répète la sonde RUNS fois, avec une ligne par essai puis le bilan', async () => {
     const console = new ConsoleEnMemoire();
 
     await uneVerification({
@@ -91,7 +88,7 @@ describe('VerifieAppelsOutils', () => {
     { id: 'appel-1', function: { name: nom, arguments: args } },
   ];
 
-  test.each([
+  it.each([
     [undefined, 'aucun tool_calls structure'],
     [appel('lire', '{"command":"ls"}'), "outil inattendu: 'lire'"],
     [appel('execute', 'command=ls'), 'arguments non JSON'],
@@ -115,7 +112,7 @@ describe('VerifieAppelsOutils', () => {
     );
   });
 
-  test('valide le multi-tour quand le modèle enchaîne un nouvel appel valide au lieu de répondre', async () => {
+  it('valide le multi-tour quand le modèle enchaîne un nouvel appel valide au lieu de répondre', async () => {
     const executeLs = {
       reponse: {
         message: {
@@ -146,7 +143,7 @@ describe('VerifieAppelsOutils', () => {
     );
   });
 
-  test("refuse le multi-tour quand le modèle ne répond pas et n'enchaîne aucun appel valide", async () => {
+  it("refuse le multi-tour quand le modèle ne répond pas et n'enchaîne aucun appel valide", async () => {
     const executeLs = {
       reponse: {
         message: {
@@ -176,7 +173,7 @@ describe('VerifieAppelsOutils', () => {
     );
   });
 
-  test("consigne l'erreur réseau ou HTTP de l'émission comme du second tour", async () => {
+  it("consigne l'erreur réseau ou HTTP de l'émission comme du second tour", async () => {
     const executeLs = {
       reponse: {
         message: {
@@ -205,7 +202,7 @@ describe('VerifieAppelsOutils', () => {
     );
   });
 
-  test("annonce le modèle vérifié, l'URL de son fournisseur et le nombre d'essais", async () => {
+  it("annonce le modèle vérifié, l'URL de son fournisseur et le nombre d'essais", async () => {
     const console = new ConsoleEnMemoire();
 
     await uneVerification({ console }).execute({});
@@ -216,9 +213,9 @@ describe('VerifieAppelsOutils', () => {
     ]);
   });
 
-  test('vérifie le modèle désigné au lancement, chez son propre fournisseur', async () => {
+  it('vérifie le modèle désigné au lancement, chez son propre fournisseur', async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       '/depot/outils/shannon/configs/models.scaleway.json',
       JSON.stringify({
@@ -236,9 +233,9 @@ describe('VerifieAppelsOutils', () => {
     });
   });
 
-  test("lit l'URL dans la description pi imposée plutôt que dans celle déduite du fournisseur", async () => {
+  it("lit l'URL dans la description pi imposée plutôt que dans celle déduite du fournisseur", async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       '/mes-modeles.json',
       JSON.stringify({
@@ -253,7 +250,7 @@ describe('VerifieAppelsOutils', () => {
     expect(apiChat.demandes[0].url).toBe('https://albert-recette.example/v1');
   });
 
-  test('refuse un fournisseur sans description pi : aucune URL à interroger', async () => {
+  it('refuse un fournisseur sans description pi : aucune URL à interroger', async () => {
     const apiChat = new ApiChatSimulee();
 
     await expect(
@@ -264,9 +261,9 @@ describe('VerifieAppelsOutils', () => {
     expect(apiChat.demandes).toEqual([]);
   });
 
-  test("se contente de l'environnement du shell en l'absence de shannon.env", async () => {
+  it("se contente de l'environnement du shell en l'absence de shannon.env", async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.delete('outils/shannon/shannon.env');
     const environnement = new EnvironnementEnMemoire({
       RUNS: '1',

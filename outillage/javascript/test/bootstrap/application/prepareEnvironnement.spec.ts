@@ -1,4 +1,4 @@
-import { describe, expect, test, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { GitSimule } from '../../doubles/GitSimule.ts';
 import { PreparationOutilSimulee } from '../../doubles/PreparationOutilSimulee.ts';
@@ -9,20 +9,17 @@ import {
   PrepareEnvironnement,
 } from '../../../src/bootstrap/application/prepareEnvironnement.ts';
 
-// Cas d'usage avec un double par défaut pour chaque dépendance : chaque test ne fournit que ceux
-// dont il observe les effets.
-function unePreparation(doubles: Partial<Dependances> = {}) {
-  return new PrepareEnvironnement({
+const unePreparation = (doubles: Partial<Dependances> = {}) =>
+  new PrepareEnvironnement({
     git: new GitSimule(),
     systemeDeFichier: new SystemeDeFichierEnMemoire(),
     console: new ConsoleEnMemoire(),
     outils: [],
     ...doubles,
   });
-}
 
-describe('PrepareEnvironnement', () => {
-  test('initialise les sous-modules des outils', async () => {
+describe('Prépare l’environnement', () => {
+  it('initialise les sous-modules des outils', async () => {
     const git = new GitSimule();
 
     await unePreparation({ git }).execute({});
@@ -30,7 +27,7 @@ describe('PrepareEnvironnement', () => {
     expect(git.sousModulesInitialises).toBe(true);
   });
 
-  test('crée le dossier des copies de scan', async () => {
+  it('crée le dossier des copies de scan', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
 
     await unePreparation({ systemeDeFichier }).execute({});
@@ -38,7 +35,7 @@ describe('PrepareEnvironnement', () => {
     expect(systemeDeFichier.existe('cible/copies')).toBe(true);
   });
 
-  test('clone la cible demandée dans sa copie de travail, sur la branche par défaut du dépôt distant', async () => {
+  it('clone la cible demandée dans sa copie de travail, sur la branche par défaut du dépôt distant', async () => {
     const git = new GitSimule();
     const cible = new Cible({ nom: 'app', url: 'https://git.example/app.git' });
 
@@ -53,7 +50,7 @@ describe('PrepareEnvironnement', () => {
     ]);
   });
 
-  test('conserve une copie de travail existante sans la recloner', async () => {
+  it('conserve une copie de travail existante sans la recloner', async () => {
     const git = new GitSimule();
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
     systemeDeFichier.creeDossier('cible/copies/app');
@@ -69,7 +66,7 @@ describe('PrepareEnvironnement', () => {
     );
   });
 
-  test('annonce le clonage de la cible, avec la branche demandée, puis la copie créée', async () => {
+  it('annonce le clonage de la cible, avec la branche demandée, puis la copie créée', async () => {
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ console }).execute({
@@ -88,7 +85,7 @@ describe('PrepareEnvironnement', () => {
     );
   });
 
-  test("sans cible demandée, n'en clone aucune et indique comment en cloner une", async () => {
+  it("sans cible demandée, n'en clone aucune et indique comment en cloner une", async () => {
     const git = new GitSimule();
     const console = new ConsoleEnMemoire();
 
@@ -100,7 +97,7 @@ describe('PrepareEnvironnement', () => {
     );
   });
 
-  test("prépare chaque outil du registre, dans l'ordre, en l'annonçant", async () => {
+  it("prépare chaque outil du registre, dans l'ordre, en l'annonçant", async () => {
     const console = new ConsoleEnMemoire();
     const journal: string[] = [];
     const codex = new PreparationOutilSimulee('codex-security', journal);
@@ -117,7 +114,7 @@ describe('PrepareEnvironnement', () => {
     );
   });
 
-  test("récapitule les fichiers d'environnement à renseigner, présents ou à créer", async () => {
+  it("récapitule les fichiers d'environnement à renseigner, présents ou à créer", async () => {
     const console = new ConsoleEnMemoire();
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:x',
@@ -142,7 +139,7 @@ describe('PrepareEnvironnement', () => {
     ]);
   });
 
-  test('rappelle comment cibler la copie de travail avec chaque outil', async () => {
+  it('rappelle comment cibler la copie de travail avec chaque outil', async () => {
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ console }).execute({

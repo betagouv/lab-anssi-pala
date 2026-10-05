@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
@@ -14,8 +14,7 @@ import {
 const CIBLE = '/depot/cible/copies/app';
 const FINDING = { title: "Exemple de finding", cwe: ['CWE-200'] };
 
-// Un dépôt prêt : environnement du proxy généré, cible clonée, finding à valider rédigé.
-function unDepotPret() {
+const unDepotDeFichiersPret = () => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     'outils/codex-security/codex-security.env':
       'LITELLM_MASTER_KEY=sk-local-jeton\n',
@@ -23,24 +22,23 @@ function unDepotPret() {
   });
   systemeDeFichier.creeDossier(CIBLE);
   return systemeDeFichier;
-}
+};
 
-function uneValidation(doubles: Partial<Dependances> = {}) {
-  return new ValideFinding({
+const uneValidation = (doubles: Partial<Dependances> = {}) =>
+  new ValideFinding({
     racine: '/depot',
     cli: new CliCodexSecuritySimulee(),
     validation: new ValidationCodexSimulee(),
-    systemeDeFichier: unDepotPret(),
+    systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     environnement: new EnvironnementEnMemoire({ CODEX_TARGET: CIBLE }),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
-}
 
-describe('ValideFinding', () => {
-  test('valide le finding sur la cible, avec la config, vers une sortie horodatée', async () => {
+describe('Valide Finding', () => {
+  it('valide le finding sur la cible, avec la config, vers une sortie horodatée', async () => {
     const validation = new ValidationCodexSimulee();
 
     await uneValidation({ validation }).execute({ findingFile: 'finding.json' });
@@ -55,10 +53,10 @@ describe('ValideFinding', () => {
     ]);
   });
 
-  test('écrit le résumé validation-result.json, avec la durée de la validation arrondie en secondes', async () => {
+  it('écrit le résumé validation-result.json, avec la durée de la validation arrondie en secondes', async () => {
     const horloge = new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9));
     const validation = new ValidationCodexSimulee({ horloge, dureeMs: 42_600 });
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     const sortie = '/depot/resultats/brut/codex-security/validate-20260930-140509';
 
     await uneValidation({ horloge, validation, systemeDeFichier }).execute({
@@ -76,8 +74,8 @@ describe('ValideFinding', () => {
     });
   });
 
-  test('écrit le rapport de validation validation-report.md', async () => {
-    const systemeDeFichier = unDepotPret();
+  it('écrit le rapport de validation validation-report.md', async () => {
+    const systemeDeFichier = unDepotDeFichiersPret();
 
     await uneValidation({ systemeDeFichier }).execute({
       findingFile: 'finding.json',
@@ -90,7 +88,7 @@ describe('ValideFinding', () => {
     ).toBe('# Rapport\n');
   });
 
-  test("affiche sur la sortie standard une synthèse JSON d'une ligne", async () => {
+  it("affiche sur la sortie standard une synthèse JSON d'une ligne", async () => {
     const horloge = new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9));
     const validation = new ValidationCodexSimulee({ horloge, dureeMs: 42_600 });
     const console = new ConsoleEnMemoire();
@@ -104,7 +102,7 @@ describe('ValideFinding', () => {
     );
   });
 
-  test('annonce cible, config et sortie en traces, hors de la sortie standard réservée à la synthèse', async () => {
+  it('annonce cible, config et sortie en traces, hors de la sortie standard réservée à la synthèse', async () => {
     const console = new ConsoleEnMemoire();
 
     await uneValidation({ console }).execute({ findingFile: 'finding.json' });
@@ -116,7 +114,7 @@ describe('ValideFinding', () => {
     ]);
   });
 
-  test('ferme la validation même quand elle échoue', async () => {
+  it('ferme la validation même quand elle échoue', async () => {
     const validation = new ValidationCodexSimulee({
       echec: new Error('réponse rejetée par le SDK'),
     });
@@ -127,8 +125,8 @@ describe('ValideFinding', () => {
     expect(validation.fermee).toBe(true);
   });
 
-  test("refuse un finding qui n'est pas du JSON, sans lancer de validation", async () => {
-    const systemeDeFichier = unDepotPret();
+  it("refuse un finding qui n'est pas du JSON, sans lancer de validation", async () => {
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier('finding.json', "titre: exemple de finding");
     const validation = new ValidationCodexSimulee();
 

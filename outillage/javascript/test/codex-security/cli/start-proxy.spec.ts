@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { ConteneurProxySimule } from '../../doubles/ConteneurProxySimule.ts';
@@ -8,7 +8,7 @@ import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { startProxy } from '../../../src/codex-security/cli/start-proxy.ts';
 
 describe('start-proxy (ligne de commande)', () => {
-  test("signale l'échec du démarrage et sort en code 1", async () => {
+  it("signale l'échec du démarrage et sort en code 1", async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await startProxy([], {

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { ConteneurProxySimule } from '../../doubles/ConteneurProxySimule.ts';
@@ -10,8 +10,8 @@ import {
   DemarreProxy,
 } from '../../../src/codex-security/application/demarreProxy.ts';
 
-function unDemarrage(doubles: Partial<Dependances> = {}) {
-  return new DemarreProxy({
+const unDemarrageDuProxyCodex = (doubles: Partial<Dependances> = {}) =>
+  new DemarreProxy({
     generation: new GenerationEnvironnementSimulee(),
     conteneur: new ConteneurProxySimule(),
     reseau: new ReseauSimule(),
@@ -20,13 +20,12 @@ function unDemarrage(doubles: Partial<Dependances> = {}) {
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
-}
 
-describe('DemarreProxy', () => {
-  test("génère l'environnement du proxy avant de lancer le conteneur", async () => {
+describe('Démarre Proxy Codex', () => {
+  it("génère l'environnement du proxy avant de lancer le conteneur", async () => {
     const journal: string[] = [];
 
-    await unDemarrage({
+    await unDemarrageDuProxyCodex({
       generation: new GenerationEnvironnementSimulee(journal),
       conteneur: new ConteneurProxySimule(journal),
     }).execute();
@@ -35,18 +34,18 @@ describe('DemarreProxy', () => {
     expect(journal).toContain('conteneur démarré');
   });
 
-  test('remplace le conteneur existant : supprimé, puis démarré', async () => {
+  it('remplace le conteneur existant : supprimé, puis démarré', async () => {
     const journal: string[] = [];
 
-    await unDemarrage({ conteneur: new ConteneurProxySimule(journal) }).execute();
+    await unDemarrageDuProxyCodex({ conteneur: new ConteneurProxySimule(journal) }).execute();
 
     expect(journal).toEqual(['conteneur supprimé', 'conteneur démarré']);
   });
 
-  test("démarre par défaut sur le port 4000 avec l'image LiteLLM figée par digest", async () => {
+  it("démarre par défaut sur le port 4000 avec l'image LiteLLM figée par digest", async () => {
     const conteneur = new ConteneurProxySimule();
 
-    await unDemarrage({ conteneur }).execute();
+    await unDemarrageDuProxyCodex({ conteneur }).execute();
 
     expect(conteneur.configuration).toEqual({
       port: '4000',
@@ -55,14 +54,14 @@ describe('DemarreProxy', () => {
     });
   });
 
-  test("LITELLM_PORT et LITELLM_IMAGE surchargent le port et l'image", async () => {
+  it("LITELLM_PORT et LITELLM_IMAGE surchargent le port et l'image", async () => {
     const conteneur = new ConteneurProxySimule();
     const environnement = new EnvironnementEnMemoire({
       LITELLM_PORT: '4100',
       LITELLM_IMAGE: 'litellm:essai',
     });
 
-    await unDemarrage({ conteneur, environnement }).execute();
+    await unDemarrageDuProxyCodex({ conteneur, environnement }).execute();
 
     expect(conteneur.configuration).toEqual({
       port: '4100',
@@ -70,24 +69,24 @@ describe('DemarreProxy', () => {
     });
   });
 
-  test("sans base de données, annonce que le plafond de budget n'est pas bloquant", async () => {
+  it("sans base de données, annonce que le plafond de budget n'est pas bloquant", async () => {
     const console = new ConsoleEnMemoire();
 
-    await unDemarrage({ console }).execute();
+    await unDemarrageDuProxyCodex({ console }).execute();
 
     expect(console.lignes.map((l) => l.message)).toContain(
       "Budget : suivi seul (pas de DATABASE_URL) — le plafond n'est pas bloquant. Voir le README."
     );
   });
 
-  test('avec LITELLM_DATABASE_URL, transmet la base au proxy et annonce le plafond appliqué', async () => {
+  it('avec LITELLM_DATABASE_URL, transmet la base au proxy et annonce le plafond appliqué', async () => {
     const conteneur = new ConteneurProxySimule();
     const console = new ConsoleEnMemoire();
     const environnement = new EnvironnementEnMemoire({
       LITELLM_DATABASE_URL: 'postgresql://budget',
     });
 
-    await unDemarrage({ conteneur, console, environnement }).execute();
+    await unDemarrageDuProxyCodex({ conteneur, console, environnement }).execute();
 
     expect(conteneur.configuration?.baseDeDonnees).toBe('postgresql://budget');
     expect(console.lignes.map((l) => l.message)).toContain(
@@ -95,12 +94,12 @@ describe('DemarreProxy', () => {
     );
   });
 
-  test("attend que le proxy réponde, toutes les 2 secondes, puis annonce qu'il est prêt", async () => {
+  it("attend que le proxy réponde, toutes les 2 secondes, puis annonce qu'il est prêt", async () => {
     const reseau = new ReseauSimule([false, false, true]);
     const attente = new AttenteInstantanee();
     const console = new ConsoleEnMemoire();
 
-    await unDemarrage({ reseau, attente, console }).execute();
+    await unDemarrageDuProxyCodex({ reseau, attente, console }).execute();
 
     expect(reseau.urlsInterrogees).toEqual(
       Array(3).fill('http://127.0.0.1:4000/health/liveliness')
@@ -111,10 +110,10 @@ describe('DemarreProxy', () => {
     );
   });
 
-  test('abandonne après 60 tentatives sans réponse du proxy', async () => {
+  it('abandonne après 60 tentatives sans réponse du proxy', async () => {
     const reseau = new ReseauSimule([false]);
 
-    await expect(unDemarrage({ reseau }).execute()).rejects.toThrow(
+    await expect(unDemarrageDuProxyCodex({ reseau }).execute()).rejects.toThrow(
       'Erreur: le proxy ne répond pas — voir docker logs codex-security-litellm'
     );
     expect(reseau.urlsInterrogees).toHaveLength(60);

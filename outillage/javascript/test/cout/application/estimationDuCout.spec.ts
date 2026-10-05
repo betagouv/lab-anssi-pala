@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import {
   type Dependances,
@@ -10,15 +10,15 @@ import type { Console } from '../../../src/noyau/ports/Console.ts';
 const RELEVE_CODEX =
   '  TOKENS   777,656 uncached input, 348,672 cache reads, 0 cache writes, 31,639 output, 1,157,967 total';
 
-const lesDependances = (console: Console): Dependances => ({
+const lesDependancesPourEstimation = (console: Console): Dependances => ({
   console,
 });
 
-describe('EstimeCout', () => {
-  test("estime le coût d'un scan Codex sur un modèle Scaleway, cache compté au tarif d'entrée", () => {
+describe('Estimation du coût', () => {
+  it("estime le coût d'un scan Codex sur un modèle Scaleway, cache compté au tarif d'entrée", () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(
         RELEVE_CODEX,
         'scaleway_deepseek',
@@ -35,10 +35,10 @@ describe('EstimeCout', () => {
     ]);
   });
 
-  test('annonce un coût nul pour Albert, service gratuit de la DINUM', () => {
+  it('annonce un coût nul pour Albert, service gratuit de la DINUM', () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(RELEVE_CODEX, 'albert', 'modèle')
     );
 
@@ -48,10 +48,10 @@ describe('EstimeCout', () => {
     ]);
   });
 
-  test('invite à compléter la table des tarifs pour un modèle payant inconnu', () => {
+  it('invite à compléter la table des tarifs pour un modèle payant inconnu', () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(
         RELEVE_CODEX,
         'fournisseur',
@@ -64,10 +64,10 @@ describe('EstimeCout', () => {
     ]);
   });
 
-  test("signale un coût non calculable quand le scan n'a pas publié son relevé (run non terminé)", () => {
+  it("signale un coût non calculable quand le scan n'a pas publié son relevé (run non terminé)", () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(
         'Scan en cours…\n',
         'fournisseur',
@@ -81,10 +81,10 @@ describe('EstimeCout', () => {
     ]);
   });
 
-  test('signale un coût non calculable quand le relevé de tokens est incomplet', () => {
+  it('signale un coût non calculable quand le relevé de tokens est incomplet', () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(
         '  TOKENS   12 uncached input, 3 output',
         'fournisseur',
@@ -97,10 +97,10 @@ describe('EstimeCout', () => {
     );
   });
 
-  test('retient le dernier relevé complet, même si « TOKENS » est mentionné ensuite', () => {
+  it('retient le dernier relevé complet, même si « TOKENS » est mentionné ensuite', () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte(
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte(
       unReleveDeConsommationDeTokensCodex(
         `${RELEVE_CODEX}\nPlafond TOKENS atteint\n`,
         'fournisseur',
@@ -113,10 +113,10 @@ describe('EstimeCout', () => {
     );
   });
 
-  test("estime le coût d'un pentest Shannon en sommant les tokens de tous ses agents", () => {
+  it("estime le coût d'un pentest Shannon en sommant les tokens de tous ses agents", () => {
     const sortie = new ConsoleEnMemoire();
 
-    new EstimationDuCout(lesDependances(sortie)).rapporte({
+    new EstimationDuCout(lesDependancesPourEstimation(sortie)).rapporte({
       entree: 1_000_000,
       cache: 0,
       sortie: 100_000,

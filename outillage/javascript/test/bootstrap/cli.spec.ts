@@ -1,22 +1,22 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../doubles/ConsoleEnMemoire.ts';
 import { GitSimule } from '../doubles/GitSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../doubles/SystemeDeFichierEnMemoire.ts';
 import type { Dependances } from '../../src/bootstrap/application/prepareEnvironnement.ts';
 import { bootstrap } from '../../src/bootstrap/cli.ts';
 
-function dependances(doubles: Partial<Dependances> = {}): Dependances {
-  return {
-    git: new GitSimule(),
-    systemeDeFichier: new SystemeDeFichierEnMemoire(),
-    console: new ConsoleEnMemoire(),
-    outils: [],
-    ...doubles,
-  };
-}
+const lesDependancesDuBootstrap = (
+  doubles: Partial<Dependances> = {}
+): Dependances => ({
+  git: new GitSimule(),
+  systemeDeFichier: new SystemeDeFichierEnMemoire(),
+  console: new ConsoleEnMemoire(),
+  outils: [],
+  ...doubles,
+});
 
 describe('bootstrap (ligne de commande)', () => {
-  test("prépare l'environnement avec la cible désignée par --project, --url et --branch", async () => {
+  it("prépare l'environnement avec la cible désignée par --project, --url et --branch", async () => {
     const git = new GitSimule();
 
     const code = await bootstrap(
@@ -28,7 +28,7 @@ describe('bootstrap (ligne de commande)', () => {
         '--branch',
         'main',
       ],
-      dependances({ git })
+      lesDependancesDuBootstrap({ git })
     );
 
     expect(code).toBe(0);
@@ -41,13 +41,13 @@ describe('bootstrap (ligne de commande)', () => {
     ]);
   });
 
-  test("refuse --project sans --url, sans rien préparer (erreur d'usage, code 2)", async () => {
+  it("refuse --project sans --url, sans rien préparer (erreur d'usage, code 2)", async () => {
     const git = new GitSimule();
     const console = new ConsoleEnMemoire();
 
     const code = await bootstrap(
       ['--project', 'app'],
-      dependances({ git, console })
+      lesDependancesDuBootstrap({ git, console })
     );
 
     expect(code).toBe(2);
@@ -57,12 +57,12 @@ describe('bootstrap (ligne de commande)', () => {
     expect(git.sousModulesInitialises).toBe(false);
   });
 
-  test("refuse --url sans --project (erreur d'usage, code 2)", async () => {
+  it("refuse --url sans --project (erreur d'usage, code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
     const code = await bootstrap(
       ['--url', 'https://git.example/app.git'],
-      dependances({ console })
+      lesDependancesDuBootstrap({ console })
     );
 
     expect(code).toBe(2);
@@ -71,11 +71,14 @@ describe('bootstrap (ligne de commande)', () => {
     );
   });
 
-  test("affiche l'aide, avec des exemples, sans rien préparer", async () => {
+  it("affiche l'aide, avec des exemples, sans rien préparer", async () => {
     const git = new GitSimule();
     const console = new ConsoleEnMemoire();
 
-    const code = await bootstrap(['--help'], dependances({ git, console }));
+    const code = await bootstrap(
+      ['--help'],
+      lesDependancesDuBootstrap({ git, console })
+    );
 
     expect(code).toBe(0);
     expect(git.sousModulesInitialises).toBe(false);

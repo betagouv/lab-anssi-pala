@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
@@ -11,7 +11,9 @@ import {
   validate,
 } from '../../../src/codex-security/cli/validate.ts';
 
-function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
+const lesDependancesPourLaValidation = (
+  doubles: Partial<DependancesCli> = {}
+): DependancesCli => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     'outils/codex-security/codex-security.env':
       'LITELLM_MASTER_KEY=sk-local-jeton\n',
@@ -31,13 +33,13 @@ function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
     console: new ConsoleEnMemoire(),
     ...doubles,
   };
-}
+};
 
 describe('validate (ligne de commande)', () => {
-  test("exige --finding-file (erreur d'usage, code 2)", async () => {
+  it("exige --finding-file (erreur d'usage, code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
-    const code = await validate([], dependances({ console }));
+    const code = await validate([], lesDependancesPourLaValidation({ console }));
 
     expect(code).toBe(2);
     expect(console.erreurs.map((l) => l.message)[0]).toBe(
@@ -45,9 +47,9 @@ describe('validate (ligne de commande)', () => {
     );
   });
 
-  test("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
+  it("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
     const validation = new ValidationCodexSimulee();
-    const { systemeDeFichier } = dependances();
+    const { systemeDeFichier } = lesDependancesPourLaValidation();
     systemeDeFichier.ecritFichier(
       '/home/auditeur/findings/f1.json',
       '{"title":"Exemple de finding"}'
@@ -55,7 +57,7 @@ describe('validate (ligne de commande)', () => {
 
     const code = await validate(
       ['--finding-file', 'f1.json'],
-      dependances({
+      lesDependancesPourLaValidation({
         validation,
         systemeDeFichier,
         repertoireAppel: '/home/auditeur/findings',

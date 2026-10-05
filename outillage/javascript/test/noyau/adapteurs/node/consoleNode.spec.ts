@@ -1,11 +1,11 @@
 import { PassThrough } from 'node:stream';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleNode } from '../../../../src/noyau/adaptateurs/node/consoleNode.ts';
 
 const tubeFerme = () => Object.assign(new Error('write EPIPE'), { code: 'EPIPE' });
 
-describe('ConsoleNode', () => {
-  test("s'arrête proprement quand le lecteur de la sortie standard ferme le tube (ex. | head)", () => {
+describe('Console Node', () => {
+  it("s'arrête proprement quand le lecteur de la sortie standard ferme le tube (ex. | head)", () => {
     const sortie = new PassThrough();
     let arretee = false;
     new ConsoleNode({
@@ -18,7 +18,7 @@ describe('ConsoleNode', () => {
     expect(arretee).toBe(true);
   });
 
-  test("laisse remonter toute autre erreur d'écriture", () => {
+  it("laisse remonter toute autre erreur d'écriture", () => {
     const sortie = new PassThrough();
     let arretee = false;
     new ConsoleNode({

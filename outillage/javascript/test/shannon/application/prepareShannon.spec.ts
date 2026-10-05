@@ -1,10 +1,10 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { DepotShannonSimule } from '../../doubles/DepotShannonSimule.ts';
 import { PrepareShannon } from '../../../src/shannon/application/prepareShannon.ts';
 
-describe('PrepareShannon', () => {
-  test("applique les patchs locaux sur les sources de Shannon et l'annonce", async () => {
+describe('Prépare Shannon', () => {
+  it("applique les patchs locaux sur les sources de Shannon et l'annonce", async () => {
     const depot = new DepotShannonSimule({
       patchs: ['patches/bash-timeout-30s.patch'],
     });
@@ -18,7 +18,7 @@ describe('PrepareShannon', () => {
     ]);
   });
 
-  test("laisse un patch déjà appliqué (ou non applicable en l'état) et le signale", async () => {
+  it("laisse un patch déjà appliqué (ou non applicable en l'état) et le signale", async () => {
     const depot = new DepotShannonSimule({
       patchs: ['patches/bash-timeout-30s.patch'],
       dejaAppliques: ['patches/bash-timeout-30s.patch'],

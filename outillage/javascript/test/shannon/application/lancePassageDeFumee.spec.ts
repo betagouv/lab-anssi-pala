@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
@@ -11,29 +11,27 @@ import {
 } from '../../../src/shannon/application/lancePassageDeFumee.ts';
 
 // shannon.env renseigné (modèle servi par Albert) et CLI Shannon construite.
-function unDepotPret() {
-  return new SystemeDeFichierEnMemoire({
+const unDepotDeFichiersPret = () =>
+  new SystemeDeFichierEnMemoire({
     'outils/shannon/shannon.env':
       'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\nSHANNON_AI_API_KEY=cle\n',
     'outils/shannon/source/apps/cli/dist/index.mjs': '',
   });
-}
 
-function unPassage(doubles: Partial<Dependances> = {}) {
-  return new LancePassageDeFumee({
+const unPassage = (doubles: Partial<Dependances> = {}) =>
+  new LancePassageDeFumee({
     racine: '/depot',
     shannon: new ShannonSimule(),
     serveur: new ServeurCibleFumeeSimule(),
-    systemeDeFichier: unDepotPret(),
+    systemeDeFichier: unDepotDeFichiersPret(),
     horloge: new HorlogeFigee(new Date(1_790_000_000_000)),
     environnement: new EnvironnementEnMemoire(),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
-}
 
-describe('LancePassageDeFumee', () => {
-  test('sert la cible triviale sur 127.0.0.1:8080 puis y lance Shannon, décrit selon le fournisseur du modèle', async () => {
+describe('Lance Passage de fumée', () => {
+  it('sert la cible triviale sur 127.0.0.1:8080 puis y lance Shannon, décrit selon le fournisseur du modèle', async () => {
     const journal: string[] = [];
     const serveur = new ServeurCibleFumeeSimule(journal);
     const shannon = new ShannonSimule({
@@ -50,7 +48,7 @@ describe('LancePassageDeFumee', () => {
     });
   });
 
-  test('sert et vise le port demandé par SMOKE_PORT', async () => {
+  it('sert et vise le port demandé par SMOKE_PORT', async () => {
     const journal: string[] = [];
     const shannon = new ShannonSimule();
 
@@ -64,7 +62,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].url).toBe('http://host.docker.internal:9090');
   });
 
-  test('se contente par défaut des prompts minimaux de Shannon (pipeline de test)', async () => {
+  it('se contente par défaut des prompts minimaux de Shannon (pipeline de test)', async () => {
     const shannon = new ShannonSimule();
 
     await unPassage({ shannon }).execute();
@@ -72,7 +70,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].pipelineTesting).toBe(true);
   });
 
-  test('lance les vrais prompts, avec le vrai agent de rapport, quand SMOKE_REAL=1', async () => {
+  it('lance les vrais prompts, avec le vrai agent de rapport, quand SMOKE_REAL=1', async () => {
     const shannon = new ShannonSimule();
 
     await unPassage({
@@ -83,7 +81,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].pipelineTesting).toBe(false);
   });
 
-  test("ouvre un workspace neuf, nommé d'après le fournisseur et horodaté", async () => {
+  it("ouvre un workspace neuf, nommé d'après le fournisseur et horodaté", async () => {
     const shannon = new ShannonSimule();
 
     await unPassage({ shannon }).execute();
@@ -91,7 +89,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].workspace).toBe('albert-smoke-1790000000');
   });
 
-  test('reprend le workspace désigné par SMOKE_WORKSPACE', async () => {
+  it('reprend le workspace désigné par SMOKE_WORKSPACE', async () => {
     const shannon = new ShannonSimule();
 
     await unPassage({
@@ -104,7 +102,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].workspace).toBe('albert-smoke-1');
   });
 
-  test("transmet à Shannon l'environnement du shell complété par shannon.env", async () => {
+  it("transmet à Shannon l'environnement du shell complété par shannon.env", async () => {
     const shannon = new ShannonSimule();
 
     await unPassage({
@@ -119,10 +117,10 @@ describe('LancePassageDeFumee', () => {
     });
   });
 
-  test("exige un modèle désigné : aucun fournisseur n'est privilégié", async () => {
+  it("exige un modèle désigné : aucun fournisseur n'est privilégié", async () => {
     const serveur = new ServeurCibleFumeeSimule();
     const shannon = new ShannonSimule();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       'outils/shannon/shannon.env',
       'SHANNON_AI_API_KEY=cle\n'
@@ -137,9 +135,9 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements).toEqual([]);
   });
 
-  test('lance sans description pi un modèle que Shannon connaît nativement', async () => {
+  it('lance sans description pi un modèle que Shannon connaît nativement', async () => {
     const shannon = new ShannonSimule();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       'outils/shannon/shannon.env',
       'SHANNON_AI_MODEL=anthropic:claude-sonnet-4-6\n'
@@ -150,7 +148,7 @@ describe('LancePassageDeFumee', () => {
     expect(shannon.lancements[0].modelsConfig).toBeUndefined();
   });
 
-  test('arrête toujours la cible servie, même quand Shannon échoue', async () => {
+  it('arrête toujours la cible servie, même quand Shannon échoue', async () => {
     const serveur = new ServeurCibleFumeeSimule();
     const shannon = new ShannonSimule({ echec: new Error('Erreur Shannon') });
 
@@ -160,7 +158,7 @@ describe('LancePassageDeFumee', () => {
     expect(serveur.enService).toBe(false);
   });
 
-  test.each([
+  it.each([
     [
       'outils/shannon/shannon.env',
       'Fichier manquant : outils/shannon/shannon.env (depuis shannon.env.template)',
@@ -172,7 +170,7 @@ describe('LancePassageDeFumee', () => {
   ])('ne sert ni ne lance rien sans %s', async (absent, message) => {
     const serveur = new ServeurCibleFumeeSimule();
     const shannon = new ShannonSimule();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.delete(absent);
 
     await expect(

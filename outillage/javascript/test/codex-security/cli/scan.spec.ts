@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
@@ -9,7 +9,7 @@ import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoi
 import { scan } from '../../../src/codex-security/cli/scan.ts';
 
 describe('scan (ligne de commande)', () => {
-  test('transmet ses options telles quelles à codex-security scan et sort avec le statut du scan', async () => {
+  it('transmet ses options telles quelles à codex-security scan et sort avec le statut du scan', async () => {
     const cli = new CliCodexSecuritySimulee({ statutDuScan: 3 });
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       'outils/codex-security/codex-security.env':
@@ -42,7 +42,7 @@ describe('scan (ligne de commande)', () => {
     ]);
   });
 
-  test('affiche sa propre aide, avec les options ajoutées par défaut, sans lancer de scan', async () => {
+  it('affiche sa propre aide, avec les options ajoutées par défaut, sans lancer de scan', async () => {
     const cli = new CliCodexSecuritySimulee();
     const console = new ConsoleEnMemoire();
 

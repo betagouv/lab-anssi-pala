@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
@@ -13,7 +13,7 @@ import {
 
 const CIBLE = '/depot/cible/copies/app';
 
-function unDepotPret() {
+const unDepotDeFichiersPret = () => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     'outils/codex-security/codex-security.env':
       'ALBERT_API_KEY=cle-albert\nLITELLM_MASTER_KEY=sk-local-jeton\n',
@@ -24,13 +24,13 @@ function unDepotPret() {
   });
   systemeDeFichier.creeDossier(CIBLE);
   return systemeDeFichier;
-}
+};
 
-function unScan(doubles: Partial<Dependances> = {}) {
-  return new LanceScan({
+const unScanCodex = (doubles: Partial<Dependances> = {}) =>
+  new LanceScan({
     racine: '/depot',
     cli: new CliCodexSecuritySimulee(),
-    systemeDeFichier: unDepotPret(),
+    systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     environnement: new EnvironnementEnMemoire({ CODEX_TARGET: CIBLE }),
@@ -38,47 +38,46 @@ function unScan(doubles: Partial<Dependances> = {}) {
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
-}
 
-describe('LanceScan', () => {
-  test('refuse de scanner sans la CLI Codex Security', async () => {
+describe('Lance Scan Codex', () => {
+  it('refuse de scanner sans la CLI Codex Security', async () => {
     const cli = new CliCodexSecuritySimulee({ installee: false });
 
-    await expect(unScan({ cli }).execute({ options: [] })).rejects.toThrow(
+    await expect(unScanCodex({ cli }).execute({ options: [] })).rejects.toThrow(
       'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
     );
   });
 
-  test("refuse de scanner sans l'environnement du proxy", async () => {
-    const systemeDeFichier = unDepotPret();
+  it("refuse de scanner sans l'environnement du proxy", async () => {
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.delete('outils/codex-security/codex-security.env');
 
     await expect(
-      unScan({ systemeDeFichier }).execute({ options: [] })
+      unScanCodex({ systemeDeFichier }).execute({ options: [] })
     ).rejects.toThrow(
       'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm start-proxy)'
     );
   });
 
-  test('refuse de scanner sans cible désignée par CODEX_TARGET (aucune cible par défaut)', async () => {
+  it('refuse de scanner sans cible désignée par CODEX_TARGET (aucune cible par défaut)', async () => {
     const environnement = new EnvironnementEnMemoire({});
 
-    await expect(unScan({ environnement }).execute({ options: [] })).rejects.toThrow(
+    await expect(unScanCodex({ environnement }).execute({ options: [] })).rejects.toThrow(
       'CODEX_TARGET non défini : indiquer la cible, ex. CODEX_TARGET="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
     );
   });
 
-  test('refuse de scanner une cible absente du disque', async () => {
+  it('refuse de scanner une cible absente du disque', async () => {
     const environnement = new EnvironnementEnMemoire({
       CODEX_TARGET: '/depot/cible/copies/absente',
     });
 
-    await expect(unScan({ environnement }).execute({ options: [] })).rejects.toThrow(
+    await expect(unScanCodex({ environnement }).execute({ options: [] })).rejects.toThrow(
       'Cible manquante : /depot/cible/copies/absente (cloner via pnpm bootstrap --project <nom> --url <git-url>)'
     );
   });
 
-  test('refuse de scanner quand le proxy LiteLLM ne répond pas sur son port', async () => {
+  it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son port', async () => {
     const reseau = new ReseauSimule([false]);
     const environnement = new EnvironnementEnMemoire({
       CODEX_TARGET: CIBLE,
@@ -86,7 +85,7 @@ describe('LanceScan', () => {
     });
 
     await expect(
-      unScan({ reseau, environnement }).execute({ options: [] })
+      unScanCodex({ reseau, environnement }).execute({ options: [] })
     ).rejects.toThrow(
       'Proxy LiteLLM injoignable sur 127.0.0.1:4100 (lancer pnpm start-proxy)'
     );
@@ -95,11 +94,11 @@ describe('LanceScan', () => {
     ]);
   });
 
-  test("scanne la cible avec la config par défaut, en transmettant les options de l'utilisateur", async () => {
+  it("scanne la cible avec la config par défaut, en transmettant les options de l'utilisateur", async () => {
     const cli = new CliCodexSecuritySimulee();
     const console = new ConsoleEnMemoire();
 
-    await unScan({ cli, console }).execute({
+    await unScanCodex({ cli, console }).execute({
       options: ['--verbose', '--mode', 'deep'],
     });
 
@@ -116,9 +115,9 @@ describe('LanceScan', () => {
     ]);
   });
 
-  test('CODEX_CONFIG impose la configuration du scan', async () => {
+  it('CODEX_CONFIG impose la configuration du scan', async () => {
     const cli = new CliCodexSecuritySimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.set(
       '/configs/ciblee.yaml',
       'codex:\n  model: glm-5.2\n  model_provider: scaleway\n'
@@ -128,32 +127,32 @@ describe('LanceScan', () => {
       CODEX_CONFIG: '/configs/ciblee.yaml',
     });
 
-    await unScan({ cli, systemeDeFichier, environnement }).execute({ options: [] });
+    await unScanCodex({ cli, systemeDeFichier, environnement }).execute({ options: [] });
 
     expect(cli.scans[0].config).toBe('/configs/ciblee.yaml');
   });
 
-  test('sort dans un dossier horodaté privé, avec le log écrit à côté (Codex exige une sortie vide)', async () => {
+  it('sort dans un dossier horodaté privé, avec le log écrit à côté (Codex exige une sortie vide)', async () => {
     const cli = new CliCodexSecuritySimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
     const console = new ConsoleEnMemoire();
     const sortie = '/depot/resultats/brut/codex-security/scan-20260930-140509';
 
-    await unScan({ cli, systemeDeFichier, console }).execute({ options: [] });
+    await unScanCodex({ cli, systemeDeFichier, console }).execute({ options: [] });
 
     expect(cli.scans[0]).toMatchObject({ sortie, journal: `${sortie}.stdout.log` });
     expect(systemeDeFichier.dossiersPrives).toContain(sortie);
     expect(console.lignes.map((l) => l.message)[2]).toBe(`Sortie : ${sortie}`);
   });
 
-  test('CODEX_OUTPUT impose la sortie, sans y placer le log même avec un / final', async () => {
+  it('CODEX_OUTPUT impose la sortie, sans y placer le log même avec un / final', async () => {
     const cli = new CliCodexSecuritySimulee();
     const environnement = new EnvironnementEnMemoire({
       CODEX_TARGET: CIBLE,
       CODEX_OUTPUT: '/tmp/scan-a/',
     });
 
-    await unScan({ cli, environnement }).execute({ options: [] });
+    await unScanCodex({ cli, environnement }).execute({ options: [] });
 
     expect(cli.scans[0]).toMatchObject({
       sortie: '/tmp/scan-a',
@@ -161,7 +160,7 @@ describe('LanceScan', () => {
     });
   });
 
-  test('ne transmet à Codex que le jeton local du proxy, jamais une clé OpenAI', async () => {
+  it('ne transmet à Codex que le jeton local du proxy, jamais une clé OpenAI', async () => {
     const cli = new CliCodexSecuritySimulee();
     const environnement = new EnvironnementEnMemoire({
       CODEX_TARGET: CIBLE,
@@ -169,7 +168,7 @@ describe('LanceScan', () => {
       OPENAI_API_KEY: 'sk-openai',
     });
 
-    await unScan({ cli, environnement }).execute({ options: [] });
+    await unScanCodex({ cli, environnement }).execute({ options: [] });
 
     const transmis = cli.scans[0].environnement;
     expect(transmis).toMatchObject({
@@ -180,11 +179,11 @@ describe('LanceScan', () => {
     expect(transmis).not.toHaveProperty('OPENAI_API_KEY');
   });
 
-  test("isole l'identité et l'historique de Codex dans des dossiers privés, et désigne le script d'artefacts", async () => {
+  it("isole l'identité et l'historique de Codex dans des dossiers privés, et désigne le script d'artefacts", async () => {
     const cli = new CliCodexSecuritySimulee();
-    const systemeDeFichier = unDepotPret();
+    const systemeDeFichier = unDepotDeFichiersPret();
 
-    await unScan({ cli, systemeDeFichier }).execute({ options: [] });
+    await unScanCodex({ cli, systemeDeFichier }).execute({ options: [] });
 
     expect(cli.scans[0].environnement).toMatchObject({
       CODEX_HOME: '/depot/outils/codex-security/codex-home',
@@ -201,10 +200,10 @@ describe('LanceScan', () => {
     );
   });
 
-  test('estime le coût du scan à partir de son log, avec le modèle et le fournisseur de la config', async () => {
+  it('estime le coût du scan à partir de son log, avec le modèle et le fournisseur de la config', async () => {
     const estimation = new EstimationDuCoutSimulee();
 
-    await unScan({ estimation }).execute({ options: [] });
+    await unScanCodex({ estimation }).execute({ options: [] });
 
     expect(estimation.releves).toEqual([
       {
@@ -217,12 +216,12 @@ describe('LanceScan', () => {
     ]);
   });
 
-  test("renvoie le statut du scan même quand l'estimation du coût échoue", async () => {
+  it("renvoie le statut du scan même quand l'estimation du coût échoue", async () => {
     const cli = new CliCodexSecuritySimulee({ statutDuScan: 3 });
     const console = new ConsoleEnMemoire();
     const estimation = new EstimationDuCoutSimulee({ console });
 
-    const statut = await unScan({ cli, estimation, console }).execute(
+    const statut = await unScanCodex({ cli, estimation, console }).execute(
       { options: [] },
       () => {
         throw new Error('Fichier introuvable : scan.stdout.log');
@@ -235,10 +234,10 @@ describe('LanceScan', () => {
     ]);
   });
 
-  test("suit par défaut les consignes de scan du dépôt, sans lesquelles DeepSeek n'écrit pas findings.json", async () => {
+  it("suit par défaut les consignes de scan du dépôt, sans lesquelles DeepSeek n'écrit pas findings.json", async () => {
     const cli = new CliCodexSecuritySimulee();
 
-    await unScan({ cli }).execute({ options: ['--dry-run'] });
+    await unScanCodex({ cli }).execute({ options: ['--dry-run'] });
 
     expect(cli.scans[0].options).toEqual(
       expect.arrayContaining([
@@ -248,18 +247,18 @@ describe('LanceScan', () => {
     );
   });
 
-  test("demande par défaut un log bavard, dont le relevé TOKENS permet d'estimer le coût", async () => {
+  it("demande par défaut un log bavard, dont le relevé TOKENS permet d'estimer le coût", async () => {
     const cli = new CliCodexSecuritySimulee();
 
-    await unScan({ cli }).execute({ options: [] });
+    await unScanCodex({ cli }).execute({ options: [] });
 
     expect(cli.scans[0].options).toContain('--verbose');
   });
 
-  test("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {
+  it("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {
     const cli = new CliCodexSecuritySimulee();
 
-    await unScan({ cli }).execute({
+    await unScanCodex({ cli }).execute({
       options: ['--scan-prompt-file=/mes-consignes.md'],
     });
 
