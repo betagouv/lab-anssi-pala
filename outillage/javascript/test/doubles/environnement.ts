@@ -15,16 +15,18 @@ export const ENVIRONNEMENT_SHANNON: EnvironnementShannon = {
 };
 
 export const ENVIRONNEMENT_PROXY: EnvironnementProxy = {
-  ALBERT_API_KEY: 'cle-albert',
-  ALBERT_BASE_URL: 'https://albert.example/v1',
+  FOURNISSEUR_NOM: 'albert',
+  FOURNISSEUR_API_KEY: 'cle-fournisseur',
+  FOURNISSEUR_BASE_URL: 'https://fournisseur.example/v1',
   LITELLM_MASTER_KEY: 'sk-local-neuf',
   CODEX_API_KEY: 'sk-local-neuf',
   image: 'image',
 };
 
 export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
-  apiKey: 'clef-albert',
-  url: 'http://albert.local',
+  nom: 'albert',
+  apiKey: 'clef-fournisseur',
+  url: 'http://fournisseur.local',
 };
 
 export const ENVIRONNEMENT_CODEX_SECURITY: EnvironnementCodexSecurity = {

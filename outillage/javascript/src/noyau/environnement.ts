@@ -23,16 +23,17 @@ export type EnvironnementCodexSecurity = {
 };
 
 export type EnvironnementProxy = {
-  ALBERT_API_KEY: string;
-  ALBERT_BASE_URL: string;
+  FOURNISSEUR_NOM: string;
+  FOURNISSEUR_API_KEY: string;
+  FOURNISSEUR_BASE_URL: string;
   CODEX_API_KEY: string;
   LITELLM_MASTER_KEY: string;
-  SCALEWAY_DEEPSEEK_API_KEY?: string;
   image: string;
   urlBaseDeDonnees?: string;
 };
 
 export type EnvironnementFournisseur = {
+  nom: string;
   apiKey: string;
   url: string;
 };
@@ -42,7 +43,6 @@ type Environnement = {
   pourShannon: () => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
   fournisseur: () => EnvironnementFournisseur;
-  SCALEWAY_DEEPSEEK_API_KEY?: string;
   verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier): void;
 };
 
@@ -70,12 +70,10 @@ const variablesCodexSecurity = {
 };
 export const environnement: Environnement = {
   path: process.env.PATH!,
-  ...(process.env.SCALEWAY_DEEPSEEK_API_KEY && {
-    SCALEWAY_DEEPSEEK_API_KEY: process.env.SCALEWAY_DEEPSEEK_API_KEY,
-  }),
   fournisseur: (): EnvironnementFournisseur => ({
-    apiKey: process.env.ALBERT_API_KEY || '',
-    url: process.env.ALBERT_BASE_URL || '',
+    nom: process.env.FOURNISSEUR_NOM || '',
+    apiKey: process.env.FOURNISSEUR_API_KEY || '',
+    url: process.env.FOURNISSEUR_BASE_URL || '',
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
   pourShannon: (): EnvironnementShannon => ({

@@ -21,7 +21,7 @@ const CONFIG_PAR_DEFAUT = '/depot/outils/codex-security/configs/config-defaut.ya
 const unDepotDeFichiersPret = () => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     'outils/codex-security/codex-security.env':
-      'ALBERT_API_KEY=cle-albert\nLITELLM_MASTER_KEY=sk-local-jeton\n',
+      'FOURNISSEUR_API_KEY=cle-fournisseur\nLITELLM_MASTER_KEY=sk-local-jeton\n',
     '/depot/outils/codex-security/configs/config-defaut.yaml':
       'codex:\n  model: deepseek-v4-flash-albert\n  model_provider: albert\n',
     '/depot/resultats/brut/codex-security/scan-20260930-140509.stdout.log':

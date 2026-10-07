@@ -3,7 +3,7 @@
 # Scan minimal : mode standard, périmètre réduit, DeepSeek V4 Flash (Scaleway) via le proxy LiteLLM.
 # Même configuration que albert-minimal.yaml, hors modèle et fournisseur ; les paramètres
 # d'échantillonnage (max_tokens 16384, temperature, top_p, presence_penalty) sont imposés par le
-# proxy (litellm/config.yaml), la clé Scaleway y reste.
+# proxy (litellm/config.yaml), la clé du fournisseur y reste (FOURNISSEUR_NOM=scaleway dans le .env).
 # Fichier de configuration de confiance (même autorité que les options CLI) : il choisit
 # la destination des appels modèle. Voir source/docs/project-configuration.md.
 #

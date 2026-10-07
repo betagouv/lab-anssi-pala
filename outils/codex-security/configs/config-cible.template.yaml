@@ -5,11 +5,11 @@
 # scanné). Aucun secret ici : la clé arrive par l'environnement (env_key), la config peut être
 # versionnée. Voir source/docs/project-configuration.md.
 #
-# Modèle par défaut : DeepSeek V4 Flash servi par Albert (fonctionne avec la seule clé Albert ;
-# tool_choice auto est forcé par le proxy). Pour DeepSeek chez Scaleway (souvent plus rapide,
-# cache actif), basculer sur le bloc « scaleway_deepseek » commenté plus bas et renseigner
-# SCALEWAY_DEEPSEEK_API_KEY dans le .env racine. gpt-oss-120b est déconseillé (n'écrit pas les
-# artefacts du scan).
+# Modèle par défaut : DeepSeek V4 Flash servi par Albert (FOURNISSEUR_NOM=albert ; tool_choice
+# auto est forcé par le proxy). Pour DeepSeek chez Scaleway (souvent plus rapide, cache actif),
+# basculer sur le bloc « scaleway_deepseek » commenté plus bas, avec FOURNISSEUR_NOM=scaleway et
+# FOURNISSEUR_BASE_URL/FOURNISSEUR_API_KEY de Scaleway dans le .env racine. gpt-oss-120b est
+# déconseillé (n'écrit pas les artefacts du scan).
 auth: api-key
 scan:
   mode: standard

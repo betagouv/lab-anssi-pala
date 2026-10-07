@@ -1,17 +1,20 @@
 # Proxy LiteLLM : expose l'API Responses d'OpenAI (/v1/responses), seule API que parle
 # Codex (>= 0.1xx : `wire_api = "chat"` n'est plus supporté), et la traduit vers
-# /v1/chat/completions d'Albert, qui n'expose pas /v1/responses (404).
+# /v1/chat/completions du fournisseur (FOURNISSEUR_BASE_URL), qui n'expose pas /v1/responses
+# pour ces modèles (404 chez Albert, 422 chez Scaleway).
 #
 # Lancé par outillage/bash/codex-security/start-proxy.sh, exposé sur 127.0.0.1 uniquement.
-# La clé Albert reste dans le proxy ; Codex ne connaît que LITELLM_MASTER_KEY (jeton local).
+# La clé du fournisseur (FOURNISSEUR_API_KEY) reste dans le proxy ; Codex ne connaît que
+# LITELLM_MASTER_KEY (jeton local). Chaque entrée porte l'identifiant du modèle chez son
+# fournisseur : choisir dans la config Codex celle qui correspond à FOURNISSEUR_NOM.
 model_list:
   - model_name: gpt-oss-120b
     litellm_params:
       # Préfixe hosted_vllm/ : Albert est servi par vLLM ; l'alias Albert est openai/gpt-oss-120b.
       model: hosted_vllm/openai/gpt-oss-120b
-      api_base: os.environ/ALBERT_BASE_URL
-      api_key: os.environ/ALBERT_API_KEY
-      # Sans cette option, LiteLLM relaie tel quel vers /v1/responses d'Albert (404).
+      api_base: os.environ/FOURNISSEUR_BASE_URL
+      api_key: os.environ/FOURNISSEUR_API_KEY
+      # Sans cette option, LiteLLM relaie tel quel vers /v1/responses du fournisseur (404 chez Albert).
       use_chat_completions_api: true
       timeout: 600
       # Albert (DINUM) : service gratuit -> coût nul, ne consomme jamais le budget.
@@ -21,8 +24,8 @@ model_list:
     litellm_params:
       # Scaleway (API compatible OpenAI) : /v1/responses n'y est servi que pour gpt-oss-120b.
       model: hosted_vllm/deepseek-v4-flash-0731
-      api_base: https://api.scaleway.ai/fcbbc9c9-62a8-49f0-a5b9-606a62ecf9d8/v1
-      api_key: os.environ/SCALEWAY_DEEPSEEK_API_KEY
+      api_base: os.environ/FOURNISSEUR_BASE_URL
+      api_key: os.environ/FOURNISSEUR_API_KEY
       use_chat_completions_api: true
       timeout: 600
       # Paramètres d'échantillonnage imposés par le proxy : Codex ne sait pas les transmettre.
@@ -39,8 +42,8 @@ model_list:
     litellm_params:
       # DeepSeek V4 Flash servi par Albert (vLLM) ; alias Albert deepseek-ai/DeepSeek-V4-Flash-0731.
       model: hosted_vllm/deepseek-ai/DeepSeek-V4-Flash-0731
-      api_base: os.environ/ALBERT_BASE_URL
-      api_key: os.environ/ALBERT_API_KEY
+      api_base: os.environ/FOURNISSEUR_BASE_URL
+      api_key: os.environ/FOURNISSEUR_API_KEY
       use_chat_completions_api: true
       timeout: 600
       # Albert (vLLM) n'appelle les outils que si tool_choice est explicite : sans cela,
