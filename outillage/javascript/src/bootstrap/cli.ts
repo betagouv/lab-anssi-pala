@@ -18,7 +18,7 @@ Exemples :
   pnpm bootstrap --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
 
 Après le bootstrap, les outils ciblent la copie cible/copies/<nom> (rappel en fin d'exécution) :
-CODEX_TARGET pour Codex Security ; pour Shannon, pnpm shannon --project <nom> l'utilise par défaut.`;
+CIBLE pour Codex Security ; pour Shannon, pnpm shannon --project <nom> l'utilise par défaut.`;
 
 export async function bootstrap(
   argv: string[],

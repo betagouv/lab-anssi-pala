@@ -101,16 +101,16 @@ export class PrepareEnvironnement {
   }
 
   #rappelleCommentCibler(cible: Cible): void {
-    const codexTarget = `CODEX_TARGET="$PWD/${cible.copieDeTravail}"`;
+    const variableCible = `CIBLE="$PWD/${cible.copieDeTravail}"`;
     this.#console.aLaLigne('');
     this.#console.aLaLigne(`==> Cible prête : ${cible.copieDeTravail}`, 'VERT');
     this.#console.aLaLigne(`    Codex Security :`, 'BLEU');
     this.#console.aLaLigne(
-      `       Pour un scan par défaut : ${codexTarget} pnpm scan`,
+      `       Pour un scan par défaut : ${variableCible} pnpm scan`,
       'BLEU'
     );
     this.#console.aLaLigne(
-      `       Pour un scan avec configuration : ${codexTarget} CODEX_CONFIG="$PWD/outils/codex-security/configs/<fichier_config>.yaml" pnpm scan`,
+      `       Pour un scan avec configuration : ${variableCible} CONFIG="$PWD/outils/codex-security/configs/<fichier_config>.yaml" pnpm scan`,
       'BLEU'
     );
     this.#console.aLaLigne(

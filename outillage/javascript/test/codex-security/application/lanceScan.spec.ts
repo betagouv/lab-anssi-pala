@@ -71,14 +71,14 @@ describe('Lance Scan Codex', () => {
   });
 
   // TODO: la cible n’est pas une variable elle doit être calculée
-  it.skip('refuse de scanner sans cible désignée par CODEX_TARGET (aucune cible par défaut)', async () => {
+  it.skip('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       // cible: undefined,
     });
 
     await expect(unScanCodex().execute({ options: [] })).rejects.toThrow(
-      'CODEX_TARGET non défini : indiquer la cible, ex. CODEX_TARGET="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
+      'CIBLE non défini : indiquer la cible, ex. CIBLE="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
     );
   });
 

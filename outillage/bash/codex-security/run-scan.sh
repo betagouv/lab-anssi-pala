@@ -2,20 +2,20 @@
 # Lance un scan Codex Security sur une copie de la cible, via le proxy LiteLLM local
 # (voir start-proxy.sh, à lancer d'abord). Modèle par défaut : DeepSeek servi par Albert.
 #
-# Usage : CODEX_TARGET=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh [options…]
-#   ex. : CODEX_TARGET=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh --dry-run
+# Usage : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh [options…]
+#   ex. : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh --dry-run
 # Variables :
-#   CODEX_TARGET  dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
-#   CODEX_CONFIG  fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
+#   CIBLE         dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
+#   CONFIG        fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
 #                 pour un scan ciblé, copier configs/config-cible.template.yaml et y fixer scope.paths)
-#   CODEX_OUTPUT  dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
-#   LITELLM_PORT  port du proxy (défaut 4000 ; doit correspondre à base_url dans CODEX_CONFIG)
+#   SORTIE        dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
+#   LITELLM_PORT  port du proxy (défaut 4000 ; doit correspondre à base_url dans CONFIG)
 set -euo pipefail
 
 # shellcheck source=env-runtime.sh
 . "$(dirname "${BASH_SOURCE[0]}")/env-runtime.sh"
 
-sortie="${CODEX_OUTPUT:-$racine/resultats/brut/codex-security/scan-$(date +%Y%m%d-%H%M%S)}"
+sortie="${SORTIE:-$racine/resultats/brut/codex-security/scan-$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$sortie"
 chmod 700 "$sortie"
 # Le log est écrit À CÔTÉ du dossier de sortie (jamais dedans) : Codex Security exige un

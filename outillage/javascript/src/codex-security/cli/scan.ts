@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { type Dependances, LanceScan } from '../application/lanceScan.ts';
 
-const AIDE = `Usage : CODEX_TARGET="$PWD/cible/copies/<nom>" [CODEX_CONFIG=…] pnpm scan [options de codex-security scan…]
+const AIDE = `Usage : CIBLE="$PWD/cible/copies/<nom>" [CONFIG=…] pnpm scan [options de codex-security scan…]
 
 Lance un scan Codex Security sur la copie de travail de la cible, via le proxy LiteLLM local
 (pnpm start-proxy d'abord), puis en estime le coût.
@@ -19,9 +19,9 @@ Toutes les autres options sont transmises telles quelles à codex-security scan 
 --mode deep, --path…) ; liste : outils/codex-security/node_modules/.bin/codex-security scan --help
 
 Variables :
-  CODEX_TARGET  dépôt à scanner (obligatoire ; cloné par pnpm bootstrap dans cible/copies/<nom>)
-  CODEX_CONFIG  configuration (défaut configs/config-defaut.yaml ; scan ciblé : copier config-cible.template.yaml)
-  CODEX_OUTPUT  dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
+  CIBLE         dépôt à scanner (obligatoire ; cloné par pnpm bootstrap dans cible/copies/<nom>)
+  CONFIG        configuration (défaut configs/config-defaut.yaml ; scan ciblé : copier config-cible.template.yaml)
+  SORTIE        dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
   LITELLM_PORT  port du proxy (défaut 4000)`;
 
 export async function scan(

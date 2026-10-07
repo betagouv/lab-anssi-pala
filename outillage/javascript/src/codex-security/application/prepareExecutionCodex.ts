@@ -86,9 +86,10 @@ export class PrepareExecutionCodex {
       );
     }
     const cible = environnement.pourCodexSecurity().cible;
+
     if (!cible) {
       throw new Error(
-        'CODEX_TARGET non défini : indiquer la cible, ex. CODEX_TARGET="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
+        'CIBLE non défini : indiquer la cible, ex. CIBLE="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
       );
     }
     if (!this.#systemeDeFichier.existe(cible)) {

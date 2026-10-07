@@ -150,8 +150,8 @@ describe('Prépare l’environnement', () => {
       '',
       '==> Cible prête : cible/copies/app',
       '    Codex Security :',
-      '       Pour un scan par défaut : CODEX_TARGET="$PWD/cible/copies/app" pnpm scan',
-      '       Pour un scan avec configuration : CODEX_TARGET="$PWD/cible/copies/app" CODEX_CONFIG="$PWD/outils/codex-security/configs/<fichier_config>.yaml" pnpm scan',
+      '       Pour un scan par défaut : CIBLE="$PWD/cible/copies/app" pnpm scan',
+      '       Pour un scan avec configuration : CIBLE="$PWD/cible/copies/app" CONFIG="$PWD/outils/codex-security/configs/<fichier_config>.yaml" pnpm scan',
       '    Shannon        : pnpm shannon --project app --url <url-app> --config <fichier>',
     ]);
   });

@@ -3,7 +3,7 @@
 #   - installe la CLI publiée sur npm, à la version figée dans package-lock.json.
 #
 # La cible à scanner n'est plus préparée ici : le bootstrap racine clone la cible dans
-# cible/copies/<nom> (avec .git), utilisable directement comme CODEX_TARGET. Codex Security
+# cible/copies/<nom> (avec .git), utilisable directement comme CIBLE. Codex Security
 # exige une sortie hors du dépôt Git englobant la cible : la copie porte son propre .git et
 # resultats/ est en dehors, la contrainte est donc satisfaite.
 set -euo pipefail

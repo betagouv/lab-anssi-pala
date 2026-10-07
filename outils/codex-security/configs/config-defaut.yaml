@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../node_modules/@openai/codex-security/schemas/project-config.schema.json
 #
-# Config PAR DÉFAUT de outillage/bash/codex-security/run-scan.sh (utilisée quand CODEX_CONFIG n'est pas fourni).
+# Config PAR DÉFAUT de outillage/bash/codex-security/run-scan.sh (utilisée quand CONFIG n'est pas fourni).
 # DeepSeek V4 Flash servi par Albert (fonctionne avec la seule clé Albert ; le proxy force
 # tool_choice auto). gpt-oss-120b n'est plus le défaut : il n'écrit pas les artefacts du scan.
 #
 # Pas de scope : le DÉPÔT ENTIER est scanné (peut être long/coûteux). Pour un scan ciblé et rapide,
-# copier configs/config-cible.template.yaml, y fixer scope.paths, et passer CODEX_CONFIG.
+# copier configs/config-cible.template.yaml, y fixer scope.paths, et passer CONFIG.
 # Aucun secret ici (clé via env_key) ; voir source/docs/project-configuration.md.
 auth: api-key
 scan:

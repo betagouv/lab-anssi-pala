@@ -35,7 +35,7 @@ Exemples :
   bash outillage/bash/bootstrap.sh --project cible-exemple --url https://github.com/betagouv/cible-exemple.git --branch main
 
 Après le bootstrap, les outils ciblent la copie cible/copies/<nom> (rappel en fin d'exécution) :
-CODEX_TARGET pour Codex Security ; pour Shannon, outillage/bash/shannon/run-shannon.sh --project <nom> l'utilise par défaut.
+CIBLE pour Codex Security ; pour Shannon, outillage/bash/shannon/run-shannon.sh --project <nom> l'utilise par défaut.
 USAGE
 }
 
@@ -101,6 +101,6 @@ echo "    ainsi que les configs Shannon remplies, depuis outils/shannon/configs/
 if [ -n "$projet" ]; then
   echo
   echo "==> Cible prête : cible/copies/$projet"
-  echo "    Codex Security : CODEX_TARGET=\"\$PWD/cible/copies/$projet\""
+  echo "    Codex Security : CIBLE=\"\$PWD/cible/copies/$projet\""
   echo "    Shannon        : bash outillage/bash/shannon/run-shannon.sh --project $projet --url <url-app> --config <fichier>"
 fi

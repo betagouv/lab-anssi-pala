@@ -5,14 +5,14 @@
 #
 # Usage :
 #   bash outillage/bash/codex-security/validate.sh --finding-file <finding.json>
-# Variables : CODEX_TARGET, CODEX_CONFIG, LITELLM_PORT (voir env-runtime.sh),
-#             CODEX_OUTPUT (défaut resultats/brut/codex-security/validate-<horodatage>, doit être vide)
+# Variables : CIBLE, CONFIG, LITELLM_PORT (voir env-runtime.sh),
+#             SORTIE (défaut resultats/brut/codex-security/validate-<horodatage>, doit être vide)
 set -euo pipefail
 
 # shellcheck source=env-runtime.sh
 . "$(dirname "${BASH_SOURCE[0]}")/env-runtime.sh"
 
-sortie="${CODEX_OUTPUT:-$racine/resultats/brut/codex-security/validate-$(date +%Y%m%d-%H%M%S)}"
+sortie="${SORTIE:-$racine/resultats/brut/codex-security/validate-$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$sortie"
 chmod 700 "$sortie"
 
