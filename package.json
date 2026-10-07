@@ -17,9 +17,9 @@
     "start-proxy": "node outillage/javascript/src/composition/start-proxy.ts",
     "scan": "node outillage/javascript/src/composition/scan.ts",
     "validate": "node outillage/javascript/src/composition/validate.ts",
-    "shannon": "node outillage/javascript/src/composition/shannon.ts",
-    "shannon-smoke": "node outillage/javascript/src/composition/shannon-smoke.ts",
-    "check-tool-calls": "node outillage/javascript/src/composition/check-tool-calls.ts"
+    "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
+    "shannon-smoke": "node --require dotenv/config outillage/javascript/src/composition/shannon-smoke.ts",
+    "check-tool-calls": "node --require dotenv/config outillage/javascript/src/composition/check-tool-calls.ts"
   },
   "dependencies": {
     "commander": "^15.0.0",
