@@ -1,7 +1,9 @@
 # Albert API
 
 - Endpoint : `https://albert.api.etalab.gouv.fr/v1`
-- Authentification : `Authorization: Bearer ${ALBERT_API_KEY}` (clé non documentée ici, voir `.env` local).
+- Configuration (`.env` racine) : `FOURNISSEUR_NOM=albert`,
+  `FOURNISSEUR_BASE_URL=https://albert.api.etalab.gouv.fr/v1`, `FOURNISSEUR_API_KEY=<clé Albert>`.
+- Authentification : `Authorization: Bearer ${FOURNISSEUR_API_KEY}` (clé non documentée ici, voir `.env` local).
 
 ## GET /v1/models
 
@@ -32,10 +34,10 @@ Requête de test (clé masquée) :
 
 ```bash
 curl -s \
-  -H "Authorization: Bearer $ALBERT_API_KEY" \
+  -H "Authorization: Bearer $FOURNISSEUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model":"openai/gpt-oss-120b","messages":[{"role":"user","content":"Réponds uniquement OK."}],"max_tokens":200}' \
-  https://albert.api.etalab.gouv.fr/v1/chat/completions
+  "$FOURNISSEUR_BASE_URL/chat/completions"
 ```
 
 Réponse (extrait) : `{"content":"OK", ..., "finish_reason":"stop"}`.
