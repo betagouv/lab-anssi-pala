@@ -4,19 +4,18 @@
 import { join } from 'node:path';
 import { parseEnv } from 'node:util';
 import type { Console } from '../../noyau/ports/Console.ts';
-import type { Environnement } from '../../noyau/ports/Environnement.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { DescriptionPi } from '../domaine/DescriptionPi.ts';
 import { jugeAppelOutil, MESSAGES_SONDE } from '../domaine/SondeAppelsOutils.ts';
 import { SpecModele } from '../domaine/SpecModele.ts';
 import type { ApiChat } from '../ports/ApiChat.ts';
+import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = {
   // Racine absolue du dépôt d'audit.
   racine: string;
   apiChat: ApiChat;
   systemeDeFichier: SystemeDeFichier;
-  environnement: Environnement;
   console: Console;
 };
 
@@ -31,20 +30,12 @@ export class VerifieAppelsOutils {
   readonly #racine: string;
   readonly #apiChat: ApiChat;
   readonly #systemeDeFichier: SystemeDeFichier;
-  readonly #environnement: Environnement;
   readonly #console: Console;
 
-  constructor({
-    racine,
-    apiChat,
-    systemeDeFichier,
-    environnement,
-    console,
-  }: Dependances) {
+  constructor({ racine, apiChat, systemeDeFichier, console }: Dependances) {
     this.#racine = racine;
     this.#apiChat = apiChat;
     this.#systemeDeFichier = systemeDeFichier;
-    this.#environnement = environnement;
     this.#console = console;
   }
 
@@ -59,7 +50,7 @@ export class VerifieAppelsOutils {
   }): Promise<number> {
     const variables = this.#variables();
     const destinataire = this.#destinataire(variables, modele, modelsConfig);
-    const essais = Number(variables.RUNS || '5');
+    const essais = environnement.pourShannon().nombreEssais;
     this.#console.aLaLigne(
       `Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`,
       'BLEU'
@@ -85,7 +76,6 @@ export class VerifieAppelsOutils {
   #variables(): Record<string, string | undefined> {
     const envShannon = 'outils/shannon/shannon.env';
     return {
-      ...this.#environnement.variables(),
       ...(this.#systemeDeFichier.existe(envShannon) &&
         parseEnv(this.#systemeDeFichier.lit(envShannon))),
     };
@@ -97,12 +87,14 @@ export class VerifieAppelsOutils {
     modeleImpose?: string,
     modelsConfig?: string
   ): Destinataire {
-    const cle = variables.SHANNON_AI_API_KEY;
+    const cle = environnement.pourShannon().apiKey;
     if (!cle)
       throw new Error(
         'Clé absente : définir SHANNON_AI_API_KEY (outils/shannon/shannon.env ou environnement).'
       );
-    const modele = SpecModele.exigee(modeleImpose || variables.SHANNON_AI_MODEL);
+    const modele = SpecModele.exigee(
+      modeleImpose || environnement.pourShannon().model
+    );
     return {
       url: this.#urlDuFournisseur(modele, modelsConfig),
       cle,

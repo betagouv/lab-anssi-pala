@@ -1,12 +1,19 @@
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiChatSimulee } from '../../doubles/ApiChatSimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { checkToolCalls } from '../../../src/shannon/cli/check-tool-calls.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import { ENVIRONNEMENT_SHANNON } from '../../doubles/environnement.ts';
 
 describe('check-tool-calls (ligne de commande)', () => {
-  test("vérifie le modèle et la description pi désignés (chemin relatif au répertoire d'appel)", async () => {
+  beforeEach(() => {
+    environnement.pourShannon = () => ({
+      ...ENVIRONNEMENT_SHANNON,
+    });
+  });
+
+  it("vérifie le modèle fourni en paramètre et la description pi désignés (chemin relatif au répertoire d'appel)", async () => {
     const apiChat = new ApiChatSimulee();
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       '/home/auditeur/modeles.json': JSON.stringify({
@@ -26,10 +33,6 @@ describe('check-tool-calls (ligne de commande)', () => {
         repertoireAppel: '/home/auditeur',
         apiChat,
         systemeDeFichier,
-        environnement: new EnvironnementEnMemoire({
-          RUNS: '1',
-          SHANNON_AI_API_KEY: 'cle',
-        }),
         console: new ConsoleEnMemoire(),
       }
     );

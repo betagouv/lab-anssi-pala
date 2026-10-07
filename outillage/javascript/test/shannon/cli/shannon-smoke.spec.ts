@@ -1,17 +1,20 @@
 import { describe, expect, test } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ServeurCibleFumeeSimule } from '../../doubles/ServeurCibleFumeeSimule.ts';
 import { ShannonSimule } from '../../doubles/ShannonSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { shannonSmoke } from '../../../src/shannon/cli/shannon-smoke.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import { ENVIRONNEMENT_SHANNON } from '../../doubles/environnement.ts';
 
 describe('shannon-smoke (ligne de commande)', () => {
   test('sort avec le statut du passage de fumée', async () => {
+    environnement.pourShannon = () => ({ ...ENVIRONNEMENT_SHANNON });
+
     const code = await shannonSmoke([], {
       racine: '/depot',
-      shannon: new ShannonSimule({ statut: 4 }),
+      shannon: new ShannonSimule({ statut: 42 }),
       serveur: new ServeurCibleFumeeSimule(),
       systemeDeFichier: new SystemeDeFichierEnMemoire({
         'outils/shannon/shannon.env':
@@ -19,10 +22,9 @@ describe('shannon-smoke (ligne de commande)', () => {
         'outils/shannon/source/apps/cli/dist/index.mjs': '',
       }),
       horloge: new HorlogeFigee(new Date(1_790_000_000_000)),
-      environnement: new EnvironnementEnMemoire(),
       console: new ConsoleEnMemoire(),
     });
 
-    expect(code).toBe(4);
+    expect(code).toBe(42);
   });
 });

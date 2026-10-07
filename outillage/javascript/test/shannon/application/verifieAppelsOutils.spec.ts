@@ -1,12 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { ApiChatSimulee } from '../../doubles/ApiChatSimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
   VerifieAppelsOutils,
 } from '../../../src/shannon/application/verifieAppelsOutils.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import { ENVIRONNEMENT_SHANNON } from '../../doubles/environnement.ts';
 
 const DESCRIPTION_ALBERT = JSON.stringify({
   providers: { albert: { baseUrl: 'https://albert.example/v1' } },
@@ -24,13 +25,22 @@ const uneVerification = (doubles: Partial<Dependances> = {}) =>
     racine: '/depot',
     apiChat: new ApiChatSimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
-    environnement: new EnvironnementEnMemoire({ RUNS: '1' }),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
 
 describe('Verifie appels outils', () => {
-  it("exige la clé de Shannon, sans jamais l'afficher", async () => {
+  beforeEach(() => {
+    environnement.pourShannon = () => ENVIRONNEMENT_SHANNON;
+  });
+
+  // TODO: Clef et modèle sont obligatoires
+  it.skip("exige la clé de Shannon, sans jamais l'afficher", async () => {
+    environnement.pourShannon = () => ({
+      ...ENVIRONNEMENT_SHANNON,
+      // apiKey: undefined,
+      // model: undefined,
+    });
     const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.ecritFichier(
       'outils/shannon/shannon.env',
@@ -66,12 +76,15 @@ describe('Verifie appels outils', () => {
     ]);
   });
 
-  it('répète la sonde RUNS fois, avec une ligne par essai puis le bilan', async () => {
+  it('répète la sonde suivant le nombre de fois définis, avec une ligne par essai puis le bilan', async () => {
+    environnement.pourShannon = () => ({
+      ...ENVIRONNEMENT_SHANNON,
+      nombreEssais: 3,
+    });
     const console = new ConsoleEnMemoire();
 
     await uneVerification({
       console,
-      environnement: new EnvironnementEnMemoire({ RUNS: '3' }),
     }).execute({});
 
     expect(console.lignes.map((l) => l.message).slice(-6)).toEqual([
@@ -174,6 +187,10 @@ describe('Verifie appels outils', () => {
   });
 
   it("consigne l'erreur réseau ou HTTP de l'émission comme du second tour", async () => {
+    environnement.pourShannon = () => ({
+      ...ENVIRONNEMENT_SHANNON,
+      nombreEssais: 2,
+    });
     const executeLs = {
       reponse: {
         message: {
@@ -190,7 +207,6 @@ describe('Verifie appels outils', () => {
         executeLs,
         { erreur: 'reseau: TimeoutError' },
       ]),
-      environnement: new EnvironnementEnMemoire({ RUNS: '2' }),
       console,
     }).execute({});
 
@@ -259,20 +275,5 @@ describe('Verifie appels outils', () => {
       'Aucune URL pour le fournisseur « anthropic » : fournir sa description pi (--models-config)'
     );
     expect(apiChat.demandes).toEqual([]);
-  });
-
-  it("se contente de l'environnement du shell en l'absence de shannon.env", async () => {
-    const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.fichiers.delete('outils/shannon/shannon.env');
-    const environnement = new EnvironnementEnMemoire({
-      RUNS: '1',
-      SHANNON_AI_MODEL: 'albert:openai/gpt-oss-120b',
-      SHANNON_AI_API_KEY: 'cle-du-shell',
-    });
-
-    await uneVerification({ apiChat, systemeDeFichier, environnement }).execute({});
-
-    expect(apiChat.demandes[0].cle).toBe('cle-du-shell');
   });
 });

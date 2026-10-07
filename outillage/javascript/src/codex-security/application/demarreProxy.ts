@@ -2,9 +2,10 @@
 // Completions d'Albert et Scaleway. Portage TS de start-proxy.sh.
 import type { Attente } from '../../noyau/ports/Attente.ts';
 import type { Console } from '../../noyau/ports/Console.ts';
-import type { Environnement } from '../../noyau/ports/Environnement.ts';
 import type { Reseau } from '../../noyau/ports/Reseau.ts';
 import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy.ts';
+import { environnement } from '../../noyau/environnement.ts';
+import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 
 // Génération de l'environnement du proxy (voir GenereEnvironnementProxy).
 export interface GenerationEnvironnement {
@@ -12,56 +13,49 @@ export interface GenerationEnvironnement {
 }
 
 // Image figée par digest (main-stable du 23/09/2026) : le pont Responses -> Chat évolue vite.
-const IMAGE_PAR_DEFAUT =
-  'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
-
 export type Dependances = {
-  generation: GenerationEnvironnement;
   conteneur: ConteneurProxy;
   reseau: Reseau;
   attente: Attente;
-  environnement: Environnement;
   console: Console;
+  systemeDeFichier: SystemeDeFichier;
 };
 
 export class DemarreProxy {
-  readonly #generation: GenerationEnvironnement;
   readonly #conteneur: ConteneurProxy;
   readonly #reseau: Reseau;
   readonly #attente: Attente;
-  readonly #environnement: Environnement;
   readonly #console: Console;
+  readonly #sytemeDeFichier: SystemeDeFichier;
 
   constructor({
-    generation,
     conteneur,
     reseau,
     attente,
-    environnement,
     console,
+    systemeDeFichier,
   }: Dependances) {
-    this.#generation = generation;
     this.#conteneur = conteneur;
     this.#reseau = reseau;
     this.#attente = attente;
-    this.#environnement = environnement;
     this.#console = console;
+    this.#sytemeDeFichier = systemeDeFichier;
   }
 
   async execute(): Promise<void> {
     const configuration = this.#configuration();
-    this.#generation.execute();
     this.#annonceBudget(configuration);
     await this.#remplaceConteneur(configuration);
     await this.#attendsLeProxy(configuration.port);
   }
 
   #configuration(): ConfigurationProxy {
-    const variables = this.#environnement.variables();
-    const baseDeDonnees = variables.LITELLM_DATABASE_URL;
+    const baseDeDonnees = environnement
+      .pourCodexSecurity()
+      .proxy(this.#sytemeDeFichier).urlBaseDeDonnees;
     return {
-      port: variables.LITELLM_PORT || '4000',
-      image: variables.LITELLM_IMAGE || IMAGE_PAR_DEFAUT,
+      port: environnement.pourCodexSecurity().portLiteLLM,
+      image: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier).image,
       ...(baseDeDonnees && { baseDeDonnees }),
     };
   }
@@ -82,7 +76,7 @@ export class DemarreProxy {
   }
 
   // Jusqu'à 60 tentatives espacées de 2 s (environ 2 minutes).
-  async #attendsLeProxy(port: string): Promise<void> {
+  async #attendsLeProxy(port: number): Promise<void> {
     this.#console.sureUneSeuleLigne('Attente du proxy LiteLLM', 'GRIS');
     for (let tentative = 1; tentative <= 60; tentative++) {
       if (await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`)) {

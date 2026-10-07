@@ -1,7 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
@@ -10,9 +9,13 @@ import {
   type Dependances,
   ValideFinding,
 } from '../../../src/codex-security/application/valideFinding.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 const CIBLE = '/depot/cible/copies/app';
+const CONFIG_PAR_DEFAUT = '/depot/outils/codex-security/configs/config-defaut.yaml';
 const FINDING = { title: "Exemple de finding", cwe: ['CWE-200'] };
+const SORTIE = '/depot/resultats/brut/codex-security/validate-20260930-140509';
 
 const unDepotDeFichiersPret = () => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
@@ -32,12 +35,20 @@ const uneValidation = (doubles: Partial<Dependances> = {}) =>
     systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
-    environnement: new EnvironnementEnMemoire({ CODEX_TARGET: CIBLE }),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
 
 describe('Valide Finding', () => {
+  beforeEach(() => {
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+      cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
+      sortie: SORTIE,
+    });
+  });
+
   it('valide le finding sur la cible, avec la config, vers une sortie horodatée', async () => {
     const validation = new ValidationCodexSimulee();
 
@@ -46,9 +57,9 @@ describe('Valide Finding', () => {
     expect(validation.demandes).toEqual([
       expect.objectContaining({
         cible: CIBLE,
-        config: '/depot/outils/codex-security/configs/config-defaut.yaml',
+        config: CONFIG_PAR_DEFAUT,
         finding: FINDING,
-        sortie: '/depot/resultats/brut/codex-security/validate-20260930-140509',
+        sortie: SORTIE,
       }),
     ]);
   });
@@ -57,18 +68,17 @@ describe('Valide Finding', () => {
     const horloge = new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9));
     const validation = new ValidationCodexSimulee({ horloge, dureeMs: 42_600 });
     const systemeDeFichier = unDepotDeFichiersPret();
-    const sortie = '/depot/resultats/brut/codex-security/validate-20260930-140509';
 
     await uneValidation({ horloge, validation, systemeDeFichier }).execute({
       findingFile: 'finding.json',
     });
 
     expect(
-      JSON.parse(systemeDeFichier.lit(`${sortie}/validation-result.json`))
+      JSON.parse(systemeDeFichier.lit(`${SORTIE}/validation-result.json`))
     ).toEqual({
       disposition: 'confirmed',
       threadId: 'fil-1',
-      outputDir: sortie,
+      outputDir: SORTIE,
       durationSeconds: 43,
       finding: FINDING,
     });

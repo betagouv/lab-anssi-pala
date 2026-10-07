@@ -1,7 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
@@ -10,6 +9,8 @@ import {
   type DependancesCli,
   validate,
 } from '../../../src/codex-security/cli/validate.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 const lesDependancesPourLaValidation = (
   doubles: Partial<DependancesCli> = {}
@@ -27,15 +28,16 @@ const lesDependancesPourLaValidation = (
     systemeDeFichier,
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30)),
-    environnement: new EnvironnementEnMemoire({
-      CODEX_TARGET: '/depot/cible/copies/app',
-    }),
     console: new ConsoleEnMemoire(),
     ...doubles,
   };
 };
 
 describe('validate (ligne de commande)', () => {
+  beforeEach(() => {
+    environnement.pourCodexSecurity = () => ({ ...ENVIRONNEMENT_CODEX_SECURITY });
+  });
+
   it("exige --finding-file (erreur d'usage, code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
@@ -48,6 +50,10 @@ describe('validate (ligne de commande)', () => {
   });
 
   it("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+      cible: '/depot/cible/copies/app',
+    });
     const validation = new ValidationCodexSimulee();
     const { systemeDeFichier } = lesDependancesPourLaValidation();
     systemeDeFichier.ecritFichier(

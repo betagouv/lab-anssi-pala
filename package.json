@@ -13,7 +13,7 @@
     "bootstrap": "node outillage/javascript/src/composition/bootstrap.ts",
     "format:corrige": "prettier --write .",
     "format:verifie": "prettier --check .",
-    "generate-env": "node outillage/javascript/src/composition/generate-env.ts",
+    "generate-env": "node --require dotenv/config outillage/javascript/src/composition/generate-env.ts",
     "start-proxy": "node outillage/javascript/src/composition/start-proxy.ts",
     "scan": "node outillage/javascript/src/composition/scan.ts",
     "validate": "node outillage/javascript/src/composition/validate.ts",
@@ -22,7 +22,8 @@
     "check-tool-calls": "node outillage/javascript/src/composition/check-tool-calls.ts"
   },
   "dependencies": {
-    "commander": "^15.0.0"
+    "commander": "^15.0.0",
+    "dotenv": "^18.0.4"
   },
   "devDependencies": {
     "prettier": "^3.9.9",

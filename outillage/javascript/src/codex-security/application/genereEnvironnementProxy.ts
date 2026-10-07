@@ -1,74 +1,80 @@
 // Génère l'environnement du proxy LiteLLM à partir du .env racine. Portage TS de generate-env.sh.
 import { parseEnv } from 'node:util';
 import type { Console } from '../../noyau/ports/Console.ts';
-import type { Environnement } from '../../noyau/ports/Environnement.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import { EnvironnementProxy } from '../domaine/EnvironnementProxy.ts';
 import type { GenerateurDeJeton } from '../ports/GenerateurDeJeton.ts';
+import { environnement } from '../../noyau/environnement.ts';
+import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
+import type { GenerationEnvironnement } from './demarreProxy.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
   generateurDeJeton: GenerateurDeJeton;
-  environnement: Environnement;
   console: Console;
 };
 
-export class GenereEnvironnementProxy {
+export class GenereEnvironnementProxy implements GenerationEnvironnement {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #generateurDeJeton: GenerateurDeJeton;
-  readonly #environnement: Environnement;
   readonly #console: Console;
 
-  constructor({
-    systemeDeFichier,
-    generateurDeJeton,
-    environnement,
-    console,
-  }: Dependances) {
+  constructor({ systemeDeFichier, generateurDeJeton, console }: Dependances) {
     this.#systemeDeFichier = systemeDeFichier;
     this.#generateurDeJeton = generateurDeJeton;
-    this.#environnement = environnement;
     this.#console = console;
   }
 
   execute(): void {
-    const environnement = EnvironnementProxy.depuis(
-      this.#variablesDeLaRacine(),
-      this.#jetonLocal()
-    );
+    environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
+    const environnementProxy = environnement
+      .pourCodexSecurity()
+      .proxy(this.#systemeDeFichier);
+
+    const toutesLesVariables = () => {
+      let jetonLocal = environnementProxy.LITELLM_MASTER_KEY;
+      if (!jetonLocal || !jetonLocal.startsWith('sk-')) {
+        jetonLocal = this.#generateurDeJeton.jetonLocal();
+      }
+      return `${Object.entries({
+        ...environnementProxy,
+        ALBERT_API_KEY: environnement.fournisseur().apiKey,
+        ALBERT_BASE_URL: environnement.fournisseur().url,
+        LITELLM_MASTER_KEY: jetonLocal,
+        CODEX_API_KEY: jetonLocal,
+        ...(environnement.SCALEWAY_DEEPSEEK_API_KEY && {
+          SCALEWAY_DEEPSEEK_API_KEY: environnement.SCALEWAY_DEEPSEEK_API_KEY,
+        }),
+      })
+        .filter(([nom, valeur]) => nom !== 'image')
+        .map(([nom, valeur]) => `${nom}=${valeur}`)
+        .join('\n')}\n`;
+    };
+
+    const fournisseurs = () => {
+      const albert = `Albert (${environnementProxy.ALBERT_BASE_URL})`;
+      return environnementProxy.SCALEWAY_DEEPSEEK_API_KEY
+        ? `${albert} + Scaleway (DeepSeek)`
+        : `${albert} ; Scaleway absent (SCALEWAY_DEEPSEEK_API_KEY non renseignée dans .env)`;
+    };
     this.#systemeDeFichier.ecritFichierPrive(
-      EnvironnementProxy.CHEMIN,
-      environnement.contenu
+      CHEMIN_FICHIER_ENV_CODEX,
+      toutesLesVariables()
     );
-    this.#console.aLaLigne(`Généré: ${EnvironnementProxy.CHEMIN}`, 'VERT');
+    this.#console.aLaLigne(`Généré: ${CHEMIN_FICHIER_ENV_CODEX}`, 'VERT');
     this.#console.aLaLigne(
-      `  Fournisseurs configurés pour le proxy : ${environnement.fournisseurs}`,
+      `  Fournisseurs configurés pour le proxy : ${fournisseurs()}`,
       'BLEU'
     );
   }
-
-  // Comme `set -a; source .env` : le .env racine complète et surcharge l'environnement du shell.
-  #variablesDeLaRacine(): Record<string, string | undefined> {
-    if (!this.#systemeDeFichier.existe('.env')) {
-      throw new Error(
-        'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
-      );
-    }
-    return {
-      ...this.#environnement.variables(),
-      ...parseEnv(this.#systemeDeFichier.lit('.env')),
-    };
-  }
-
   // Le jeton existant est conservé pour ne pas invalider un proxy en marche.
   #jetonLocal(): string {
     return this.#jetonExistant() ?? this.#generateurDeJeton.jetonLocal();
   }
 
   #jetonExistant(): string | undefined {
-    if (!this.#systemeDeFichier.existe(EnvironnementProxy.CHEMIN)) return undefined;
+    if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) return undefined;
     const jeton = parseEnv(
-      this.#systemeDeFichier.lit(EnvironnementProxy.CHEMIN)
+      this.#systemeDeFichier.lit(CHEMIN_FICHIER_ENV_CODEX)
     ).LITELLM_MASTER_KEY;
     return jeton?.startsWith('sk-') ? jeton : undefined;
   }

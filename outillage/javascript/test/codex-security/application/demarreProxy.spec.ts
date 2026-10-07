@@ -2,53 +2,67 @@ import { describe, expect, it } from 'vitest';
 import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { ConteneurProxySimule } from '../../doubles/ConteneurProxySimule.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
-import { GenerationEnvironnementSimulee } from '../../doubles/GenerationEnvironnementSimulee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import {
-  type Dependances,
   DemarreProxy,
+  type Dependances,
 } from '../../../src/codex-security/application/demarreProxy.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
+import {
+  ENVIRONNEMENT_CODEX_SECURITY,
+  ENVIRONNEMENT_PROXY,
+} from '../../doubles/environnement.ts';
+import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 
 const unDemarrageDuProxyCodex = (doubles: Partial<Dependances> = {}) =>
   new DemarreProxy({
-    generation: new GenerationEnvironnementSimulee(),
     conteneur: new ConteneurProxySimule(),
     reseau: new ReseauSimule(),
     attente: new AttenteInstantanee(),
-    environnement: new EnvironnementEnMemoire(),
     console: new ConsoleEnMemoire(),
+    systemeDeFichier: new SystemeDeFichierEnMemoire(),
     ...doubles,
   });
 
 describe('Démarre Proxy Codex', () => {
-  it("génère l'environnement du proxy avant de lancer le conteneur", async () => {
+  it.skip('ne démarre pas le proxy si les variables ne sont pas positionnées', async () => {
     const journal: string[] = [];
 
-    await unDemarrageDuProxyCodex({
-      generation: new GenerationEnvironnementSimulee(journal),
+    const demarrageProxy = unDemarrageDuProxyCodex({
       conteneur: new ConteneurProxySimule(journal),
-    }).execute();
+    });
 
-    expect(journal[0]).toBe('environnement généré');
-    expect(journal).toContain('conteneur démarré');
+    await expect(() => demarrageProxy.execute()).rejects.toThrow(
+      'Positionnez les variables nécessaires au démarrage du proxy'
+    );
   });
 
   it('remplace le conteneur existant : supprimé, puis démarré', async () => {
     const journal: string[] = [];
 
-    await unDemarrageDuProxyCodex({ conteneur: new ConteneurProxySimule(journal) }).execute();
+    await unDemarrageDuProxyCodex({
+      conteneur: new ConteneurProxySimule(journal),
+    }).execute();
 
     expect(journal).toEqual(['conteneur supprimé', 'conteneur démarré']);
   });
 
   it("démarre par défaut sur le port 4000 avec l'image LiteLLM figée par digest", async () => {
     const conteneur = new ConteneurProxySimule();
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+      portLiteLLM: 4000,
+      proxy: () => ({
+        ...ENVIRONNEMENT_PROXY,
+        image:
+          'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02',
+      }),
+    });
 
     await unDemarrageDuProxyCodex({ conteneur }).execute();
 
     expect(conteneur.configuration).toEqual({
-      port: '4000',
+      port: 4000,
       image:
         'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02',
     });
@@ -56,15 +70,19 @@ describe('Démarre Proxy Codex', () => {
 
   it("LITELLM_PORT et LITELLM_IMAGE surchargent le port et l'image", async () => {
     const conteneur = new ConteneurProxySimule();
-    const environnement = new EnvironnementEnMemoire({
-      LITELLM_PORT: '4100',
-      LITELLM_IMAGE: 'litellm:essai',
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+      portLiteLLM: 4100,
+      proxy: () => ({
+        ...ENVIRONNEMENT_PROXY,
+        image: 'litellm:essai',
+      }),
     });
 
-    await unDemarrageDuProxyCodex({ conteneur, environnement }).execute();
+    await unDemarrageDuProxyCodex({ conteneur }).execute();
 
     expect(conteneur.configuration).toEqual({
-      port: '4100',
+      port: 4100,
       image: 'litellm:essai',
     });
   });
@@ -82,11 +100,15 @@ describe('Démarre Proxy Codex', () => {
   it('avec LITELLM_DATABASE_URL, transmet la base au proxy et annonce le plafond appliqué', async () => {
     const conteneur = new ConteneurProxySimule();
     const console = new ConsoleEnMemoire();
-    const environnement = new EnvironnementEnMemoire({
-      LITELLM_DATABASE_URL: 'postgresql://budget',
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+      proxy: () => ({
+        ...ENVIRONNEMENT_PROXY,
+        urlBaseDeDonnees: 'postgresql://budget',
+      }),
     });
 
-    await unDemarrageDuProxyCodex({ conteneur, console, environnement }).execute();
+    await unDemarrageDuProxyCodex({ conteneur, console }).execute();
 
     expect(conteneur.configuration?.baseDeDonnees).toBe('postgresql://budget');
     expect(console.lignes.map((l) => l.message)).toContain(

@@ -1,0 +1,96 @@
+import type { SystemeDeFichier } from './ports/SystemeDeFichier.ts';
+import {
+  CHEMIN_FICHIER_ENV_CODEX,
+  CHEMIN_FICHIER_ENV_RACINE,
+} from '../codex-security/domaine/cheminEnvironnement.ts';
+import { parseEnv } from 'node:util';
+
+export type EnvironnementShannon = {
+  apiKey: string;
+  model: string;
+  nombreEssais: number;
+  portTestDeFumee: number;
+  testPipelineActive: boolean;
+  espaceDeTravail: string;
+};
+
+export type EnvironnementCodexSecurity = {
+  cible: string; // TODO: pas une variable d’env => doit être généré
+  portLiteLLM: number; // TODO déplacer dans proxy()
+  sortie: string; // TODO: pas une variable d’env => doit être généré
+  config: string; // TODO: pas une variable d’env => doit être généré
+  proxy: (systemeDeFichier: SystemeDeFichier) => EnvironnementProxy;
+};
+
+export type EnvironnementProxy = {
+  ALBERT_API_KEY: string;
+  ALBERT_BASE_URL: string;
+  CODEX_API_KEY: string;
+  LITELLM_MASTER_KEY: string;
+  SCALEWAY_DEEPSEEK_API_KEY?: string;
+  image: string;
+  urlBaseDeDonnees?: string;
+};
+
+export type EnvironnementFournisseur = {
+  apiKey: string;
+  url: string;
+};
+
+type Environnement = {
+  path: string;
+  pourShannon: () => EnvironnementShannon;
+  pourCodexSecurity: () => EnvironnementCodexSecurity;
+  fournisseur: () => EnvironnementFournisseur;
+  SCALEWAY_DEEPSEEK_API_KEY?: string;
+  verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier): void;
+};
+
+const IMAGE_LITE_LLM_PAR_DEFAUT =
+  'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
+
+const variablesCodexSecurity = {
+  cible: process.env.CIBLE || '',
+  portLiteLLM: Number(process.env.PORT_LITE_LLM) || 4000,
+  sortie: process.env.SORTIE || '',
+  config: process.env.CONFIG || '',
+  proxy: (systemeDeFichier: SystemeDeFichier) => {
+    let variablesProxy = '';
+    if (systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
+      variablesProxy = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_CODEX);
+    }
+    return {
+      ...parseEnv(variablesProxy),
+      image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
+      ...(process.env.LITELLM_DATABASE_URL && {
+        urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
+      }),
+    } as EnvironnementProxy;
+  },
+};
+export const environnement: Environnement = {
+  path: process.env.PATH!,
+  ...(process.env.SCALEWAY_DEEPSEEK_API_KEY && {
+    SCALEWAY_DEEPSEEK_API_KEY: process.env.SCALEWAY_DEEPSEEK_API_KEY,
+  }),
+  fournisseur: (): EnvironnementFournisseur => ({
+    apiKey: process.env.ALBERT_API_KEY || '',
+    url: process.env.ALBERT_BASE_URL || '',
+  }),
+  pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
+  pourShannon: (): EnvironnementShannon => ({
+    apiKey: process.env.SHANNON_AI_API_KEY || '',
+    model: process.env.SHANNON_AI_MODEL || '',
+    nombreEssais: Number(process.env.RUNS) || 5,
+    portTestDeFumee: Number(process.env.SMOKE_PORT) || 8080,
+    testPipelineActive: process.env.TEST_PIPELINE_ACTIVE === 'true',
+    espaceDeTravail: process.env.SHANNON_ESPACE_DE_TRAVAIL || '',
+  }),
+  verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier) {
+    if (!systemeDeFichier.existe(CHEMIN_FICHIER_ENV_RACINE)) {
+      throw new Error(
+        'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
+      );
+    }
+  },
+};

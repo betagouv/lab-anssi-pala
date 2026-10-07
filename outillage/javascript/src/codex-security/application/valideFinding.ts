@@ -35,7 +35,7 @@ export class ValideFinding {
   }
 
   async execute({ findingFile }: { findingFile: string }): Promise<void> {
-    const { cible, config, sortie, environnement } =
+    const { cible, config, sortie, environnementCodex } =
       await this.#execution.pour('validate');
     this.#console.aLaLigne(`Cible  : ${cible}`, 'VIOLET');
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
@@ -47,7 +47,7 @@ export class ValideFinding {
       config,
       finding,
       sortie: sortie.chemin,
-      environnement,
+      environnement: environnementCodex,
     });
     this.#consigne(sortie.chemin, finding, resultat, dureeSecondes);
   }

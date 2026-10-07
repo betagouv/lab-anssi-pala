@@ -1,24 +1,16 @@
 // Installation locale de Shannon : fichier d'environnement (clé et modèle, non versionné) et CLI
 // construite depuis les sources. Commune au pentest et au passage de fumée.
 import { parseEnv } from 'node:util';
-import type { Environnement } from '../../noyau/ports/Environnement.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
+import type { EnvironnementShannonDeLancement } from '../ports/Shannon.ts';
 
 const ENV_SHANNON = 'outils/shannon/shannon.env';
 
 export class InstallationShannon {
   readonly #systemeDeFichier: SystemeDeFichier;
-  readonly #environnement: Environnement;
 
-  constructor({
-    systemeDeFichier,
-    environnement,
-  }: {
-    systemeDeFichier: SystemeDeFichier;
-    environnement: Environnement;
-  }) {
+  constructor({ systemeDeFichier }: { systemeDeFichier: SystemeDeFichier }) {
     this.#systemeDeFichier = systemeDeFichier;
-    this.#environnement = environnement;
   }
 
   verifieEnvironnementRenseigne(): void {
@@ -39,11 +31,12 @@ export class InstallationShannon {
     }
   }
 
-  // Comme `set -a; . shannon.env` : l'environnement du shell complété par clé et modèle de Shannon.
-  environnement(): Record<string, string | undefined> {
+  environnement(): EnvironnementShannonDeLancement {
+    const variables = parseEnv(this.#systemeDeFichier.lit(ENV_SHANNON));
     return {
-      ...this.#environnement.variables(),
-      ...parseEnv(this.#systemeDeFichier.lit(ENV_SHANNON)),
+      SHANNON_AI_API_KEY: variables.SHANNON_AI_API_KEY!,
+      SHANNON_AI_MODEL: variables.SHANNON_AI_MODEL!,
+      PATH: variables.PATH!,
     };
   }
 }

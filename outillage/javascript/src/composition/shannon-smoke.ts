@@ -1,7 +1,6 @@
 // Racine de composition : passage de fumée Shannon depuis la racine du dépôt.
 import { join } from 'node:path';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { EnvironnementProcessus } from '../noyau/adaptateurs/node/EnvironnementProcessus.ts';
 import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 import { ServeurCibleFumeeHttp } from '../shannon/adaptateurs/ServeurCibleFumeeHttp.ts';
@@ -17,6 +16,5 @@ process.exitCode = await shannonSmoke(process.argv.slice(2), {
   serveur: new ServeurCibleFumeeHttp(join(outil, 'smoke-target')),
   systemeDeFichier: new SystemeDeFichierNode(racine),
   horloge: new HorlogeSysteme(),
-  environnement: new EnvironnementProcessus(),
   console: new ConsoleNode(),
 });

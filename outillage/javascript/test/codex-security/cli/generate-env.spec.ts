@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { EnvironnementEnMemoire } from '../../doubles/EnvironnementEnMemoire.ts';
 import { GenerateurDeJetonFige } from '../../doubles/GenerateurDeJetonFige.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { genereEnv } from '../../../src/codex-security/cli/generate-env.ts';
@@ -12,7 +11,6 @@ describe('generate-env (ligne de commande)', () => {
     const code = await genereEnv([], {
       systemeDeFichier: new SystemeDeFichierEnMemoire(),
       generateurDeJeton: new GenerateurDeJetonFige('sk-local-neuf'),
-      environnement: new EnvironnementEnMemoire(),
       console,
     });
 

@@ -4,7 +4,6 @@ import { CliCodexSecurityNpm } from '../codex-security/adaptateurs/CliCodexSecur
 import { scan } from '../codex-security/cli/scan.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { EnvironnementProcessus } from '../noyau/adaptateurs/node/EnvironnementProcessus.ts';
 import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
@@ -24,10 +23,6 @@ process.exitCode = await scan(process.argv.slice(2), {
   systemeDeFichier,
   reseau: new ReseauFetch(5000),
   horloge: new HorlogeSysteme(),
-  environnement: new EnvironnementProcessus({
-    chemins: ['CODEX_TARGET', 'CODEX_CONFIG', 'CODEX_OUTPUT'],
-    depuis: repertoireAppel,
-  }),
   estimation: new EstimationDuCout({ console }),
   console,
 });

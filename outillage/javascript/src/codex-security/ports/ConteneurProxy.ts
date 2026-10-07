@@ -1,5 +1,5 @@
 export type ConfigurationProxy = {
-  port: string;
+  port: number;
   image: string;
   baseDeDonnees?: string;
 };

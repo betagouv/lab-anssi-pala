@@ -2,7 +2,6 @@
 import { join } from 'node:path';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { EnvironnementProcessus } from '../noyau/adaptateurs/node/EnvironnementProcessus.ts';
 import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
@@ -21,7 +20,6 @@ process.exitCode = await shannon(process.argv.slice(2), {
   systemeDeFichier,
   reseau: new ReseauFetch(5000),
   horloge: new HorlogeSysteme(),
-  environnement: new EnvironnementProcessus(),
   estimation: new EstimationDuCout({ console }),
   console,
 });

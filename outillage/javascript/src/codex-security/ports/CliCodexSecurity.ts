@@ -1,3 +1,5 @@
+import type { EnvironnementCodex } from '../application/prepareExecutionCodex.ts';
+
 export type DemandeDeScan = {
   cible: string;
   config: string;
@@ -6,7 +8,7 @@ export type DemandeDeScan = {
   journal: string;
   options: string[];
   // Environnement complet du processus Codex.
-  environnement: Record<string, string | undefined>;
+  environnement: EnvironnementCodex & { PATH: string };
 };
 
 // CLI Codex Security publiée sur npm, installée dans outils/codex-security à la version figée par

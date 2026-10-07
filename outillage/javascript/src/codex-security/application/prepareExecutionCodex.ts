@@ -2,13 +2,13 @@
 // validation : vérifie les prérequis, résout cible, config et sortie, et construit l'environnement
 // du processus Codex. Portage TS de env-runtime.sh.
 import { join } from 'node:path';
-import type { Environnement } from '../../noyau/ports/Environnement.ts';
 import type { Horloge } from '../../noyau/ports/Horloge.ts';
 import type { Reseau } from '../../noyau/ports/Reseau.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
-import { EnvironnementProxy } from '../domaine/EnvironnementProxy.ts';
 import type { CliCodexSecurity } from '../ports/CliCodexSecurity.ts';
+import { environnement } from '../../noyau/environnement.ts';
+import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
 
 export type DependancesExecution = {
   // Racine absolue du dépôt d'audit : les chemins transmis à Codex doivent être absolus.
@@ -17,14 +17,22 @@ export type DependancesExecution = {
   systemeDeFichier: SystemeDeFichier;
   reseau: Reseau;
   horloge: Horloge;
-  environnement: Environnement;
 };
 
 export type ExecutionCodex = {
   cible: string;
   config: string;
   sortie: DossierDeSortie;
-  environnement: Record<string, string | undefined>;
+  environnementCodex: EnvironnementCodex;
+};
+
+export type EnvironnementCodex = {
+  LITELLM_API_KEY: string;
+  CODEX_API_KEY: string;
+  CODEX_HOME: string;
+  CODEX_SECURITY_STATE_DIR: string;
+  CODEX_SECURITY_NO_UPDATE_NOTICE: string;
+  CODEX_SCAN_ECRIT_ARTEFACTS: string;
 };
 
 export class PrepareExecutionCodex {
@@ -33,7 +41,6 @@ export class PrepareExecutionCodex {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #reseau: Reseau;
   readonly #horloge: Horloge;
-  readonly #environnement: Environnement;
 
   constructor({
     racine,
@@ -41,49 +48,44 @@ export class PrepareExecutionCodex {
     systemeDeFichier,
     reseau,
     horloge,
-    environnement,
   }: DependancesExecution) {
     this.#racine = racine;
     this.#cli = cli;
     this.#systemeDeFichier = systemeDeFichier;
     this.#reseau = reseau;
     this.#horloge = horloge;
-    this.#environnement = environnement;
   }
 
   // nature : préfixe du dossier de sortie horodaté (scan, validate).
   async pour(nature: string): Promise<ExecutionCodex> {
-    const variables = this.#environnement.variables();
-    const cible = await this.#verifiePrerequis(variables);
-    const sortie = variables.CODEX_OUTPUT
-      ? new DossierDeSortie(variables.CODEX_OUTPUT)
+    const environnementCodex = environnement.pourCodexSecurity();
+    const cible = await this.#verifiePrerequis();
+    const sortie = environnementCodex.sortie
+      ? new DossierDeSortie(environnementCodex.sortie)
       : DossierDeSortie.horodate(this.#racine, nature, this.#horloge.maintenant());
     this.#systemeDeFichier.creeDossierPrive(sortie.chemin);
     return {
       cible,
       // Défaut : DeepSeek servi par Albert, dépôt entier. Scan ciblé : copier config-cible.template.yaml.
       config:
-        variables.CODEX_CONFIG ||
+        environnementCodex.config ||
         join(this.#racine, 'outils/codex-security/configs/config-defaut.yaml'),
       sortie,
-      environnement: this.#environnementCodex(variables),
+      environnementCodex: this.#environnementCodex(),
     };
   }
 
-  // Renvoie la cible, fournie par CODEX_TARGET (dépôt agnostique : aucune cible par défaut).
-  async #verifiePrerequis(
-    variables: Record<string, string | undefined>
-  ): Promise<string> {
+  async #verifiePrerequis(): Promise<string> {
     if (!this.#cli.estInstallee())
       throw new Error(
         'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
       );
-    if (!this.#systemeDeFichier.existe(EnvironnementProxy.CHEMIN)) {
+    if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
       throw new Error(
-        `Fichier manquant : ${EnvironnementProxy.CHEMIN} (lancer pnpm start-proxy)`
+        `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm start-proxy)`
       );
     }
-    const cible = variables.CODEX_TARGET;
+    const cible = environnement.pourCodexSecurity().cible;
     if (!cible) {
       throw new Error(
         'CODEX_TARGET non défini : indiquer la cible, ex. CODEX_TARGET="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
@@ -94,7 +96,7 @@ export class PrepareExecutionCodex {
         `Cible manquante : ${cible} (cloner via pnpm bootstrap --project <nom> --url <git-url>)`
       );
     }
-    const port = variables.LITELLM_PORT || '4000';
+    const port = environnement.pourCodexSecurity().portLiteLLM;
     if (!(await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`))) {
       throw new Error(
         `Proxy LiteLLM injoignable sur 127.0.0.1:${port} (lancer pnpm start-proxy)`
@@ -103,30 +105,21 @@ export class PrepareExecutionCodex {
     return cible;
   }
 
-  // Le jeton local du proxy est la seule clé transmise à Codex ; la clé Albert reste dans le proxy.
-  // Codex Security refuse de démarrer en mode api-key sans OPENAI_API_KEY/CODEX_API_KEY : on lui
-  // fournit le même jeton, qui n'est envoyé qu'au fournisseur configuré (le proxy).
-  #environnementCodex(
-    variables: Record<string, string | undefined>
-  ): Record<string, string | undefined> {
-    const jeton = EnvironnementProxy.depuisContenu(
-      this.#systemeDeFichier.lit(EnvironnementProxy.CHEMIN)
-    ).jetonLocal;
-    const { OPENAI_API_KEY: _jamaisTransmise, ...shell } = variables;
+  #environnementCodex(): EnvironnementCodex {
+    const jeton = environnement
+      .pourCodexSecurity()
+      .proxy(this.#systemeDeFichier).LITELLM_MASTER_KEY;
     // Identité et historique Codex isolés : rien n'est lu ni écrit dans ~/.codex.
     const codexHome = join(this.#racine, 'outils/codex-security/codex-home');
     const etat = join(this.#racine, 'outils/codex-security/state');
     this.#systemeDeFichier.creeDossierPrive(codexHome);
     this.#systemeDeFichier.creeDossierPrive(etat);
     return {
-      ...shell,
       LITELLM_API_KEY: jeton,
       CODEX_API_KEY: jeton,
       CODEX_HOME: codexHome,
       CODEX_SECURITY_STATE_DIR: etat,
       CODEX_SECURITY_NO_UPDATE_NOTICE: '1',
-      // Script d'écriture des artefacts appelé par l'agent (configs/consignes-scan.md, étape 4) :
-      // il reste en Python, lancé par l'agent via "$PYTHON".
       CODEX_SCAN_ECRIT_ARTEFACTS: join(
         this.#racine,
         'outils/codex-security/scripts/ecrit-artefacts-scan.py'

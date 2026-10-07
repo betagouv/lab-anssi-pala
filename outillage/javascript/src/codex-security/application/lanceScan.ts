@@ -15,6 +15,7 @@ import {
   type ConsommationDeTokens,
   unReleveDeConsommationDeTokensCodex,
 } from '../../cout/domaine/consommationDeTokens.ts';
+import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = DependancesExecution & {
   estimation: EstimationDuCout;
@@ -46,7 +47,7 @@ export class LanceScan {
       modele: string
     ) => ConsommationDeTokens | null = unReleveDeConsommationDeTokensCodex
   ): Promise<number> {
-    const { cible, config, sortie, environnement } =
+    const { cible, config, sortie, environnementCodex } =
       await this.#execution.pour('scan');
     this.#console.aLaLigne(`Cible  : ${cible}`, 'VIOLET');
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
@@ -58,7 +59,7 @@ export class LanceScan {
       sortie: sortie.chemin,
       journal: sortie.journal,
       options: this.#optionsDuScan(options),
-      environnement,
+      environnement: { ...environnementCodex, PATH: environnement.path },
     });
     this.#estimeLeCout(config, sortie, releveDeTokens);
     return statut;
