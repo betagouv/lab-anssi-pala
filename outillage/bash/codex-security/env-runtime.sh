@@ -10,7 +10,7 @@ cible="${CIBLE:-}"
 # Défaut : DeepSeek servi par Albert, dépôt entier (config-defaut.yaml). gpt-oss n'est plus le
 # défaut (il n'écrit pas les artefacts). Pour un scan ciblé : copier config-cible.template.yaml.
 config="${CONFIG:-$outil/configs/config-defaut.yaml}"
-port="${LITELLM_PORT:-4000}"
+port="${PORT_LITE_LLM:-4000}"
 env_file="$outil/codex-security.env"
 
 [ -x "$outil/node_modules/.bin/codex-security" ] || { echo "CLI absente : lancer outillage/bash/bootstrap.sh (npm ci dans outils/codex-security)" >&2; exit 1; }

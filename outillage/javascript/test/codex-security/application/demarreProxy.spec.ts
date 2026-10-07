@@ -68,7 +68,7 @@ describe('Démarre Proxy Codex', () => {
     });
   });
 
-  it("LITELLM_PORT et LITELLM_IMAGE surchargent le port et l'image", async () => {
+  it("PORT_LITE_LLM et CODEX_LITE_LLM_IMAGE surchargent le port et l'image", async () => {
     const conteneur = new ConteneurProxySimule();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,

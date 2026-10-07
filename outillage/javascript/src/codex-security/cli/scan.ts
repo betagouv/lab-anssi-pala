@@ -19,10 +19,10 @@ Toutes les autres options sont transmises telles quelles à codex-security scan 
 --mode deep, --path…) ; liste : outils/codex-security/node_modules/.bin/codex-security scan --help
 
 Variables :
-  CIBLE         dépôt à scanner (obligatoire ; cloné par pnpm bootstrap dans cible/copies/<nom>)
-  CONFIG        configuration (défaut configs/config-defaut.yaml ; scan ciblé : copier config-cible.template.yaml)
-  SORTIE        dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
-  LITELLM_PORT  port du proxy (défaut 4000)`;
+  CIBLE          dépôt à scanner (obligatoire ; cloné par pnpm bootstrap dans cible/copies/<nom>)
+  CONFIG         configuration (défaut configs/config-defaut.yaml ; scan ciblé : copier config-cible.template.yaml)
+  SORTIE         dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
+  PORT_LITE_LLM  port du proxy (défaut 4000)`;
 
 export async function scan(
   argv: string[],

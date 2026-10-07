@@ -5,11 +5,11 @@
 # Usage : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh [options…]
 #   ex. : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh --dry-run
 # Variables :
-#   CIBLE         dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
-#   CONFIG        fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
+#   CIBLE          dépôt à scanner (OBLIGATOIRE ; cloné par outillage/bash/bootstrap.sh dans cible/copies/<nom>)
+#   CONFIG         fichier de configuration (défaut configs/config-defaut.yaml : DeepSeek, dépôt entier ;
 #                 pour un scan ciblé, copier configs/config-cible.template.yaml et y fixer scope.paths)
-#   SORTIE        dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
-#   LITELLM_PORT  port du proxy (défaut 4000 ; doit correspondre à base_url dans CONFIG)
+#   SORTIE         dossier de sortie, vide (défaut resultats/brut/codex-security/scan-<horodatage>)
+#   PORT_LITE_LLM  port du proxy (défaut 4000 ; doit correspondre à base_url dans CONFIG)
 set -euo pipefail
 
 # shellcheck source=env-runtime.sh

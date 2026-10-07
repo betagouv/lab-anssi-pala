@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Lance (ou relance) le proxy LiteLLM qui traduit l'API Responses (Codex) vers l'API Chat
-# Completions d'Albert. Exposé sur 127.0.0.1:${LITELLM_PORT:-4000} uniquement.
+# Completions d'Albert. Exposé sur 127.0.0.1:${PORT_LITE_LLM:-4000} uniquement.
 #
 # Usage : ./outillage/bash/codex-security/start-proxy.sh
 # Arrêt : docker rm -f codex-security-litellm
@@ -11,7 +11,7 @@
 set -euo pipefail
 
 OUTIL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/outils/codex-security"
-PORT="${LITELLM_PORT:-4000}"
+PORT="${PORT_LITE_LLM:-4000}"
 # Image figée par digest (main-stable du 23/09/2026) : le pont Responses -> Chat évolue vite.
 IMAGE="${LITELLM_IMAGE:-ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02}"
 CONTAINER=codex-security-litellm

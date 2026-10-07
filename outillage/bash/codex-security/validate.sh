@@ -5,7 +5,7 @@
 #
 # Usage :
 #   bash outillage/bash/codex-security/validate.sh --finding-file <finding.json>
-# Variables : CIBLE, CONFIG, LITELLM_PORT (voir env-runtime.sh),
+# Variables : CIBLE, CONFIG, PORT_LITE_LLM (voir env-runtime.sh),
 #             SORTIE (défaut resultats/brut/codex-security/validate-<horodatage>, doit être vide)
 set -euo pipefail
 

@@ -9,7 +9,7 @@ export async function startProxy(
 ): Promise<number> {
   const programme = new Command('start-proxy')
     .description(
-      'Lance (ou relance) le proxy LiteLLM sur 127.0.0.1:${LITELLM_PORT:-4000}.'
+      'Lance (ou relance) le proxy LiteLLM sur 127.0.0.1:${PORT_LITE_LLM:-4000}.'
     )
     .addHelpText(
       'after',
