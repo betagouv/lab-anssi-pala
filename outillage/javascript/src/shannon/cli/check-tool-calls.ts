@@ -1,5 +1,4 @@
 // Adaptateur de ligne de commande de la vérification des appels d'outils (check_tool_calls.py).
-import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import {
@@ -7,11 +6,9 @@ import {
   VerifieAppelsOutils,
 } from '../application/verifieAppelsOutils.ts';
 
-export type DependancesCli = Dependances & { repertoireAppel: string };
-
 export async function checkToolCalls(
   argv: string[],
-  dependances: DependancesCli
+  dependances: Dependances
 ): Promise<number> {
   const programme = new Command('check-tool-calls')
     .description(
@@ -21,25 +18,14 @@ export async function checkToolCalls(
       '--model <spec>',
       'modèle vérifié (fournisseur:modèle) ; défaut SHANNON_AI_MODEL'
     )
-    .option(
-      '--models-config <fichier>',
-      'description pi du fournisseur ; défaut déduite du modèle'
-    )
     .addHelpText(
       'after',
       `
-Clé : SHANNON_AI_API_KEY (outils/shannon/shannon.env ou environnement), jamais affichée.
+URL et clé : FOURNISSEUR_BASE_URL et FOURNISSEUR_API_KEY (.env racine), clé jamais affichée.
 Variables : RUNS (essais, défaut 5), MAX_TOKENS (défaut 4000). Attendu avant tout scan : 5/5 et 5/5.`
     );
   return executeCommande(programme, argv, dependances.console, () => {
-    const { model, modelsConfig } = programme.opts<{
-      model?: string;
-      modelsConfig?: string;
-    }>();
-    return new VerifieAppelsOutils(dependances).execute({
-      modele: model,
-      modelsConfig:
-        modelsConfig && resolve(dependances.repertoireAppel, modelsConfig),
-    });
+    const { model } = programme.opts<{ model?: string }>();
+    return new VerifieAppelsOutils(dependances).execute({ modele: model });
   });
 }

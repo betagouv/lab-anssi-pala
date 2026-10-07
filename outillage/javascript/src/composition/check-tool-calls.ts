@@ -9,8 +9,6 @@ const racine = join(import.meta.dirname, '../../../..');
 
 process.exitCode = await checkToolCalls(process.argv.slice(2), {
   racine,
-  // pnpm exécute depuis la racine du paquet mais garde le répertoire d'appel dans INIT_CWD.
-  repertoireAppel: process.env.INIT_CWD || process.cwd(),
   apiChat: new ApiChatFetch({ maxTokens: Number(process.env.MAX_TOKENS || '4000') }),
   systemeDeFichier: new SystemeDeFichierNode(racine),
   console: new ConsoleNode(),

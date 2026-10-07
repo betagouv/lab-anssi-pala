@@ -7,17 +7,14 @@ import {
   VerifieAppelsOutils,
 } from '../../../src/shannon/application/verifieAppelsOutils.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
-import { ENVIRONNEMENT_SHANNON } from '../../doubles/environnement.ts';
-
-const DESCRIPTION_ALBERT = JSON.stringify({
-  providers: { albert: { baseUrl: 'https://albert.example/v1' } },
-});
+import {
+  ENVIRONNEMENT_FOURNISSEUR,
+  ENVIRONNEMENT_SHANNON,
+} from '../../doubles/environnement.ts';
 
 const unDepotDeFichiersPret = () =>
   new SystemeDeFichierEnMemoire({
-    'outils/shannon/shannon.env':
-      'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\nSHANNON_AI_API_KEY=cle-shannon\n',
-    '/depot/outils/shannon/configs/models.albert.json': DESCRIPTION_ALBERT,
+    'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n',
   });
 
 const uneVerification = (doubles: Partial<Dependances> = {}) =>
@@ -32,6 +29,7 @@ const uneVerification = (doubles: Partial<Dependances> = {}) =>
 describe('Verifie appels outils', () => {
   beforeEach(() => {
     environnement.pourShannon = () => ENVIRONNEMENT_SHANNON;
+    environnement.fournisseur = () => ENVIRONNEMENT_FOURNISSEUR;
   });
 
   // TODO: Clef et modèle sont obligatoires
@@ -48,17 +46,17 @@ describe('Verifie appels outils', () => {
     );
 
     await expect(uneVerification({ systemeDeFichier }).execute({})).rejects.toThrow(
-      'Clé absente : définir SHANNON_AI_API_KEY (outils/shannon/shannon.env ou environnement).'
+      'Clé absente : définir FOURNISSEUR_API_KEY dans le .env racine.'
     );
   });
 
-  it("interroge le modèle de Shannon chez son fournisseur, à l'URL de sa description pi", async () => {
+  it("interroge le modèle de Shannon chez le fournisseur, à l'URL FOURNISSEUR_BASE_URL", async () => {
     const apiChat = new ApiChatSimulee();
 
     await uneVerification({ apiChat }).execute({});
 
     expect(apiChat.demandes[0]).toMatchObject({
-      url: 'https://albert.example/v1',
+      url: 'http://fournisseur.local',
       cle: 'cle-shannon',
       modele: 'openai/gpt-oss-120b',
     });
@@ -224,55 +222,30 @@ describe('Verifie appels outils', () => {
     await uneVerification({ console }).execute({});
 
     expect(console.lignes.map((l) => l.message).slice(0, 2)).toEqual([
-      'Modèle openai/gpt-oss-120b sur https://albert.example/v1, 1 essai(s)',
+      'Modèle openai/gpt-oss-120b sur http://fournisseur.local, 1 essai(s)',
       '',
     ]);
   });
 
-  it('vérifie le modèle désigné au lancement, chez son propre fournisseur', async () => {
+  it('vérifie le modèle désigné au lancement, chez le fournisseur', async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.ecritFichier(
-      '/depot/outils/shannon/configs/models.scaleway.json',
-      JSON.stringify({
-        providers: { scaleway: { baseUrl: 'https://scaleway.example/v1' } },
-      })
-    );
 
-    await uneVerification({ apiChat, systemeDeFichier }).execute({
+    await uneVerification({ apiChat }).execute({
       modele: 'scaleway:deepseek-v4-flash-0731',
     });
 
     expect(apiChat.demandes[0]).toMatchObject({
-      url: 'https://scaleway.example/v1',
+      url: 'http://fournisseur.local',
       modele: 'deepseek-v4-flash-0731',
     });
   });
 
-  it("lit l'URL dans la description pi imposée plutôt que dans celle déduite du fournisseur", async () => {
+  it('refuse de vérifier sans URL du fournisseur : aucune API à interroger', async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.ecritFichier(
-      '/mes-modeles.json',
-      JSON.stringify({
-        providers: { albert: { baseUrl: 'https://albert-recette.example/v1' } },
-      })
-    );
+    environnement.fournisseur = () => ({ ...ENVIRONNEMENT_FOURNISSEUR, url: '' });
 
-    await uneVerification({ apiChat, systemeDeFichier }).execute({
-      modelsConfig: '/mes-modeles.json',
-    });
-
-    expect(apiChat.demandes[0].url).toBe('https://albert-recette.example/v1');
-  });
-
-  it('refuse un fournisseur sans description pi : aucune URL à interroger', async () => {
-    const apiChat = new ApiChatSimulee();
-
-    await expect(
-      uneVerification({ apiChat }).execute({ modele: 'anthropic:claude-sonnet-4-6' })
-    ).rejects.toThrow(
-      'Aucune URL pour le fournisseur « anthropic » : fournir sa description pi (--models-config)'
+    await expect(uneVerification({ apiChat }).execute({})).rejects.toThrow(
+      'URL absente : définir FOURNISSEUR_BASE_URL dans le .env racine.'
     );
     expect(apiChat.demandes).toEqual([]);
   });

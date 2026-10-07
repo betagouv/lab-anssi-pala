@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Vérifie qu'Albert émet de vrais `tool_calls` structurés.
+"""Vérifie que le modèle du fournisseur émet de vrais `tool_calls` structurés.
 
 Contexte : lors du premier run un outil tiers, Qwen3-Coder n'a jamais émis un seul
 appel d'outil dans le champ structuré `tool_calls` (855 tentatives). Shannon
@@ -13,11 +13,12 @@ Deux contrôles, répétés RUNS fois (5 par défaut) :
   2. multi-tour : après le résultat de l'outil, le modèle répond ou enchaîne
      un nouvel appel valide.
 
-La clé est lue dans l'environnement (SHANNON_AI_API_KEY, sinon ALBERT_API_KEY)
-et n'est jamais affichée.
+URL et clé du fournisseur sont lues dans l'environnement (FOURNISSEUR_BASE_URL,
+FOURNISSEUR_API_KEY du .env racine) ; la clé n'est jamais affichée. Le modèle est
+l'identifiant de SHANNON_AI_MODEL (partie après « fournisseur: »), ou MODEL.
 
 Usage :
-    set -a; . outils/shannon/shannon.env; set +a
+    set -a; . ./.env; . outils/shannon/shannon.env; set +a
     python3 outils/shannon/scripts/check_tool_calls.py
 """
 
@@ -27,8 +28,8 @@ import sys
 import urllib.error
 import urllib.request
 
-BASE_URL = os.environ.get("ALBERT_BASE_URL", "https://albert.api.etalab.gouv.fr/v1")
-MODEL = os.environ.get("ALBERT_MODEL", "openai/gpt-oss-120b")
+BASE_URL = os.environ.get("FOURNISSEUR_BASE_URL", "")
+MODEL = os.environ.get("MODEL") or os.environ.get("SHANNON_AI_MODEL", "").partition(":")[2]
 RUNS = int(os.environ.get("RUNS", "5"))
 MAX_TOKENS = int(os.environ.get("MAX_TOKENS", "4000"))
 TIMEOUT_SECONDS = 120
@@ -55,9 +56,13 @@ MESSAGES = [
 
 
 def api_key():
-    key = os.environ.get("SHANNON_AI_API_KEY") or os.environ.get("ALBERT_API_KEY")
+    key = os.environ.get("FOURNISSEUR_API_KEY")
     if not key:
-        sys.exit("Clé absente : définir SHANNON_AI_API_KEY ou ALBERT_API_KEY dans l'environnement.")
+        sys.exit("Clé absente : définir FOURNISSEUR_API_KEY dans le .env racine.")
+    if not BASE_URL:
+        sys.exit("URL absente : définir FOURNISSEUR_BASE_URL dans le .env racine.")
+    if not MODEL:
+        sys.exit("Modèle absent : définir SHANNON_AI_MODEL (outils/shannon/shannon.env) ou MODEL.")
     return key
 
 

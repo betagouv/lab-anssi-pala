@@ -1,11 +1,9 @@
 // Vérifie que le modèle de Shannon émet de vrais `tool_calls` structurés, avant de dépenser un scan.
 // Portage TS de check_tool_calls.py, rendu agnostique du fournisseur : modèle de SHANNON_AI_MODEL,
-// URL tirée de sa description pi, clé de Shannon.
-import { join } from 'node:path';
+// URL et clé du fournisseur (FOURNISSEUR_BASE_URL, FOURNISSEUR_API_KEY), les mêmes que Shannon.
 import { parseEnv } from 'node:util';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import { DescriptionPi } from '../domaine/DescriptionPi.ts';
 import { jugeAppelOutil, MESSAGES_SONDE } from '../domaine/SondeAppelsOutils.ts';
 import { SpecModele } from '../domaine/SpecModele.ts';
 import type { ApiChat } from '../ports/ApiChat.ts';
@@ -40,16 +38,9 @@ export class VerifieAppelsOutils {
   }
 
   // modele : force le modèle vérifié (« fournisseur:modèle ») ; défaut SHANNON_AI_MODEL.
-  // modelsConfig : description pi à lire ; défaut : déduite du fournisseur.
-  async execute({
-    modele,
-    modelsConfig,
-  }: {
-    modele?: string;
-    modelsConfig?: string;
-  }): Promise<number> {
+  async execute({ modele }: { modele?: string }): Promise<number> {
     const variables = this.#variables();
-    const destinataire = this.#destinataire(variables, modele, modelsConfig);
+    const destinataire = this.#destinataire(variables, modele);
     const essais = environnement.pourShannon().nombreEssais;
     this.#console.aLaLigne(
       `Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`,
@@ -81,22 +72,26 @@ export class VerifieAppelsOutils {
     };
   }
 
-  // Le modèle que Shannon utilisera, chez son fournisseur, avec la clé de Shannon (jamais affichée).
+  // Le modèle que Shannon utilisera, chez le fournisseur, avec la clé de Shannon (jamais affichée).
   #destinataire(
     variables: Record<string, string | undefined>,
-    modeleImpose?: string,
-    modelsConfig?: string
+    modeleImpose?: string
   ): Destinataire {
     const cle = environnement.pourShannon().apiKey;
     if (!cle)
       throw new Error(
-        'Clé absente : définir SHANNON_AI_API_KEY (outils/shannon/shannon.env ou environnement).'
+        'Clé absente : définir FOURNISSEUR_API_KEY dans le .env racine.'
+      );
+    const url = environnement.fournisseur().url;
+    if (!url)
+      throw new Error(
+        'URL absente : définir FOURNISSEUR_BASE_URL dans le .env racine.'
       );
     const modele = SpecModele.exigee(
       modeleImpose || environnement.pourShannon().model
     );
     return {
-      url: this.#urlDuFournisseur(modele, modelsConfig),
+      url,
       cle,
       modele: modele.identifiant,
     };
@@ -178,23 +173,5 @@ export class VerifieAppelsOutils {
         multitour: `ni reponse ni nouvel appel valide (${relance.raison})`,
       },
     };
-  }
-
-  // URL de l'API du fournisseur, lue dans sa description pi : la même source que Shannon.
-  #urlDuFournisseur(modele: SpecModele, modelsConfig?: string): string {
-    const description =
-      modelsConfig ??
-      modele.descriptionPiDans(join(this.#racine, 'outils/shannon/configs'));
-    const url =
-      description &&
-      DescriptionPi.depuisJson(this.#systemeDeFichier.lit(description)).urlDe(
-        modele.fournisseur
-      );
-    if (!url) {
-      throw new Error(
-        `Aucune URL pour le fournisseur « ${modele.fournisseur} » : fournir sa description pi (--models-config)`
-      );
-    }
-    return url;
   }
 }
