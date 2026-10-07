@@ -9,13 +9,18 @@ import {
   LancePassageDeFumee,
 } from '../../../src/shannon/application/lancePassageDeFumee.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
-import { ENVIRONNEMENT_SHANNON } from '../../doubles/environnement.ts';
+import {
+  ENVIRONNEMENT_FOURNISSEUR,
+  ENVIRONNEMENT_SHANNON,
+} from '../../doubles/environnement.ts';
 import type { EnvironnementShannonDeLancement } from '../../../src/shannon/ports/Shannon.ts';
 
 const unDepotDeFichiersPret = () =>
   new SystemeDeFichierEnMemoire({
-    'outils/shannon/shannon.env':
-      'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\nSHANNON_AI_API_KEY=cle\n',
+    'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n',
+    '/depot/outils/shannon/configs/models.albert.json': JSON.stringify({
+      providers: { albert: { baseUrl: '${FOURNISSEUR_BASE_URL}' } },
+    }),
     'outils/shannon/source/apps/cli/dist/index.mjs': '',
   });
 
@@ -35,6 +40,7 @@ describe('Lance Passage de fumée', () => {
     environnement.pourShannon = () => ({
       ...ENVIRONNEMENT_SHANNON,
     });
+    environnement.fournisseur = () => ENVIRONNEMENT_FOURNISSEUR;
   });
 
   it('sert la cible triviale sur 127.0.0.1:8080 puis y lance Shannon, décrit selon le fournisseur du modèle', async () => {
@@ -50,7 +56,7 @@ describe('Lance Passage de fumée', () => {
     expect(shannon.lancements[0]).toMatchObject({
       url: 'http://host.docker.internal:8080',
       depot: '/depot/outils/shannon/smoke-target',
-      modelsConfig: '/depot/outils/shannon/configs/models.albert.json',
+      modelsConfig: '/depot/outils/shannon/configs/genere/models.albert.json',
     });
   });
 
@@ -142,10 +148,7 @@ describe('Lance Passage de fumée', () => {
     const serveur = new ServeurCibleFumeeSimule();
     const shannon = new ShannonSimule();
     const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.ecritFichier(
-      'outils/shannon/shannon.env',
-      'SHANNON_AI_API_KEY=cle\n'
-    );
+    systemeDeFichier.ecritFichier('outils/shannon/shannon.env', '');
     environnement.pourShannon = () => ({
       ...ENVIRONNEMENT_SHANNON,
       // model: undefined,

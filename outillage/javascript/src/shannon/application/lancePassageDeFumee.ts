@@ -8,6 +8,7 @@ import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { SpecModele } from '../domaine/SpecModele.ts';
 import type { ServeurCibleFumee } from '../ports/ServeurCibleFumee.ts';
 import type { Shannon } from '../ports/Shannon.ts';
+import { descriptionPiDuFournisseur } from './descriptionPiDuFournisseur.ts';
 import { InstallationShannon } from './installationShannon.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
@@ -26,6 +27,7 @@ export class LancePassageDeFumee {
   readonly #shannon: Shannon;
   readonly #serveur: ServeurCibleFumee;
   readonly #installation: InstallationShannon;
+  readonly #systemeDeFichier: SystemeDeFichier;
   readonly #horloge: Horloge;
 
   constructor({ racine, shannon, serveur, systemeDeFichier, horloge }: Dependances) {
@@ -35,6 +37,7 @@ export class LancePassageDeFumee {
     this.#installation = new InstallationShannon({
       systemeDeFichier,
     });
+    this.#systemeDeFichier = systemeDeFichier;
     this.#horloge = horloge;
   }
 
@@ -48,8 +51,10 @@ export class LancePassageDeFumee {
       return await this.#shannon.demarre({
         url: `http://host.docker.internal:${port}`,
         depot: join(this.#racine, 'outils/shannon/smoke-target'),
-        modelsConfig: modele.descriptionPiDans(
-          join(this.#racine, 'outils/shannon/configs')
+        modelsConfig: descriptionPiDuFournisseur(
+          modele,
+          this.#racine,
+          this.#systemeDeFichier
         ),
         // Un même nom reprend le workspace existant au lieu d'en créer un neuf : horodaté par défaut.
         // SMOKE_WORKSPACE force la reprise d'un workspace précis (ne rejoue que la partie en échec).

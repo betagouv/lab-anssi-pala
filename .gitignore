@@ -33,6 +33,9 @@ outils/codex-security/configs/*.yaml
 !outils/codex-security/configs/config-defaut.yaml
 !outils/codex-security/configs/scaleway-deepseek-minimal.yaml
 
+# Descriptions pi complétées de FOURNISSEUR_BASE_URL au lancement de Shannon
+outils/shannon/configs/genere/
+
 # Artefacts laissés par Shannon dans la cible de fumée
 outils/shannon/smoke-target/.shannon/
 outils/shannon/smoke-target/.playwright/

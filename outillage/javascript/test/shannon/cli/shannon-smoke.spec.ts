@@ -19,6 +19,7 @@ describe('shannon-smoke (ligne de commande)', () => {
       systemeDeFichier: new SystemeDeFichierEnMemoire({
         'outils/shannon/shannon.env':
           'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n',
+        '/depot/outils/shannon/configs/models.albert.json': '{}',
         'outils/shannon/source/apps/cli/dist/index.mjs': '',
       }),
       horloge: new HorlogeFigee(new Date(1_790_000_000_000)),

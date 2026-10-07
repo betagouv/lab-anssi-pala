@@ -1,7 +1,7 @@
 {
   "providers": {
     "scaleway": {
-      "baseUrl": "https://api.scaleway.ai/fcbbc9c9-62a8-49f0-a5b9-606a62ecf9d8/v1",
+      "baseUrl": "${FOURNISSEUR_BASE_URL}",
       "api": "openai-completions",
       "apiKey": "YOUR_API_KEY",
       "models": [

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Runner généraliste Shannon : pentest agentique contre une application EN MARCHE, cible fournie
-# au lancement (aucune cible codée en dur). La clé et le modèle sont lus dans
-# outils/shannon/shannon.env (non versionné) ; la clé n'est jamais affichée.
+# au lancement (aucune cible codée en dur). Le modèle est lu dans outils/shannon/shannon.env, l'URL
+# et la clé du fournisseur dans le .env racine (FOURNISSEUR_*) ; la clé n'est jamais affichée.
 #
 # PRÉREQUIS (voir README) :
 #   - une instance de la cible tourne en local (sinon les exploitations n'aboutissent pas) ;
@@ -92,13 +92,30 @@ url_shannon="${url_shannon/127.0.0.1/host.docker.internal}"
 set -a
 . "$env_file"
 set +a
+# Shannon parle au même fournisseur que les scans : URL et clé viennent du .env racine.
+[ -f "$racine/.env" ] || { echo "Fichier manquant : $racine/.env (FOURNISSEUR_*)" >&2; exit 1; }
+set -a
+. "$racine/.env"
+set +a
+: "${FOURNISSEUR_API_KEY:?FOURNISSEUR_API_KEY manquant ou vide dans .env}"
+: "${FOURNISSEUR_BASE_URL:?FOURNISSEUR_BASE_URL manquant dans .env}"
+export SHANNON_AI_API_KEY="$FOURNISSEUR_API_KEY"
+
+# pi ne résout pas les variables dans baseUrl : copie (configs/genere/, non versionnée) de la
+# description pi où ${FOURNISSEUR_BASE_URL} est remplacée par l'URL du fournisseur.
+description_pi_du_fournisseur() {
+  local gabarit="$1" description="$outil/configs/genere/$(basename "$1")"
+  mkdir -p "$(dirname "$description")"
+  sed "s|\${FOURNISSEUR_BASE_URL}|${FOURNISSEUR_BASE_URL}|g" "$gabarit" > "$description"
+  echo "$description"
+}
 export SHANNON_AI_MODEL="${modele_impose:-${SHANNON_AI_MODEL:-anthropic:claude-sonnet-4-6}}"
 
 # models-config : override explicite, sinon déduit du fournisseur nommé par SHANNON_AI_MODEL.
 if [ -z "$models_config" ]; then
   case "$SHANNON_AI_MODEL" in
-    scaleway:*) models_config="$outil/configs/models.scaleway.json" ;;
-    albert:*)   models_config="$outil/configs/models.albert.json" ;;
+    scaleway:*) models_config="$(description_pi_du_fournisseur "$outil/configs/models.scaleway.json")" ;;
+    albert:*)   models_config="$(description_pi_du_fournisseur "$outil/configs/models.albert.json")" ;;
   esac
 fi
 mc_args=()

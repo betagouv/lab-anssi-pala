@@ -1,7 +1,7 @@
 {
   "providers": {
     "albert": {
-      "baseUrl": "https://albert.api.etalab.gouv.fr/v1",
+      "baseUrl": "${FOURNISSEUR_BASE_URL}",
       "api": "openai-completions",
       "apiKey": "YOUR_API_KEY",
       "models": [

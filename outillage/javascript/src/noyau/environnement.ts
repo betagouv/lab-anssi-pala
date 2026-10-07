@@ -77,7 +77,8 @@ export const environnement: Environnement = {
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
   pourShannon: (): EnvironnementShannon => ({
-    apiKey: process.env.SHANNON_AI_API_KEY || '',
+    // Shannon parle au fournisseur des scans : SHANNON_AI_API_KEY vaut FOURNISSEUR_API_KEY.
+    apiKey: process.env.FOURNISSEUR_API_KEY || '',
     model: process.env.SHANNON_AI_MODEL || '',
     nombreEssais: Number(process.env.RUNS) || 5,
     portTestDeFumee: Number(process.env.SMOKE_PORT) || 8080,
