@@ -48,9 +48,11 @@ export class PrepareExecutionCodex {
   async pour(nature: string): Promise<ExecutionCodex> {
     const environnementCodex = environnement.pourCodexSecurity();
     const cible = await this.#verifiePrerequis();
-    const sortie = environnementCodex.sortie
-      ? new DossierDeSortie(environnementCodex.sortie)
-      : DossierDeSortie.horodate(this.#racine, nature, this.#horloge.maintenant());
+    const sortie = DossierDeSortie.horodate(
+      this.#racine,
+      nature,
+      this.#horloge.maintenant()
+    );
     this.#systemeDeFichier.creeDossierPrive(sortie.chemin);
     return {
       cible,

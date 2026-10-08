@@ -45,7 +45,6 @@ describe('Valide Finding', () => {
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
-      sortie: SORTIE,
     });
   });
 

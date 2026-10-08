@@ -17,7 +17,6 @@ export type EnvironnementShannon = {
 
 export type EnvironnementCodexSecurity = {
   cible: string; // TODO: pas une variable d’env => doit être généré
-  sortie: string; // TODO: pas une variable d’env => doit être généré
   config: string; // TODO: pas une variable d’env => doit être généré
   proxy: (systemeDeFichier: SystemeDeFichier) => EnvironnementProxy;
 };
@@ -48,7 +47,6 @@ const IMAGE_LITE_LLM_PAR_DEFAUT =
 
 const variablesCodexSecurity: EnvironnementCodexSecurity = {
   cible: process.env.CIBLE || '',
-  sortie: process.env.SORTIE || '',
   config: process.env.CONFIG || '',
   proxy: (systemeDeFichier: SystemeDeFichier) => {
     let variablesProxy = '';

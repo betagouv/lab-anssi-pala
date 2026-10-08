@@ -170,7 +170,6 @@ describe('Lance Scan Codex', () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: CIBLE,
-      sortie,
     });
 
     await unScanCodex({ scanner: scanner, systemeDeFichier, console }).execute({
@@ -183,22 +182,6 @@ describe('Lance Scan Codex', () => {
     });
     expect(systemeDeFichier.dossiersPrives).toContain(sortie);
     expect(console.lignes.map((l) => l.message)[2]).toBe(`Sortie : ${sortie}`);
-  });
-
-  it('la variable de sortie impose la sortie, sans y placer le log même avec un / final', async () => {
-    const scanner = new ScannerCodexSecuritySimulee();
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
-      sortie: '/tmp/scan-a',
-    });
-
-    await unScanCodex({ scanner: scanner }).execute({ options: [] });
-
-    expect(scanner.scans[0]).toMatchObject({
-      sortie: '/tmp/scan-a',
-      journal: '/tmp/scan-a.stdout.log',
-    });
   });
 
   it('ne transmet à Codex que le jeton local du proxy, jamais une clé OpenAI', async () => {
