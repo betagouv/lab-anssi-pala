@@ -97,7 +97,10 @@ describe('Lance Scan Codex', () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: CIBLE,
-      portLiteLLM: 4100,
+      proxy: () => ({
+        ...ENVIRONNEMENT_PROXY,
+        portLiteLLM: 4100,
+      }),
     });
     const reseau = new ReseauSimule([false]);
 

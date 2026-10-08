@@ -36,14 +36,12 @@ export class GenereEnvironnementProxy implements GenerationEnvironnement {
         jetonLocal = this.#generateurDeJeton.jetonLocal();
       }
       return `${Object.entries({
-        ...environnementProxy,
         FOURNISSEUR_NOM: fournisseur.nom,
         FOURNISSEUR_API_KEY: fournisseur.apiKey,
         FOURNISSEUR_BASE_URL: fournisseur.url,
         LITELLM_MASTER_KEY: jetonLocal,
         CODEX_API_KEY: jetonLocal,
       })
-        .filter(([nom, valeur]) => nom !== 'image')
         .map(([nom, valeur]) => `${nom}=${valeur}`)
         .join('\n')}\n`;
     };

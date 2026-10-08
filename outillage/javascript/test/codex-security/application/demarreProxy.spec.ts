@@ -51,11 +51,11 @@ describe('Démarre Proxy Codex', () => {
     const conteneur = new ConteneurProxySimule();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      portLiteLLM: 4000,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
         image:
           'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02',
+        portLiteLLM: 4000,
       }),
     });
 
@@ -72,10 +72,10 @@ describe('Démarre Proxy Codex', () => {
     const conteneur = new ConteneurProxySimule();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      portLiteLLM: 4100,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
         image: 'litellm:essai',
+        portLiteLLM: 4100,
       }),
     });
 

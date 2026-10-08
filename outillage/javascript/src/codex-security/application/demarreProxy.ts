@@ -54,7 +54,8 @@ export class DemarreProxy {
       .pourCodexSecurity()
       .proxy(this.#sytemeDeFichier).urlBaseDeDonnees;
     return {
-      port: environnement.pourCodexSecurity().portLiteLLM,
+      port: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier)
+        .portLiteLLM,
       image: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier).image,
       ...(baseDeDonnees && { baseDeDonnees }),
     };

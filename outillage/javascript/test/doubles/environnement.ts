@@ -21,6 +21,7 @@ export const ENVIRONNEMENT_PROXY: EnvironnementProxy = {
   LITELLM_MASTER_KEY: 'sk-local-neuf',
   CODEX_API_KEY: 'sk-local-neuf',
   image: 'image',
+  portLiteLLM: 4000,
 };
 
 export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
@@ -31,7 +32,6 @@ export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
 
 export const ENVIRONNEMENT_CODEX_SECURITY: EnvironnementCodexSecurity = {
   cible: 'cible',
-  portLiteLLM: 4000,
   sortie: 'sortie',
   config: 'config',
   proxy: () => ENVIRONNEMENT_PROXY,

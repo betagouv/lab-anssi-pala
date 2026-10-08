@@ -4,6 +4,7 @@ import {
   CHEMIN_FICHIER_ENV_RACINE,
 } from '../codex-security/domaine/cheminEnvironnement.ts';
 import { parseEnv } from 'node:util';
+import * as process from "node:process";
 
 export type EnvironnementShannon = {
   apiKey: string;
@@ -16,7 +17,6 @@ export type EnvironnementShannon = {
 
 export type EnvironnementCodexSecurity = {
   cible: string; // TODO: pas une variable d’env => doit être généré
-  portLiteLLM: number; // TODO déplacer dans proxy()
   sortie: string; // TODO: pas une variable d’env => doit être généré
   config: string; // TODO: pas une variable d’env => doit être généré
   proxy: (systemeDeFichier: SystemeDeFichier) => EnvironnementProxy;
@@ -30,6 +30,7 @@ export type EnvironnementProxy = {
   LITELLM_MASTER_KEY: string;
   image: string;
   urlBaseDeDonnees?: string;
+  portLiteLLM: number;
 };
 
 export type EnvironnementFournisseur = {
@@ -49,9 +50,8 @@ type Environnement = {
 const IMAGE_LITE_LLM_PAR_DEFAUT =
   'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
 
-const variablesCodexSecurity = {
+const variablesCodexSecurity: EnvironnementCodexSecurity = {
   cible: process.env.CIBLE || '',
-  portLiteLLM: Number(process.env.PORT_LITE_LLM) || 4000,
   sortie: process.env.SORTIE || '',
   config: process.env.CONFIG || '',
   proxy: (systemeDeFichier: SystemeDeFichier) => {
@@ -59,9 +59,11 @@ const variablesCodexSecurity = {
     if (systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
       variablesProxy = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_CODEX);
     }
+    const lesVariablesEnvironnement = parseEnv(variablesProxy);
     return {
-      ...parseEnv(variablesProxy),
+      ...lesVariablesEnvironnement,
       image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
+      portLiteLLM: Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000,
       ...(process.env.LITELLM_DATABASE_URL && {
         urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
       }),
