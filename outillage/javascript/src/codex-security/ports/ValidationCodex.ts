@@ -1,10 +1,11 @@
+import type { EnvironnementCodex } from './EnvironnementCodex.ts';
+
 export type DemandeDeValidation = {
   cible: string;
   config: string;
   finding: object;
   sortie: string;
-  // Environnement du processus Codex (jeton local, identité isolée).
-  environnement: Record<string, string | undefined>;
+  environnement: EnvironnementCodex;
 };
 
 export type ResultatDeValidation = {

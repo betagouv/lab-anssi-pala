@@ -5,10 +5,13 @@ import {
   executeCommande,
   lanceCommande,
 } from '../../noyau/adaptateurs/node/processus.ts';
-import type { CliCodexSecurity, DemandeDeScan } from '../ports/CliCodexSecurity.ts';
+import type {
+  ScannerCodexSecurity,
+  DemandeDeScan,
+} from '../ports/ScannerCodexSecurity.ts';
 
 // CLI installée par npm dans outils/codex-security/node_modules (version figée par package-lock.json).
-export class CliCodexSecurityNpm implements CliCodexSecurity {
+export class ScannerCodexSecurityNpm implements ScannerCodexSecurity {
   readonly #outil: string;
   readonly #repertoireAppel: string;
 

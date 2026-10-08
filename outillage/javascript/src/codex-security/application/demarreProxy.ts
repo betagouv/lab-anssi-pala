@@ -7,11 +7,6 @@ import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy
 import { environnement } from '../../noyau/environnement.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 
-// Génération de l'environnement du proxy (voir GenereEnvironnementProxy).
-export interface GenerationEnvironnement {
-  execute(): void;
-}
-
 // Image figée par digest (main-stable du 23/09/2026) : le pont Responses -> Chat évolue vite.
 export type Dependances = {
   conteneur: ConteneurProxy;

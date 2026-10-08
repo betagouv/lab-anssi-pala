@@ -3,8 +3,8 @@ import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import {
   type Dependances,
-  GenereEnvironnementProxy,
-} from '../application/genereEnvironnementProxy.ts';
+  GenereEnvironnement,
+} from '../application/genereEnvironnement.ts';
 
 export async function genereEnv(
   argv: string[],
@@ -14,7 +14,7 @@ export async function genereEnv(
     'Génère outils/codex-security/codex-security.env à partir du .env racine (jamais versionné).'
   );
   return executeCommande(programme, argv, dependances.console, () => {
-    new GenereEnvironnementProxy(dependances).execute();
+    new GenereEnvironnement(dependances).execute();
     return 0;
   });
 }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
+import { ScannerCodexSecuritySimulee } from '../../doubles/ScannerCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
@@ -30,7 +30,7 @@ const unDepotDeFichiersPret = () => {
 const uneValidation = (doubles: Partial<Dependances> = {}) =>
   new ValideFinding({
     racine: '/depot',
-    cli: new CliCodexSecuritySimulee(),
+    scanner: new ScannerCodexSecuritySimulee(),
     validation: new ValidationCodexSimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
+import { ScannerCodexSecuritySimulee } from '../../doubles/ScannerCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
@@ -15,7 +15,7 @@ describe('scan (ligne de commande)', () => {
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: '/depot/cible/copies/app',
     });
-    const cli = new CliCodexSecuritySimulee({ statutDuScan: 42 });
+    const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       'outils/codex-security/codex-security.env':
         'LITELLM_MASTER_KEY=sk-local-jeton\n',
@@ -26,7 +26,7 @@ describe('scan (ligne de commande)', () => {
       ['--verbose', '--dry-run', '--scan-prompt-file', 'consignes.md'],
       {
         racine: '/depot',
-        cli,
+        scanner: cli,
         systemeDeFichier,
         reseau: new ReseauSimule(),
         horloge: new HorlogeFigee(new Date(2026, 8, 30)),
@@ -45,12 +45,12 @@ describe('scan (ligne de commande)', () => {
   });
 
   it('affiche sa propre aide, avec les options ajoutées par défaut, sans lancer de scan', async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const cli = new ScannerCodexSecuritySimulee();
     const console = new ConsoleEnMemoire();
 
     const code = await scan(['--help'], {
       racine: '/depot',
-      cli,
+      scanner: cli,
       systemeDeFichier: new SystemeDeFichierEnMemoire(),
       reseau: new ReseauSimule(),
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),

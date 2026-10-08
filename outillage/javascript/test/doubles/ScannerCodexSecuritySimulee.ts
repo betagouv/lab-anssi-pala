@@ -1,9 +1,9 @@
 import type {
-  CliCodexSecurity,
+  ScannerCodexSecurity,
   DemandeDeScan,
-} from '../../src/codex-security/ports/CliCodexSecurity.ts';
+} from '../../src/codex-security/ports/ScannerCodexSecurity.ts';
 
-export class CliCodexSecuritySimulee implements CliCodexSecurity {
+export class ScannerCodexSecuritySimulee implements ScannerCodexSecurity {
   #installee: boolean;
   readonly #version: string;
   readonly #statutDuScan: number;

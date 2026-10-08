@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { CliCodexSecuritySimulee } from '../../doubles/CliCodexSecuritySimulee.ts';
+import { ScannerCodexSecuritySimulee } from '../../doubles/ScannerCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
@@ -34,7 +34,7 @@ const unDepotDeFichiersPret = () => {
 const unScanCodex = (doubles: Partial<Dependances> = {}) =>
   new LanceScan({
     racine: '/depot',
-    cli: new CliCodexSecuritySimulee(),
+    scanner: new ScannerCodexSecuritySimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
@@ -52,9 +52,11 @@ describe('Lance Scan Codex', () => {
   });
 
   it('refuse de scanner sans la CLI Codex Security', async () => {
-    const cli = new CliCodexSecuritySimulee({ installee: false });
+    const scanner = new ScannerCodexSecuritySimulee({ installee: false });
 
-    await expect(unScanCodex({ cli }).execute({ options: [] })).rejects.toThrow(
+    await expect(
+      unScanCodex({ scanner: scanner }).execute({ options: [] })
+    ).rejects.toThrow(
       'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
     );
   });
@@ -120,18 +122,18 @@ describe('Lance Scan Codex', () => {
       // config: undefined,
     });
 
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     const console = new ConsoleEnMemoire();
 
-    await unScanCodex({ cli, console }).execute({
+    await unScanCodex({ scanner: scanner, console }).execute({
       options: ['--verbose', '--mode', 'deep'],
     });
 
-    expect(cli.scans[0]).toMatchObject({
+    expect(scanner.scans[0]).toMatchObject({
       cible: CIBLE,
       config: '/depot/outils/codex-security/configs/config-defaut.yaml',
     });
-    expect(cli.scans[0].options).toEqual(
+    expect(scanner.scans[0].options).toEqual(
       expect.arrayContaining(['--verbose', '--mode', 'deep'])
     );
     expect(console.lignes.map((l) => l.message).slice(0, 2)).toEqual([
@@ -146,20 +148,22 @@ describe('Lance Scan Codex', () => {
       cible: CIBLE,
       config: '/configs/ciblee.yaml',
     });
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.set(
       '/configs/ciblee.yaml',
       'codex:\n  model: glm-5.2\n  model_provider: scaleway\n'
     );
 
-    await unScanCodex({ cli, systemeDeFichier }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner, systemeDeFichier }).execute({
+      options: [],
+    });
 
-    expect(cli.scans[0].config).toBe('/configs/ciblee.yaml');
+    expect(scanner.scans[0].config).toBe('/configs/ciblee.yaml');
   });
 
   it('sort dans un dossier horodaté privé, avec le log écrit à côté (Codex exige une sortie vide)', async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     const systemeDeFichier = unDepotDeFichiersPret();
     const console = new ConsoleEnMemoire();
     const sortie = '/depot/resultats/brut/codex-security/scan-20260930-140509';
@@ -169,45 +173,49 @@ describe('Lance Scan Codex', () => {
       sortie,
     });
 
-    await unScanCodex({ cli, systemeDeFichier, console }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner, systemeDeFichier, console }).execute({
+      options: [],
+    });
 
-    expect(cli.scans[0]).toMatchObject({ sortie, journal: `${sortie}.stdout.log` });
+    expect(scanner.scans[0]).toMatchObject({
+      sortie,
+      journal: `${sortie}.stdout.log`,
+    });
     expect(systemeDeFichier.dossiersPrives).toContain(sortie);
     expect(console.lignes.map((l) => l.message)[2]).toBe(`Sortie : ${sortie}`);
   });
 
   it('la variable de sortie impose la sortie, sans y placer le log même avec un / final', async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: CIBLE,
       sortie: '/tmp/scan-a',
     });
 
-    await unScanCodex({ cli }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner }).execute({ options: [] });
 
-    expect(cli.scans[0]).toMatchObject({
+    expect(scanner.scans[0]).toMatchObject({
       sortie: '/tmp/scan-a',
       journal: '/tmp/scan-a.stdout.log',
     });
   });
 
   it('ne transmet à Codex que le jeton local du proxy, jamais une clé OpenAI', async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     environnement.path = '/usr/bin';
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       cible: CIBLE,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
-        LITELLM_MASTER_KEY: 'sk-local-jeton',
-        CODEX_API_KEY: 'sk-local-jeton',
+        jeton: 'sk-local-jeton',
       }),
     });
 
-    await unScanCodex({ cli }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner }).execute({ options: [] });
 
-    const transmis = cli.scans[0].environnement;
+    const transmis = scanner.scans[0].environnement;
     expect(transmis).toMatchObject({
       LITELLM_API_KEY: 'sk-local-jeton',
       CODEX_API_KEY: 'sk-local-jeton',
@@ -217,12 +225,14 @@ describe('Lance Scan Codex', () => {
   });
 
   it("isole l'identité et l'historique de Codex dans des dossiers privés, et désigne le script d'artefacts", async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
     const systemeDeFichier = unDepotDeFichiersPret();
 
-    await unScanCodex({ cli, systemeDeFichier }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner, systemeDeFichier }).execute({
+      options: [],
+    });
 
-    expect(cli.scans[0].environnement).toMatchObject({
+    expect(scanner.scans[0].environnement).toMatchObject({
       CODEX_HOME: '/depot/outils/codex-security/codex-home',
       CODEX_SECURITY_STATE_DIR: '/depot/outils/codex-security/state',
       CODEX_SECURITY_NO_UPDATE_NOTICE: '1',
@@ -266,16 +276,17 @@ describe('Lance Scan Codex', () => {
       cible: CIBLE,
       config: 'scan.stdout.log',
     });
-    const cli = new CliCodexSecuritySimulee({ statutDuScan: 42 });
+    const scanner = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
     const console = new ConsoleEnMemoire();
     const estimation = new EstimationDuCoutSimulee({ console });
 
-    const statut = await unScanCodex({ cli, estimation, console }).execute(
-      { options: [] },
-      () => {
-        throw new Error('Fichier introuvable : scan.stdout.log');
-      }
-    );
+    const statut = await unScanCodex({
+      scanner: scanner,
+      estimation,
+      console,
+    }).execute({ options: [] }, () => {
+      throw new Error('Fichier introuvable : scan.stdout.log');
+    });
 
     expect(statut).toBe(42);
     expect(console.erreurs.map((l) => l.message)).toEqual([
@@ -284,11 +295,11 @@ describe('Lance Scan Codex', () => {
   });
 
   it("suit par défaut les consignes de scan du dépôt, sans lesquelles DeepSeek n'écrit pas findings.json", async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
 
-    await unScanCodex({ cli }).execute({ options: ['--dry-run'] });
+    await unScanCodex({ scanner: scanner }).execute({ options: ['--dry-run'] });
 
-    expect(cli.scans[0].options).toEqual(
+    expect(scanner.scans[0].options).toEqual(
       expect.arrayContaining([
         '--scan-prompt-file',
         '/depot/outils/codex-security/configs/consignes-scan.md',
@@ -297,21 +308,21 @@ describe('Lance Scan Codex', () => {
   });
 
   it("demande par défaut un log bavard, dont le relevé TOKENS permet d'estimer le coût", async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
 
-    await unScanCodex({ cli }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner }).execute({ options: [] });
 
-    expect(cli.scans[0].options).toContain('--verbose');
+    expect(scanner.scans[0].options).toContain('--verbose');
   });
 
   it("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {
-    const cli = new CliCodexSecuritySimulee();
+    const scanner = new ScannerCodexSecuritySimulee();
 
-    await unScanCodex({ cli }).execute({
+    await unScanCodex({ scanner: scanner }).execute({
       options: ['--scan-prompt-file=/mes-consignes.md'],
     });
 
-    expect(cli.scans[0].options).toEqual([
+    expect(scanner.scans[0].options).toEqual([
       '--verbose',
       '--scan-prompt-file=/mes-consignes.md',
     ]);

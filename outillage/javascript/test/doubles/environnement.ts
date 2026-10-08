@@ -15,11 +15,7 @@ export const ENVIRONNEMENT_SHANNON: EnvironnementShannon = {
 };
 
 export const ENVIRONNEMENT_PROXY: EnvironnementProxy = {
-  FOURNISSEUR_NOM: 'albert',
-  FOURNISSEUR_API_KEY: 'cle-fournisseur',
-  FOURNISSEUR_BASE_URL: 'https://fournisseur.example/v1',
-  LITELLM_MASTER_KEY: 'sk-local-neuf',
-  CODEX_API_KEY: 'sk-local-neuf',
+  jeton: 'sk-local-neuf',
   image: 'image',
   portLiteLLM: 4000,
 };

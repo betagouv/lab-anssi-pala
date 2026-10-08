@@ -1,8 +1,6 @@
 // Racine de composition : démarre le proxy LiteLLM depuis la racine du dépôt.
 import { join } from 'node:path';
 import { ConteneurProxyDocker } from '../codex-security/adaptateurs/ConteneurProxyDocker.ts';
-import { GenerateurDeJetonAleatoire } from '../codex-security/adaptateurs/GenerateurDeJetonAleatoire.ts';
-import { GenereEnvironnementProxy } from '../codex-security/application/genereEnvironnementProxy.ts';
 import { startProxy } from '../codex-security/cli/start-proxy.ts';
 import { AttenteTemporisee } from '../noyau/adaptateurs/node/AttenteTemporisee.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';

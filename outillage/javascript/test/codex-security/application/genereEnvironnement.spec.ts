@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { GenerateurDeJetonFige } from '../../doubles/GenerateurDeJetonFige.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
-  GenereEnvironnementProxy,
-} from '../../../src/codex-security/application/genereEnvironnementProxy.ts';
+  GenereEnvironnement,
+} from '../../../src/codex-security/application/genereEnvironnement.ts';
 import {
   environnement,
   type EnvironnementProxy,
@@ -20,7 +20,7 @@ const ENV_RACINE =
   'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\n';
 
 const uneGenerationEnvironnementProxyCodex = (doubles: Partial<Dependances> = {}) =>
-  new GenereEnvironnementProxy({
+  new GenereEnvironnement({
     systemeDeFichier: new SystemeDeFichierEnMemoire({
       '.env': ENV_RACINE,
       ENV_PROXY: '',
@@ -46,7 +46,7 @@ describe('Génère Environnement Proxy Codex', () => {
     uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
 
     expect(systemeDeFichier.lit(ENV_PROXY)).toBe(
-      'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nLITELLM_MASTER_KEY=sk-local-neuf\nCODEX_API_KEY=sk-local-neuf\n'
+      'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nLITELLM_API_KEY=sk-local-neuf\nCODEX_API_KEY=sk-local-neuf\n'
     );
   });
 
@@ -58,14 +58,14 @@ describe('Génère Environnement Proxy Codex', () => {
       ...ENVIRONNEMENT_CODEX_SECURITY,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
-        LITELLM_MASTER_KEY: 'sk-local-existant',
+        jeton: 'sk-local-existant',
       }),
     });
 
     uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
 
     expect(systemeDeFichier.lit(ENV_PROXY)).toContain(
-      'LITELLM_MASTER_KEY=sk-local-existant\n'
+      'LITELLM_API_KEY=sk-local-existant\n'
     );
   });
 
@@ -77,14 +77,14 @@ describe('Génère Environnement Proxy Codex', () => {
       ...ENVIRONNEMENT_CODEX_SECURITY,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
-        LITELLM_MASTER_KEY: 'a-remplacer',
+        jeton: 'a-remplacer',
       }),
     });
 
     uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
 
     expect(systemeDeFichier.lit(ENV_PROXY)).toContain(
-      'LITELLM_MASTER_KEY=sk-local-neuf\n'
+      'LITELLM_API_KEY=sk-local-neuf\n'
     );
   });
 

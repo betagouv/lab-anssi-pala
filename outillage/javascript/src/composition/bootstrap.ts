@@ -2,7 +2,7 @@
 import { join } from 'node:path';
 import { GitEnLigneDeCommande } from '../bootstrap/adaptateurs/GitEnLigneDeCommande.ts';
 import { bootstrap } from '../bootstrap/cli.ts';
-import { CliCodexSecurityNpm } from '../codex-security/adaptateurs/CliCodexSecurityNpm.ts';
+import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { PrepareCodexSecurity } from '../codex-security/application/prepareCodexSecurity.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
@@ -18,7 +18,7 @@ process.exitCode = await bootstrap(process.argv.slice(2), {
   console,
   outils: [
     new PrepareCodexSecurity({
-      cli: new CliCodexSecurityNpm(join(racine, 'outils/codex-security')),
+      cli: new ScannerCodexSecurityNpm(join(racine, 'outils/codex-security')),
       console,
     }),
     new PrepareShannon({

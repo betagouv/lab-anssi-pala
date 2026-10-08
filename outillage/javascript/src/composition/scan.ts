@@ -1,6 +1,6 @@
 // Racine de composition : lance un scan Codex Security depuis la racine du dépôt.
 import { join } from 'node:path';
-import { CliCodexSecurityNpm } from '../codex-security/adaptateurs/CliCodexSecurityNpm.ts';
+import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { scan } from '../codex-security/cli/scan.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
@@ -16,7 +16,7 @@ const systemeDeFichier = new SystemeDeFichierNode(racine);
 
 process.exitCode = await scan(process.argv.slice(2), {
   racine,
-  cli: new CliCodexSecurityNpm(
+  scanner: new ScannerCodexSecurityNpm(
     join(racine, 'outils/codex-security'),
     repertoireAppel
   ),

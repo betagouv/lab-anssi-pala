@@ -1,19 +1,17 @@
-// Prépare l'exécution de Codex Security contre le proxy LiteLLM local, commune au scan et à la
-// validation : vérifie les prérequis, résout cible, config et sortie, et construit l'environnement
-// du processus Codex. Portage TS de env-runtime.sh.
 import { join } from 'node:path';
 import type { Horloge } from '../../noyau/ports/Horloge.ts';
 import type { Reseau } from '../../noyau/ports/Reseau.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
-import type { CliCodexSecurity } from '../ports/CliCodexSecurity.ts';
+import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
 import { environnement } from '../../noyau/environnement.ts';
 import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
+import type { EnvironnementCodex } from '../ports/EnvironnementCodex.ts';
 
 export type DependancesExecution = {
   // Racine absolue du dépôt d'audit : les chemins transmis à Codex doivent être absolus.
   racine: string;
-  cli: CliCodexSecurity;
+  scanner: ScannerCodexSecurity;
   systemeDeFichier: SystemeDeFichier;
   reseau: Reseau;
   horloge: Horloge;
@@ -26,37 +24,27 @@ export type ExecutionCodex = {
   environnementCodex: EnvironnementCodex;
 };
 
-export type EnvironnementCodex = {
-  LITELLM_API_KEY: string;
-  CODEX_API_KEY: string;
-  CODEX_HOME: string;
-  CODEX_SECURITY_STATE_DIR: string;
-  CODEX_SECURITY_NO_UPDATE_NOTICE: string;
-  CODEX_SCAN_ECRIT_ARTEFACTS: string;
-};
-
 export class PrepareExecutionCodex {
   readonly #racine: string;
-  readonly #cli: CliCodexSecurity;
+  readonly #cli: ScannerCodexSecurity;
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #reseau: Reseau;
   readonly #horloge: Horloge;
 
   constructor({
     racine,
-    cli,
+    scanner,
     systemeDeFichier,
     reseau,
     horloge,
   }: DependancesExecution) {
     this.#racine = racine;
-    this.#cli = cli;
+    this.#cli = scanner;
     this.#systemeDeFichier = systemeDeFichier;
     this.#reseau = reseau;
     this.#horloge = horloge;
   }
 
-  // nature : préfixe du dossier de sortie horodaté (scan, validate).
   async pour(nature: string): Promise<ExecutionCodex> {
     const environnementCodex = environnement.pourCodexSecurity();
     const cible = await this.#verifiePrerequis();
@@ -66,7 +54,6 @@ export class PrepareExecutionCodex {
     this.#systemeDeFichier.creeDossierPrive(sortie.chemin);
     return {
       cible,
-      // Défaut : DeepSeek servi par Albert, dépôt entier. Scan ciblé : copier config-cible.template.yaml.
       config:
         environnementCodex.config ||
         join(this.#racine, 'outils/codex-security/configs/config-defaut.yaml'),
@@ -111,7 +98,7 @@ export class PrepareExecutionCodex {
   #environnementCodex(): EnvironnementCodex {
     const jeton = environnement
       .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier).LITELLM_MASTER_KEY;
+      .proxy(this.#systemeDeFichier).jeton;
     // Identité et historique Codex isolés : rien n'est lu ni écrit dans ~/.codex.
     const codexHome = join(this.#racine, 'outils/codex-security/codex-home');
     const etat = join(this.#racine, 'outils/codex-security/state');

@@ -1,6 +1,6 @@
 // Racine de composition : valide un finding avec Codex Security depuis la racine du dépôt.
 import { join } from 'node:path';
-import { CliCodexSecurityNpm } from '../codex-security/adaptateurs/CliCodexSecurityNpm.ts';
+import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { ValidationCodexSdk } from '../codex-security/adaptateurs/ValidationCodexSdk.ts';
 import { validate } from '../codex-security/cli/validate.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
@@ -16,7 +16,7 @@ const repertoireAppel = process.env.INIT_CWD || process.cwd();
 process.exitCode = await validate(process.argv.slice(2), {
   racine,
   repertoireAppel,
-  cli: new CliCodexSecurityNpm(outil, repertoireAppel),
+  scanner: new ScannerCodexSecurityNpm(outil, repertoireAppel),
   validation: new ValidationCodexSdk(outil),
   systemeDeFichier: new SystemeDeFichierNode(racine),
   reseau: new ReseauFetch(5000),

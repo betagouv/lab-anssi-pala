@@ -1,10 +1,8 @@
-// Génère l'environnement du proxy LiteLLM à partir du .env racine. Portage TS de generate-env.sh.
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import type { GenerateurDeJeton } from '../ports/GenerateurDeJeton.ts';
 import { environnement } from '../../noyau/environnement.ts';
 import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
-import type { GenerationEnvironnement } from './demarreProxy.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -12,7 +10,7 @@ export type Dependances = {
   console: Console;
 };
 
-export class GenereEnvironnementProxy implements GenerationEnvironnement {
+export class GenereEnvironnement {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #generateurDeJeton: GenerateurDeJeton;
   readonly #console: Console;
@@ -31,7 +29,7 @@ export class GenereEnvironnementProxy implements GenerationEnvironnement {
     const fournisseur = environnement.fournisseur();
 
     const toutesLesVariables = () => {
-      let jetonLocal = environnementProxy.LITELLM_MASTER_KEY;
+      let jetonLocal = environnementProxy.jeton;
       if (!jetonLocal || !jetonLocal.startsWith('sk-')) {
         jetonLocal = this.#generateurDeJeton.jetonLocal();
       }
@@ -39,7 +37,7 @@ export class GenereEnvironnementProxy implements GenerationEnvironnement {
         FOURNISSEUR_NOM: fournisseur.nom,
         FOURNISSEUR_API_KEY: fournisseur.apiKey,
         FOURNISSEUR_BASE_URL: fournisseur.url,
-        LITELLM_MASTER_KEY: jetonLocal,
+        LITELLM_API_KEY: jetonLocal,
         CODEX_API_KEY: jetonLocal,
       })
         .map(([nom, valeur]) => `${nom}=${valeur}`)

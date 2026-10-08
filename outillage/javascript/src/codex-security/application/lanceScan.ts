@@ -5,7 +5,7 @@ import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { ConfigScan } from '../domaine/ConfigScan.ts';
 import type { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
-import type { CliCodexSecurity } from '../ports/CliCodexSecurity.ts';
+import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
 import {
   type DependancesExecution,
   PrepareExecutionCodex,
@@ -25,7 +25,7 @@ export type Dependances = DependancesExecution & {
 export class LanceScan {
   readonly #racine: string;
   readonly #execution: PrepareExecutionCodex;
-  readonly #cli: CliCodexSecurity;
+  readonly #scanner: ScannerCodexSecurity;
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #estimation: EstimationDuCout;
   readonly #console: Console;
@@ -33,7 +33,7 @@ export class LanceScan {
   constructor(dependances: Dependances) {
     this.#racine = dependances.racine;
     this.#execution = new PrepareExecutionCodex(dependances);
-    this.#cli = dependances.cli;
+    this.#scanner = dependances.scanner;
     this.#systemeDeFichier = dependances.systemeDeFichier;
     this.#estimation = dependances.estimation;
     this.#console = dependances.console;
@@ -53,7 +53,7 @@ export class LanceScan {
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
     this.#console.aLaLigne(`Sortie : ${sortie.chemin}`, 'BLEU');
 
-    const statut = await this.#cli.scanne({
+    const statut = await this.#scanner.scanne({
       cible,
       config,
       sortie: sortie.chemin,

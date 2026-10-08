@@ -4,7 +4,7 @@ import {
   CHEMIN_FICHIER_ENV_RACINE,
 } from '../codex-security/domaine/cheminEnvironnement.ts';
 import { parseEnv } from 'node:util';
-import * as process from "node:process";
+import * as process from 'node:process';
 
 export type EnvironnementShannon = {
   apiKey: string;
@@ -23,11 +23,7 @@ export type EnvironnementCodexSecurity = {
 };
 
 export type EnvironnementProxy = {
-  FOURNISSEUR_NOM: string;
-  FOURNISSEUR_API_KEY: string;
-  FOURNISSEUR_BASE_URL: string;
-  CODEX_API_KEY: string;
-  LITELLM_MASTER_KEY: string;
+  jeton: string;
   image: string;
   urlBaseDeDonnees?: string;
   portLiteLLM: number;
@@ -61,13 +57,13 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
     }
     const lesVariablesEnvironnement = parseEnv(variablesProxy);
     return {
-      ...lesVariablesEnvironnement,
+      jeton: lesVariablesEnvironnement.LITELLM_API_KEY!,
       image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
       portLiteLLM: Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000,
       ...(process.env.LITELLM_DATABASE_URL && {
         urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
       }),
-    } as EnvironnementProxy;
+    };
   },
 };
 export const environnement: Environnement = {
@@ -79,7 +75,6 @@ export const environnement: Environnement = {
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
   pourShannon: (): EnvironnementShannon => ({
-    // Shannon parle au fournisseur des scans : SHANNON_AI_API_KEY vaut FOURNISSEUR_API_KEY.
     apiKey: process.env.FOURNISSEUR_API_KEY || '',
     model: process.env.SHANNON_AI_MODEL || '',
     nombreEssais: Number(process.env.RUNS) || 5,

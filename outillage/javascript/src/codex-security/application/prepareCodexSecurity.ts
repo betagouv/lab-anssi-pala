@@ -2,15 +2,15 @@
 // Portage TS de outils/codex-security/bootstrap.sh.
 import type { PreparationOutil } from '../../bootstrap/domaine/PreparationOutil.ts';
 import type { Console } from '../../noyau/ports/Console.ts';
-import type { CliCodexSecurity } from '../ports/CliCodexSecurity.ts';
+import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
 
 export class PrepareCodexSecurity implements PreparationOutil {
   readonly nom = 'codex-security';
   readonly fichierEnvironnement = 'outils/codex-security/codex-security.env';
-  readonly #cli: CliCodexSecurity;
+  readonly #cli: ScannerCodexSecurity;
   readonly #console: Console;
 
-  constructor({ cli, console }: { cli: CliCodexSecurity; console: Console }) {
+  constructor({ cli, console }: { cli: ScannerCodexSecurity; console: Console }) {
     this.#cli = cli;
     this.#console = console;
   }
