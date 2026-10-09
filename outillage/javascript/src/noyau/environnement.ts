@@ -27,8 +27,9 @@ export type EnvironnementProxy = {
 };
 
 export type EnvironnementFournisseur = {
-  nom: string;
   apiKey: string;
+  modele: string;
+  nom: string;
   url: string;
 };
 
@@ -63,8 +64,9 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
 export const environnement: Environnement = {
   path: process.env.PATH!,
   fournisseur: (): EnvironnementFournisseur => ({
-    nom: process.env.FOURNISSEUR_NOM || '',
     apiKey: process.env.FOURNISSEUR_API_KEY || '',
+    modele: process.env.FOURNISSEUR_MODELE || '',
+    nom: process.env.FOURNISSEUR_NOM || '',
     url: process.env.FOURNISSEUR_BASE_URL || '',
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
@@ -88,6 +90,9 @@ export const environnement: Environnement = {
     }
     if (!lesVariables.FOURNISSEUR_BASE_URL) {
       throw new Error('Erreur: FOURNISSEUR_BASE_URL manquant ou vide dans .env');
+    }
+    if (!lesVariables.FOURNISSEUR_MODELE) {
+      throw new Error('Erreur: FOURNISSEUR_MODELE manquant ou vide dans .env');
     }
   },
 };

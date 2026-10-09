@@ -2,7 +2,10 @@ import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import type { GenerateurDeJeton } from '../ports/GenerateurDeJeton.ts';
 import { environnement } from '../../noyau/environnement.ts';
-import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
+import {
+  CHEMIN_FICHIER_ENV_CODEX,
+  CHEMIN_FICHIER_ENV_SHANNON,
+} from '../domaine/cheminEnvironnement.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -22,14 +25,15 @@ export class GenereEnvironnement {
   }
 
   execute(): void {
+    environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
     this.#genereLeFichierEnvPourCodexSecurity();
+    this.#genereLeFichierEnvPourShannon();
   }
 
   #genereLeFichierEnvPourCodexSecurity() {
-    environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
     const environnementProxy = environnement
-        .pourCodexSecurity()
-        .proxy(this.#systemeDeFichier);
+      .pourCodexSecurity()
+      .proxy(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
 
     const toutesLesVariables = () => {
@@ -44,18 +48,40 @@ export class GenereEnvironnement {
         LITELLM_API_KEY: jetonLocal,
         CODEX_API_KEY: jetonLocal,
       })
-          .map(([nom, valeur]) => `${nom}=${valeur}`)
-          .join('\n')}\n`;
+        .map(([nom, valeur]) => `${nom}=${valeur}`)
+        .join('\n')}\n`;
     };
 
     this.#systemeDeFichier.ecritFichierPrive(
-        CHEMIN_FICHIER_ENV_CODEX,
-        toutesLesVariables()
+      CHEMIN_FICHIER_ENV_CODEX,
+      toutesLesVariables()
     );
     this.#console.aLaLigne(`Généré: ${CHEMIN_FICHIER_ENV_CODEX}`, 'VERT');
     this.#console.aLaLigne(
-        `  Fournisseur configuré pour le proxy : ${fournisseur.nom} (${fournisseur.url})`,
-        'VERT'
+      `  Fournisseur configuré pour le proxy : ${fournisseur.nom} (${fournisseur.url})`,
+      'VERT'
+    );
+  }
+
+  #genereLeFichierEnvPourShannon() {
+    const fournisseur = environnement.fournisseur();
+    const toutesLesVariables = () => {
+      return `${Object.entries({
+        SHANNON_AI_MODEL: `${fournisseur.nom}:${fournisseur.modele}`,
+        SHANNON_AI_API_KEY: fournisseur.apiKey,
+      })
+        .map(([nom, valeur]) => `${nom}=${valeur}`)
+        .join('\n')}\n`;
+    };
+
+    this.#systemeDeFichier.ecritFichierPrive(
+      CHEMIN_FICHIER_ENV_SHANNON,
+      toutesLesVariables()
+    );
+    this.#console.aLaLigne(`Généré: ${CHEMIN_FICHIER_ENV_SHANNON}`, 'VERT');
+    this.#console.aLaLigne(
+      `  Fournisseur configuré pour Shannon : ${fournisseur.nom} (${fournisseur.modele})`,
+      'VERT'
     );
   }
 }

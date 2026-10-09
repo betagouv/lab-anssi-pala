@@ -21,8 +21,9 @@ export const ENVIRONNEMENT_PROXY: EnvironnementProxy = {
 };
 
 export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
-  nom: 'albert',
   apiKey: 'clef-fournisseur',
+  modele: 'un-modele',
+  nom: 'albert',
   url: 'http://fournisseur.local',
 };
 

@@ -64,7 +64,7 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  it("refuse de scanner si le fichier de variables d’environnement n’existe pas", async () => {
+  it('refuse de scanner si le fichier de variables d’environnement n’existe pas', async () => {
     const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.delete('outils/codex-security/codex-security.env');
 
