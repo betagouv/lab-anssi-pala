@@ -34,10 +34,6 @@ const lesDependancesPourLaValidation = (
 };
 
 describe('validate (ligne de commande)', () => {
-  beforeEach(() => {
-    environnement.pourCodexSecurity = () => ({ ...ENVIRONNEMENT_CODEX_SECURITY });
-  });
-
   it("exige --finding-file (erreur d'usage, code 2)", async () => {
     const console = new ConsoleEnMemoire();
 
@@ -68,9 +64,6 @@ describe('validate (ligne de commande)', () => {
   });
 
   it("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-    });
     const validation = new ValidationCodexSimulee();
     const { systemeDeFichier } = lesDependancesPourLaValidation();
     systemeDeFichier.ecritFichier(
@@ -90,5 +83,65 @@ describe('validate (ligne de commande)', () => {
 
     expect(code).toBe(0);
     expect(validation.demandes[0].finding).toEqual({ title: "Exemple de finding" });
+  });
+
+  it('fournit un fichier de config pour l’exécution de la validation', async () => {
+    const validation = new ValidationCodexSimulee();
+    const { systemeDeFichier } = lesDependancesPourLaValidation();
+    systemeDeFichier.ecritFichier(
+      '/home/auditeur/findings/le-finding.json',
+      '{"title":"le contenu"}'
+    );
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
+
+    const code = await validate(
+      [
+        '--config',
+        'outils/codex-security/configs/ma-config.yaml',
+        '--cible',
+        '/depot/cible/copies/cible',
+        '--finding-file',
+        '/home/auditeur/findings/le-finding.json',
+      ],
+      lesDependancesPourLaValidation({
+        validation,
+        systemeDeFichier,
+        repertoireAppel: '/home/auditeur/findings',
+      })
+    );
+
+    expect(code).toBe(0);
+    expect(validation.demandes[0].config).toEqual(
+      'outils/codex-security/configs/ma-config.yaml'
+    );
+  });
+
+  it('utilise le fichier de config par défaut pour l’exécution de la validation s’il n’est pas fourni', async () => {
+    const validation = new ValidationCodexSimulee();
+    const { systemeDeFichier } = lesDependancesPourLaValidation();
+    systemeDeFichier.ecritFichier(
+      '/home/auditeur/findings/le-finding.json',
+      '{"title":"le contenu"}'
+    );
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
+
+    const code = await validate(
+      [
+        '--cible',
+        '/depot/cible/copies/cible',
+        '--finding-file',
+        '/home/auditeur/findings/le-finding.json',
+      ],
+      lesDependancesPourLaValidation({
+        validation,
+        systemeDeFichier,
+        repertoireAppel: '/home/auditeur/findings',
+      })
+    );
+
+    expect(code).toBe(0);
+    expect(validation.demandes[0].config).toEqual(
+      '/depot/outils/codex-security/configs/config-defaut.yaml'
+    );
   });
 });

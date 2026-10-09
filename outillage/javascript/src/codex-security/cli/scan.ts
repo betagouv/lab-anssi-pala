@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { type Dependances, LanceScan } from '../application/lanceScan.ts';
+import { join } from 'node:path';
 
 export async function scan(
   argv: string[],
@@ -17,15 +18,22 @@ export async function scan(
       'Fichier contenant les consignes pour le scan',
       `${dependances.racine}/outils/codex-security/configs/consignes-scan.md`
     )
+    .option(
+      '--config <fichier>',
+      'Fichier contenant la configuration à utiliser pour le scan Codex Security',
+      `${join(dependances.racine, 'outils/codex-security/configs/config-defaut.yaml')}`
+    )
     .argument('[options...]');
   return executeCommande(programme, argv, dependances.console, () => {
-    const { cible, scanPromptFile } = programme.opts<{
+    const { cible, config, scanPromptFile } = programme.opts<{
       cible: string;
+      config: string;
       scanPromptFile: string;
     }>();
     return new LanceScan(dependances).execute({
       options: [...programme.args, '--scan-prompt-file', scanPromptFile],
       cible,
+      config,
     });
   });
 }

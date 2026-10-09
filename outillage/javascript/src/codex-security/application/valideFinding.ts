@@ -17,7 +17,7 @@ export type Dependances = DependancesExecution & {
   console: Console;
 };
 
-type CommandeDeValidation = { findingFile: string; cible: string };
+type CommandeDeValidation = { findingFile: string; cible: string; config: string };
 
 export class ValideFinding {
   readonly #execution: PrepareExecutionCodex;
@@ -34,8 +34,12 @@ export class ValideFinding {
     this.#console = dependances.console;
   }
 
-  async execute({ findingFile, cible }: CommandeDeValidation): Promise<void> {
-    const { config, sortie, environnementCodex } = await this.#execution.pour(
+  async execute({
+    findingFile,
+    cible,
+    config,
+  }: CommandeDeValidation): Promise<void> {
+    const { sortie, environnementCodex } = await this.#execution.pour(
       'validate',
       cible
     );

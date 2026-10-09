@@ -1,7 +1,6 @@
 import { type Command, CommanderError } from 'commander';
 import type { Console } from './ports/Console.ts';
 
-// Erreur d'utilisation détectée après l'analyse des options (combinaison invalide…).
 export class ErreurUsage extends Error {}
 
 const lignes = (texte: string) => texte.replace(/\n$/, '').split('\n');
@@ -12,20 +11,22 @@ const lignes = (texte: string) => texte.replace(/\n$/, '').split('\n');
 export async function executeCommande(
   programme: Command,
   argv: string[],
-  console: Console,
+  maConsole: Console,
   action: () => number | Promise<number>
 ): Promise<number> {
   programme.exitOverride().configureOutput({
-    writeOut: (texte) => lignes(texte).forEach((ligne) => console.aLaLigne(ligne)),
+    writeOut: (texte) => lignes(texte).forEach((ligne) => maConsole.aLaLigne(ligne)),
     writeErr: (texte) =>
-      lignes(texte).forEach((ligne) => console.signaleErreur(ligne)),
+      lignes(texte).forEach((ligne) => maConsole.signaleErreur(ligne)),
   });
   try {
     await programme.parseAsync(argv, { from: 'user' });
     return await action();
   } catch (erreur) {
     if (erreur instanceof CommanderError) return erreur.exitCode === 0 ? 0 : 2;
-    console.signaleErreur(erreur instanceof Error ? erreur.message : String(erreur));
+    maConsole.signaleErreur(
+      erreur instanceof Error ? erreur.message : String(erreur)
+    );
     return erreur instanceof ErreurUsage ? 2 : 1;
   }
 }

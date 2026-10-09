@@ -22,7 +22,7 @@ export type Dependances = DependancesExecution & {
   console: Console;
 };
 
-type CommandeScan = { options: string[]; cible: string };
+type CommandeScan = { options: string[]; cible: string; config: string };
 
 export class LanceScan {
   readonly #racine: string;
@@ -42,17 +42,14 @@ export class LanceScan {
   }
 
   async execute(
-    { options, cible }: CommandeScan,
+    { options, cible, config }: CommandeScan,
     releveDeTokens: (
       log: string,
       fournisseur: string,
       modele: string
     ) => ConsommationDeTokens | null = unReleveDeConsommationDeTokensCodex
   ): Promise<number> {
-    const { config, sortie, environnementCodex } = await this.#execution.pour(
-      'scan',
-      cible
-    );
+    const { sortie, environnementCodex } = await this.#execution.pour('scan', cible);
     this.#console.aLaLigne(`Cible  : ${cible}`, 'VIOLET');
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
     this.#console.aLaLigne(`Sortie : ${sortie.chemin}`, 'BLEU');

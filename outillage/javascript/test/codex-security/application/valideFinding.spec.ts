@@ -53,6 +53,7 @@ describe('Valide Finding', () => {
     await uneValidation({ validation }).execute({
       findingFile: 'finding.json',
       cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(validation.demandes).toEqual([
@@ -73,6 +74,7 @@ describe('Valide Finding', () => {
     await uneValidation({ horloge, validation, systemeDeFichier }).execute({
       findingFile: 'finding.json',
       cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(
@@ -92,6 +94,7 @@ describe('Valide Finding', () => {
     await uneValidation({ systemeDeFichier }).execute({
       findingFile: 'finding.json',
       cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(
@@ -109,6 +112,7 @@ describe('Valide Finding', () => {
     await uneValidation({ horloge, validation, console }).execute({
       findingFile: 'finding.json',
       cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(console.lignes.map((l) => l.message)[3]).toEqual(
@@ -122,6 +126,7 @@ describe('Valide Finding', () => {
     await uneValidation({ console }).execute({
       findingFile: 'finding.json',
       cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(console.lignes.map((l) => l.message).splice(0, 3)).toEqual([
@@ -140,6 +145,7 @@ describe('Valide Finding', () => {
       uneValidation({ validation }).execute({
         findingFile: 'finding.json',
         cible: CIBLE,
+        config: CONFIG_PAR_DEFAUT,
       })
     ).rejects.toThrow('réponse rejetée par le SDK');
     expect(validation.fermee).toBe(true);
@@ -154,6 +160,7 @@ describe('Valide Finding', () => {
       uneValidation({ systemeDeFichier, validation }).execute({
         findingFile: 'finding.json',
         cible: CIBLE,
+        config: CONFIG_PAR_DEFAUT,
       })
     ).rejects.toThrow("Finding illisible : finding.json n'est pas un JSON valide");
     expect(validation.demandes).toEqual([]);

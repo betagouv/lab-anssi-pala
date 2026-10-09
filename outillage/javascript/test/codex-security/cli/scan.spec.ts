@@ -32,6 +32,47 @@ describe('scan (ligne de commande)', () => {
     });
 
     expect(code).toBe(42);
+    expect(cli.scans[0].cible).toEqual('/depot/cible/copies/cible');
+    expect(cli.scans[0].options).toEqual([
+      '--verbose',
+      '--scan-prompt-file',
+      `/depot/outils/codex-security/configs/consignes-scan.md`,
+    ]);
+  });
+
+  it('fournit la configuration du scanner et transmet ses options par défaut à codex-security scan', async () => {
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+    });
+    const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/codex-security/codex-security.env':
+        'LITELLM_MASTER_KEY=sk-local-jeton\n',
+    });
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
+
+    const code = await scan(
+      [
+        '--cible',
+        '/depot/cible/copies/cible',
+        '--config',
+        'outils/codex-security/configs/ma-config.yaml',
+      ],
+      {
+        racine: '/depot',
+        scanner: cli,
+        systemeDeFichier,
+        reseau: new ReseauSimule(),
+        horloge: new HorlogeFigee(new Date(2026, 8, 30)),
+        estimation: new EstimationDuCoutSimulee(),
+        console: new ConsoleEnMemoire(),
+      }
+    );
+
+    expect(code).toBe(42);
+    expect(cli.scans[0].config).toEqual(
+      'outils/codex-security/configs/ma-config.yaml'
+    );
     expect(cli.scans[0].options).toEqual([
       '--verbose',
       '--scan-prompt-file',

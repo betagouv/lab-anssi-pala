@@ -18,7 +18,6 @@ export type DependancesExecution = {
 };
 
 export type ExecutionCodex = {
-  config: string;
   sortie: DossierDeSortie;
   environnementCodex: EnvironnementCodex;
 };
@@ -45,7 +44,6 @@ export class PrepareExecutionCodex {
   }
 
   async pour(nature: 'scan' | 'validate', cible: string): Promise<ExecutionCodex> {
-    const environnementCodex = environnement.pourCodexSecurity();
     await this.#verifiePrerequis(cible);
     const sortie = DossierDeSortie.horodate(
       this.#racine,
@@ -54,9 +52,6 @@ export class PrepareExecutionCodex {
     );
     this.#systemeDeFichier.creeDossierPrive(sortie.chemin);
     return {
-      config:
-        environnementCodex.config ||
-        join(this.#racine, 'outils/codex-security/configs/config-defaut.yaml'),
       sortie,
       environnementCodex: this.#environnementCodex(),
     };
