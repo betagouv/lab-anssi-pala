@@ -47,7 +47,6 @@ describe('Lance Scan Codex', () => {
   beforeEach(() => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
     });
   });
 
@@ -72,8 +71,7 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  // TODO: la cible n’est pas une variable elle doit être calculée
-  it.skip('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
+  it('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
     });
@@ -170,7 +168,6 @@ describe('Lance Scan Codex', () => {
     const sortie = '/depot/resultats/brut/codex-security/scan-20260930-140509';
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
     });
 
     await unScanCodex({ scanner: scanner, systemeDeFichier, console }).execute({

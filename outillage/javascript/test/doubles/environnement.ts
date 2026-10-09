@@ -27,7 +27,6 @@ export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
 };
 
 export const ENVIRONNEMENT_CODEX_SECURITY: EnvironnementCodexSecurity = {
-  cible: 'cible',
   config: 'config',
   proxy: () => ENVIRONNEMENT_PROXY,
 };

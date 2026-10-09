@@ -16,7 +16,6 @@ export type EnvironnementShannon = {
 };
 
 export type EnvironnementCodexSecurity = {
-  cible: string; // TODO: pas une variable d’env => doit être généré
   config: string; // TODO: pas une variable d’env => doit être généré
   proxy: (systemeDeFichier: SystemeDeFichier) => EnvironnementProxy;
 };
@@ -46,7 +45,6 @@ const IMAGE_LITE_LLM_PAR_DEFAUT =
   'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
 
 const variablesCodexSecurity: EnvironnementCodexSecurity = {
-  cible: process.env.CIBLE || '',
   config: process.env.CONFIG || '',
   proxy: (systemeDeFichier: SystemeDeFichier) => {
     let variablesProxy = '';

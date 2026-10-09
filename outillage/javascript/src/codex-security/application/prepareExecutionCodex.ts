@@ -1,12 +1,12 @@
-import { join } from 'node:path';
-import type { Horloge } from '../../noyau/ports/Horloge.ts';
-import type { Reseau } from '../../noyau/ports/Reseau.ts';
-import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
-import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
-import { environnement } from '../../noyau/environnement.ts';
-import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
-import type { EnvironnementCodex } from '../ports/EnvironnementCodex.ts';
+import {join} from 'node:path';
+import type {Horloge} from '../../noyau/ports/Horloge.ts';
+import type {Reseau} from '../../noyau/ports/Reseau.ts';
+import type {SystemeDeFichier} from '../../noyau/ports/SystemeDeFichier.ts';
+import {DossierDeSortie} from '../domaine/DossierDeSortie.ts';
+import type {ScannerCodexSecurity} from '../ports/ScannerCodexSecurity.ts';
+import {environnement} from '../../noyau/environnement.ts';
+import {CHEMIN_FICHIER_ENV_CODEX} from '../domaine/cheminEnvironnement.ts';
+import type {EnvironnementCodex} from '../ports/EnvironnementCodex.ts';
 
 export type DependancesExecution = {
   // Racine absolue du dépôt d'audit : les chemins transmis à Codex doivent être absolus.
@@ -18,7 +18,6 @@ export type DependancesExecution = {
 };
 
 export type ExecutionCodex = {
-  cible: string;
   config: string;
   sortie: DossierDeSortie;
   environnementCodex: EnvironnementCodex;
@@ -45,9 +44,9 @@ export class PrepareExecutionCodex {
     this.#horloge = horloge;
   }
 
-  async pour(nature: string, cibleFournie?: string): Promise<ExecutionCodex> {
+  async pour(nature: 'scan' | 'validate', cible: string): Promise<ExecutionCodex> {
     const environnementCodex = environnement.pourCodexSecurity();
-    const cible = await this.#verifiePrerequis(cibleFournie);
+    await this.#verifiePrerequis(cible);
     const sortie = DossierDeSortie.horodate(
       this.#racine,
       nature,
@@ -55,7 +54,6 @@ export class PrepareExecutionCodex {
     );
     this.#systemeDeFichier.creeDossierPrive(sortie.chemin);
     return {
-      cible,
       config:
         environnementCodex.config ||
         join(this.#racine, 'outils/codex-security/configs/config-defaut.yaml'),
@@ -64,7 +62,7 @@ export class PrepareExecutionCodex {
     };
   }
 
-  async #verifiePrerequis(cibleFournie?: string): Promise<string> {
+  async #verifiePrerequis(cible: string): Promise<void> {
     if (!this.#cli.estInstallee())
       throw new Error(
         'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
@@ -74,8 +72,6 @@ export class PrepareExecutionCodex {
         `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm start-proxy)`
       );
     }
-    const cible = cibleFournie ?? environnement.pourCodexSecurity().cible;
-
     if (!cible) {
       throw new Error(
         'CIBLE non défini : indiquer la cible, ex. CIBLE="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
@@ -94,7 +90,6 @@ export class PrepareExecutionCodex {
         `Proxy LiteLLM injoignable sur 127.0.0.1:${port} (lancer pnpm start-proxy)`
       );
     }
-    return cible;
   }
 
   #environnementCodex(): EnvironnementCodex {
