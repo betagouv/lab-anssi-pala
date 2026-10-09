@@ -1,5 +1,3 @@
-// Valide un finding existant avec Codex Security (Albert via le proxy LiteLLM). Portage TS de
-// validate.sh + validate.mjs.
 import { join } from 'node:path';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { Horloge } from '../../noyau/ports/Horloge.ts';
@@ -19,6 +17,8 @@ export type Dependances = DependancesExecution & {
   console: Console;
 };
 
+type CommandeDeValidation = { findingFile: string; cible: string };
+
 export class ValideFinding {
   readonly #execution: PrepareExecutionCodex;
   readonly #validation: ValidationCodex;
@@ -34,9 +34,11 @@ export class ValideFinding {
     this.#console = dependances.console;
   }
 
-  async execute({ findingFile }: { findingFile: string }): Promise<void> {
-    const { cible, config, sortie, environnementCodex } =
-      await this.#execution.pour('validate');
+  async execute({ findingFile, cible }: CommandeDeValidation): Promise<void> {
+    const { config, sortie, environnementCodex } = await this.#execution.pour(
+      'validate',
+      cible
+    );
     this.#console.aLaLigne(`Cible  : ${cible}`, 'VIOLET');
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
     this.#console.aLaLigne(`Sortie : ${sortie.chemin}`, 'BLEU');
@@ -52,7 +54,6 @@ export class ValideFinding {
     this.#consigne(sortie.chemin, finding, resultat, dureeSecondes);
   }
 
-  // La validation est toujours fermée, même en échec.
   async #valideEnMesurant(demande: DemandeDeValidation) {
     const debut = this.#horloge.maintenant().getTime();
     try {
@@ -68,7 +69,6 @@ export class ValideFinding {
     }
   }
 
-  // Résumé et rapport dans la sortie ; synthèse d'une ligne sur la sortie standard.
   #consigne(
     sortie: string,
     finding: object,
@@ -80,7 +80,6 @@ export class ValideFinding {
       outputDir: resultat.dossier,
       durationSeconds: dureeSecondes,
     };
-    // Même ordre de clés que validate.mjs.
     const resume = {
       disposition: resultat.disposition,
       threadId: resultat.threadId,

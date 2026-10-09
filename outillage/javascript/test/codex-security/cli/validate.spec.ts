@@ -49,13 +49,8 @@ describe('validate (ligne de commande)', () => {
     );
   });
 
-  it("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: '/depot/cible/copies/app',
-    });
-    const validation = new ValidationCodexSimulee();
-    const { systemeDeFichier } = lesDependancesPourLaValidation();
+  it("exige --cible (erreur d'usage, code 2)", async () => {
+    const { console, systemeDeFichier } = lesDependancesPourLaValidation();
     systemeDeFichier.ecritFichier(
       '/home/auditeur/findings/f1.json',
       '{"title":"Exemple de finding"}'
@@ -63,6 +58,29 @@ describe('validate (ligne de commande)', () => {
 
     const code = await validate(
       ['--finding-file', 'f1.json'],
+      lesDependancesPourLaValidation({ console, systemeDeFichier })
+    );
+
+    expect(code).toBe(2);
+    expect((console as ConsoleEnMemoire).erreurs.map((l) => l.message)[0]).toBe(
+      "error: required option '--cible <cible>' not specified"
+    );
+  });
+
+  it("lit un --finding-file relatif depuis le répertoire d'appel", async () => {
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+    });
+    const validation = new ValidationCodexSimulee();
+    const { systemeDeFichier } = lesDependancesPourLaValidation();
+    systemeDeFichier.ecritFichier(
+      '/home/auditeur/findings/f1.json',
+      '{"title":"Exemple de finding"}'
+    );
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
+
+    const code = await validate(
+      ['--finding-file', 'f1.json', '--cible', '/depot/cible/copies/cible'],
       lesDependancesPourLaValidation({
         validation,
         systemeDeFichier,

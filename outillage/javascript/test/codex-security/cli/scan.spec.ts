@@ -10,20 +10,55 @@ import { environnement } from '../../../src/noyau/environnement.ts';
 import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 describe('scan (ligne de commande)', () => {
-  it('transmet ses options telles quelles à codex-security scan et sort avec le statut du scan', async () => {
+  it('fournit la cible et transmet ses options par défaut à codex-security scan', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: '/depot/cible/copies/app',
     });
     const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       'outils/codex-security/codex-security.env':
         'LITELLM_MASTER_KEY=sk-local-jeton\n',
     });
-    systemeDeFichier.creeDossier('/depot/cible/copies/app');
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
+
+    const code = await scan(['--cible', '/depot/cible/copies/cible'], {
+      racine: '/depot',
+      scanner: cli,
+      systemeDeFichier,
+      reseau: new ReseauSimule(),
+      horloge: new HorlogeFigee(new Date(2026, 8, 30)),
+      estimation: new EstimationDuCoutSimulee(),
+      console: new ConsoleEnMemoire(),
+    });
+
+    expect(code).toBe(42);
+    expect(cli.scans[0].options).toEqual([
+      '--scan-prompt-file',
+      '/depot/outils/codex-security/configs/consignes-scan.md',
+      '--verbose',
+    ]);
+  });
+
+  it('transmet ses options à codex-security scan et sort avec le statut du scan', async () => {
+    environnement.pourCodexSecurity = () => ({
+      ...ENVIRONNEMENT_CODEX_SECURITY,
+    });
+    const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/codex-security/codex-security.env':
+        'LITELLM_MASTER_KEY=sk-local-jeton\n',
+    });
+    systemeDeFichier.creeDossier('/depot/cible/copies/cible');
 
     const code = await scan(
-      ['--verbose', '--dry-run', '--scan-prompt-file', 'consignes.md'],
+      [
+        '--verbose',
+        '--dry-run',
+        '--scan-prompt-file',
+        'consignes.md',
+        '--cible',
+        '/depot/cible/copies/cible',
+      ],
       {
         racine: '/depot',
         scanner: cli,

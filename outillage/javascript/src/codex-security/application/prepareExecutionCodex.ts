@@ -45,9 +45,9 @@ export class PrepareExecutionCodex {
     this.#horloge = horloge;
   }
 
-  async pour(nature: string): Promise<ExecutionCodex> {
+  async pour(nature: string, cibleFournie?: string): Promise<ExecutionCodex> {
     const environnementCodex = environnement.pourCodexSecurity();
-    const cible = await this.#verifiePrerequis();
+    const cible = await this.#verifiePrerequis(cibleFournie);
     const sortie = DossierDeSortie.horodate(
       this.#racine,
       nature,
@@ -64,7 +64,7 @@ export class PrepareExecutionCodex {
     };
   }
 
-  async #verifiePrerequis(): Promise<string> {
+  async #verifiePrerequis(cibleFournie?: string): Promise<string> {
     if (!this.#cli.estInstallee())
       throw new Error(
         'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
@@ -74,7 +74,7 @@ export class PrepareExecutionCodex {
         `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm start-proxy)`
       );
     }
-    const cible = environnement.pourCodexSecurity().cible;
+    const cible = cibleFournie ?? environnement.pourCodexSecurity().cible;
 
     if (!cible) {
       throw new Error(

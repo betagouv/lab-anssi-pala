@@ -17,12 +17,17 @@ export async function validate(
     .requiredOption(
       '--finding-file <fichier>',
       'finding à confronter au code (JSON)'
-    );
+    )
+    .requiredOption('--cible <cible>', 'Projet cible à scanner');
   return executeCommande(programme, argv, dependances.console, async () => {
-    const { findingFile } = programme.opts<{ findingFile: string }>();
+    const { findingFile, cible } = programme.opts<{
+      findingFile: string;
+      cible: string;
+    }>();
     // pnpm exécute depuis la racine : un chemin relatif garde le sens qu'il a pour l'utilisateur.
     await new ValideFinding(dependances).execute({
       findingFile: resolve(dependances.repertoireAppel, findingFile),
+      cible,
     });
     return 0;
   });

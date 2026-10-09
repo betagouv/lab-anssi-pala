@@ -1,4 +1,3 @@
-// Adaptateur de ligne de commande du scan Codex Security (run-scan.sh).
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { type Dependances, LanceScan } from '../application/lanceScan.ts';
@@ -37,8 +36,10 @@ export async function scan(
     .helpOption(false)
     .allowUnknownOption()
     .allowExcessArguments()
+    .requiredOption('--cible <fichier>', 'Projet cible à scanner')
     .argument('[options...]');
-  return executeCommande(programme, argv, dependances.console, () =>
-    new LanceScan(dependances).execute({ options: programme.args })
-  );
+  return executeCommande(programme, argv, dependances.console, () => {
+    const { cible } = programme.opts<{ cible: string }>();
+    return new LanceScan(dependances).execute({ options: programme.args, cible });
+  });
 }

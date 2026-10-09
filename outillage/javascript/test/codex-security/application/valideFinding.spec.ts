@@ -43,7 +43,6 @@ describe('Valide Finding', () => {
   beforeEach(() => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
     });
   });
@@ -51,7 +50,10 @@ describe('Valide Finding', () => {
   it('valide le finding sur la cible, avec la config, vers une sortie horodatée', async () => {
     const validation = new ValidationCodexSimulee();
 
-    await uneValidation({ validation }).execute({ findingFile: 'finding.json' });
+    await uneValidation({ validation }).execute({
+      findingFile: 'finding.json',
+      cible: CIBLE,
+    });
 
     expect(validation.demandes).toEqual([
       expect.objectContaining({
@@ -70,6 +72,7 @@ describe('Valide Finding', () => {
 
     await uneValidation({ horloge, validation, systemeDeFichier }).execute({
       findingFile: 'finding.json',
+      cible: CIBLE,
     });
 
     expect(
@@ -88,6 +91,7 @@ describe('Valide Finding', () => {
 
     await uneValidation({ systemeDeFichier }).execute({
       findingFile: 'finding.json',
+      cible: CIBLE,
     });
 
     expect(
@@ -104,6 +108,7 @@ describe('Valide Finding', () => {
 
     await uneValidation({ horloge, validation, console }).execute({
       findingFile: 'finding.json',
+      cible: CIBLE,
     });
 
     expect(console.lignes.map((l) => l.message)[3]).toEqual(
@@ -114,7 +119,10 @@ describe('Valide Finding', () => {
   it('annonce cible, config et sortie en traces, hors de la sortie standard réservée à la synthèse', async () => {
     const console = new ConsoleEnMemoire();
 
-    await uneValidation({ console }).execute({ findingFile: 'finding.json' });
+    await uneValidation({ console }).execute({
+      findingFile: 'finding.json',
+      cible: CIBLE,
+    });
 
     expect(console.lignes.map((l) => l.message).splice(0, 3)).toEqual([
       `Cible  : ${CIBLE}`,
@@ -129,7 +137,10 @@ describe('Valide Finding', () => {
     });
 
     await expect(
-      uneValidation({ validation }).execute({ findingFile: 'finding.json' })
+      uneValidation({ validation }).execute({
+        findingFile: 'finding.json',
+        cible: CIBLE,
+      })
     ).rejects.toThrow('réponse rejetée par le SDK');
     expect(validation.fermee).toBe(true);
   });
@@ -142,6 +153,7 @@ describe('Valide Finding', () => {
     await expect(
       uneValidation({ systemeDeFichier, validation }).execute({
         findingFile: 'finding.json',
+        cible: CIBLE,
       })
     ).rejects.toThrow("Finding illisible : finding.json n'est pas un JSON valide");
     expect(validation.demandes).toEqual([]);

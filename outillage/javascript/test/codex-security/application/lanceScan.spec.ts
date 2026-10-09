@@ -55,7 +55,7 @@ describe('Lance Scan Codex', () => {
     const scanner = new ScannerCodexSecuritySimulee({ installee: false });
 
     await expect(
-      unScanCodex({ scanner: scanner }).execute({ options: [] })
+      unScanCodex({ scanner: scanner }).execute({ options: [], cible: CIBLE })
     ).rejects.toThrow(
       'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
     );
@@ -66,7 +66,7 @@ describe('Lance Scan Codex', () => {
     systemeDeFichier.fichiers.delete('outils/codex-security/codex-security.env');
 
     await expect(
-      unScanCodex({ systemeDeFichier }).execute({ options: [] })
+      unScanCodex({ systemeDeFichier }).execute({ options: [], cible: CIBLE })
     ).rejects.toThrow(
       'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm start-proxy)'
     );
@@ -76,10 +76,9 @@ describe('Lance Scan Codex', () => {
   it.skip('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      // cible: undefined,
     });
 
-    await expect(unScanCodex().execute({ options: [] })).rejects.toThrow(
+    await expect(unScanCodex().execute({ options: [], cible: '' })).rejects.toThrow(
       'CIBLE non défini : indiquer la cible, ex. CIBLE="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
     );
   });
@@ -87,10 +86,11 @@ describe('Lance Scan Codex', () => {
   it('refuse de scanner une cible absente du disque', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: '/depot/cible/copies/absente',
     });
 
-    await expect(unScanCodex().execute({ options: [] })).rejects.toThrow(
+    await expect(
+      unScanCodex().execute({ options: [], cible: '/depot/cible/copies/absente' })
+    ).rejects.toThrow(
       'Cible manquante : /depot/cible/copies/absente (cloner via pnpm bootstrap --project <nom> --url <git-url>)'
     );
   });
@@ -98,7 +98,6 @@ describe('Lance Scan Codex', () => {
   it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son port', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
         portLiteLLM: 4100,
@@ -106,7 +105,9 @@ describe('Lance Scan Codex', () => {
     });
     const reseau = new ReseauSimule([false]);
 
-    await expect(unScanCodex({ reseau }).execute({ options: [] })).rejects.toThrow(
+    await expect(
+      unScanCodex({ reseau }).execute({ options: [], cible: CIBLE })
+    ).rejects.toThrow(
       'Proxy LiteLLM injoignable sur 127.0.0.1:4100 (lancer pnpm start-proxy)'
     );
     expect(reseau.urlsInterrogees).toEqual([
@@ -118,7 +119,6 @@ describe('Lance Scan Codex', () => {
   it.skip("scanne la cible avec la config par défaut, en transmettant les options de l'utilisateur", async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       // config: undefined,
     });
 
@@ -127,6 +127,7 @@ describe('Lance Scan Codex', () => {
 
     await unScanCodex({ scanner: scanner, console }).execute({
       options: ['--verbose', '--mode', 'deep'],
+      cible: CIBLE,
     });
 
     expect(scanner.scans[0]).toMatchObject({
@@ -145,7 +146,6 @@ describe('Lance Scan Codex', () => {
   it('la variable de configuration impose la configuration du scan', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       config: '/configs/ciblee.yaml',
     });
     const scanner = new ScannerCodexSecuritySimulee();
@@ -157,6 +157,7 @@ describe('Lance Scan Codex', () => {
 
     await unScanCodex({ scanner: scanner, systemeDeFichier }).execute({
       options: [],
+      cible: CIBLE,
     });
 
     expect(scanner.scans[0].config).toBe('/configs/ciblee.yaml');
@@ -174,6 +175,7 @@ describe('Lance Scan Codex', () => {
 
     await unScanCodex({ scanner: scanner, systemeDeFichier, console }).execute({
       options: [],
+      cible: CIBLE,
     });
 
     expect(scanner.scans[0]).toMatchObject({
@@ -189,14 +191,13 @@ describe('Lance Scan Codex', () => {
     environnement.path = '/usr/bin';
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
         jeton: 'sk-local-jeton',
       }),
     });
 
-    await unScanCodex({ scanner: scanner }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner }).execute({ options: [], cible: CIBLE });
 
     const transmis = scanner.scans[0].environnement;
     expect(transmis).toMatchObject({
@@ -213,6 +214,7 @@ describe('Lance Scan Codex', () => {
 
     await unScanCodex({ scanner: scanner, systemeDeFichier }).execute({
       options: [],
+      cible: CIBLE,
     });
 
     expect(scanner.scans[0].environnement).toMatchObject({
@@ -235,12 +237,11 @@ describe('Lance Scan Codex', () => {
     const estimation = new EstimationDuCoutSimulee();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
       // sortie: undefined,
     });
 
-    await unScanCodex({ estimation }).execute({ options: [] });
+    await unScanCodex({ estimation }).execute({ options: [], cible: CIBLE });
 
     expect(estimation.releves).toEqual([
       {
@@ -256,7 +257,6 @@ describe('Lance Scan Codex', () => {
   it("renvoie le statut du scan même quand l'estimation du coût échoue", async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
-      cible: CIBLE,
       config: 'scan.stdout.log',
     });
     const scanner = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
@@ -267,7 +267,7 @@ describe('Lance Scan Codex', () => {
       scanner: scanner,
       estimation,
       console,
-    }).execute({ options: [] }, () => {
+    }).execute({ options: [], cible: CIBLE }, () => {
       throw new Error('Fichier introuvable : scan.stdout.log');
     });
 
@@ -280,7 +280,10 @@ describe('Lance Scan Codex', () => {
   it("suit par défaut les consignes de scan du dépôt, sans lesquelles DeepSeek n'écrit pas findings.json", async () => {
     const scanner = new ScannerCodexSecuritySimulee();
 
-    await unScanCodex({ scanner: scanner }).execute({ options: ['--dry-run'] });
+    await unScanCodex({ scanner: scanner }).execute({
+      options: ['--dry-run'],
+      cible: CIBLE,
+    });
 
     expect(scanner.scans[0].options).toEqual(
       expect.arrayContaining([
@@ -293,7 +296,7 @@ describe('Lance Scan Codex', () => {
   it("demande par défaut un log bavard, dont le relevé TOKENS permet d'estimer le coût", async () => {
     const scanner = new ScannerCodexSecuritySimulee();
 
-    await unScanCodex({ scanner: scanner }).execute({ options: [] });
+    await unScanCodex({ scanner: scanner }).execute({ options: [], cible: CIBLE });
 
     expect(scanner.scans[0].options).toContain('--verbose');
   });
@@ -303,6 +306,7 @@ describe('Lance Scan Codex', () => {
 
     await unScanCodex({ scanner: scanner }).execute({
       options: ['--scan-prompt-file=/mes-consignes.md'],
+      cible: CIBLE,
     });
 
     expect(scanner.scans[0].options).toEqual([
