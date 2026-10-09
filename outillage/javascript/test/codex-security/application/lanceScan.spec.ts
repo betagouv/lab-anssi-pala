@@ -80,10 +80,6 @@ describe('Lance Scan Codex', () => {
   });
 
   it('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-    });
-
     await expect(
       unScanCodex().execute({ options: [], cible: '', config: 'config' })
     ).rejects.toThrow(
@@ -92,10 +88,6 @@ describe('Lance Scan Codex', () => {
   });
 
   it('refuse de scanner une cible absente du disque', async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-    });
-
     await expect(
       unScanCodex().execute({
         options: [],
@@ -131,40 +123,7 @@ describe('Lance Scan Codex', () => {
     ]);
   });
 
-  // TODO: la cible n’est pas une variable elle doit être calculée
-  it.skip("scanne la cible avec la config par défaut, en transmettant les options de l'utilisateur", async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      // config: undefined,
-    });
-
-    const scanner = new ScannerCodexSecuritySimulee();
-    const console = new ConsoleEnMemoire();
-
-    await unScanCodex({ scanner: scanner, console }).execute({
-      options: ['--verbose', '--mode', 'deep'],
-      cible: CIBLE,
-      config: 'config',
-    });
-
-    expect(scanner.scans[0]).toMatchObject({
-      cible: CIBLE,
-      config: '/depot/outils/codex-security/configs/config-defaut.yaml',
-    });
-    expect(scanner.scans[0].options).toEqual(
-      expect.arrayContaining(['--verbose', '--mode', 'deep'])
-    );
-    expect(console.lignes.map((l) => l.message).slice(0, 2)).toEqual([
-      `Cible  : ${CIBLE}`,
-      'Config : /depot/outils/codex-security/configs/config-defaut.yaml',
-    ]);
-  });
-
   it('la variable de configuration impose la configuration du scan', async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      config: '/configs/ciblee.yaml',
-    });
     const scanner = new ScannerCodexSecuritySimulee();
     const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.set(
@@ -186,9 +145,6 @@ describe('Lance Scan Codex', () => {
     const systemeDeFichier = unDepotDeFichiersPret();
     const console = new ConsoleEnMemoire();
     const sortie = '/depot/resultats/brut/codex-security/scan-20260930-140509';
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-    });
 
     await unScanCodex({ scanner: scanner, systemeDeFichier, console }).execute({
       options: [],
@@ -255,19 +211,13 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  // TODO: la sortie n’est pas une variable elle doit être calculée
-  it.skip('estime le coût du scan à partir de son log, avec le modèle, le fournisseur de la configuration et sans sortie', async () => {
+  it('estime le coût du scan à partir de son log, avec le modèle, le fournisseur de la configuration et sans sortie', async () => {
     const estimation = new EstimationDuCoutSimulee();
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      config: CONFIG_PAR_DEFAUT,
-      // sortie: undefined,
-    });
 
     await unScanCodex({ estimation }).execute({
       options: [],
       cible: CIBLE,
-      config: 'config',
+      config: CONFIG_PAR_DEFAUT,
     });
 
     expect(estimation.releves).toEqual([
@@ -282,9 +232,6 @@ describe('Lance Scan Codex', () => {
   });
 
   it("renvoie le statut du scan même quand l'estimation du coût échoue", async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-    });
     const scanner = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
     const console = new ConsoleEnMemoire();
     const estimation = new EstimationDuCoutSimulee({ console });
