@@ -82,5 +82,12 @@ export const environnement: Environnement = {
         'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
       );
     }
+    const lesVariables = parseEnv(systemeDeFichier.lit(CHEMIN_FICHIER_ENV_RACINE));
+    if (!lesVariables.FOURNISSEUR_API_KEY) {
+      throw new Error('Erreur: FOURNISSEUR_API_KEY manquant ou vide dans .env');
+    }
+    if (!lesVariables.FOURNISSEUR_BASE_URL) {
+      throw new Error('Erreur: FOURNISSEUR_BASE_URL manquant ou vide dans .env');
+    }
   },
 };
