@@ -22,10 +22,14 @@ export class GenereEnvironnement {
   }
 
   execute(): void {
+    this.#genereLeFichierEnvPourCodexSecurity();
+  }
+
+  #genereLeFichierEnvPourCodexSecurity() {
     environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
     const environnementProxy = environnement
-      .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier);
+        .pourCodexSecurity()
+        .proxy(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
 
     const toutesLesVariables = () => {
@@ -40,18 +44,18 @@ export class GenereEnvironnement {
         LITELLM_API_KEY: jetonLocal,
         CODEX_API_KEY: jetonLocal,
       })
-        .map(([nom, valeur]) => `${nom}=${valeur}`)
-        .join('\n')}\n`;
+          .map(([nom, valeur]) => `${nom}=${valeur}`)
+          .join('\n')}\n`;
     };
 
     this.#systemeDeFichier.ecritFichierPrive(
-      CHEMIN_FICHIER_ENV_CODEX,
-      toutesLesVariables()
+        CHEMIN_FICHIER_ENV_CODEX,
+        toutesLesVariables()
     );
     this.#console.aLaLigne(`Généré: ${CHEMIN_FICHIER_ENV_CODEX}`, 'VERT');
     this.#console.aLaLigne(
-      `  Fournisseur configuré pour le proxy : ${fournisseur.nom} (${fournisseur.url})`,
-      'BLEU'
+        `  Fournisseur configuré pour le proxy : ${fournisseur.nom} (${fournisseur.url})`,
+        'VERT'
     );
   }
 }
