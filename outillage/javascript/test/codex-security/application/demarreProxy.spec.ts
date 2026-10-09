@@ -25,6 +25,8 @@ const unDemarrageDuProxyCodex = (doubles: Partial<Dependances> = {}) =>
   });
 
 describe('Démarre Proxy Codex', () => {
+  // TODO: Vérifier si cette vérification est nécessaire (cas où on appelle le démarrage et que ni le bootstrap ni
+  // la génération de l’env n’ont été faites
   it.skip('ne démarre pas le proxy si les variables ne sont pas positionnées', async () => {
     const journal: string[] = [];
 
@@ -49,15 +51,6 @@ describe('Démarre Proxy Codex', () => {
 
   it("démarre par défaut sur le port 4000 avec l'image LiteLLM figée par digest", async () => {
     const conteneur = new ConteneurProxySimule();
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      proxy: () => ({
-        ...ENVIRONNEMENT_PROXY,
-        image:
-          'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02',
-        portLiteLLM: 4000,
-      }),
-    });
 
     await unDemarrageDuProxyCodex({ conteneur }).execute();
 
@@ -68,7 +61,7 @@ describe('Démarre Proxy Codex', () => {
     });
   });
 
-  it("PORT_LITE_LLM et CODEX_LITE_LLM_IMAGE surchargent le port et l'image", async () => {
+  it("les variables d’environnement surchargent le port et l'image", async () => {
     const conteneur = new ConteneurProxySimule();
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
