@@ -1,12 +1,12 @@
-import {join} from 'node:path';
-import type {Horloge} from '../../noyau/ports/Horloge.ts';
-import type {Reseau} from '../../noyau/ports/Reseau.ts';
-import type {SystemeDeFichier} from '../../noyau/ports/SystemeDeFichier.ts';
-import {DossierDeSortie} from '../domaine/DossierDeSortie.ts';
-import type {ScannerCodexSecurity} from '../ports/ScannerCodexSecurity.ts';
-import {environnement} from '../../noyau/environnement.ts';
-import {CHEMIN_FICHIER_ENV_CODEX} from '../domaine/cheminEnvironnement.ts';
-import type {EnvironnementCodex} from '../ports/EnvironnementCodex.ts';
+import { join } from 'node:path';
+import type { Horloge } from '../../noyau/ports/Horloge.ts';
+import type { Reseau } from '../../noyau/ports/Reseau.ts';
+import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
+import { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
+import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
+import { environnement } from '../../noyau/environnement.ts';
+import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
+import type { EnvironnementCodex } from '../ports/EnvironnementCodex.ts';
 
 export type DependancesExecution = {
   // Racine absolue du dépôt d'audit : les chemins transmis à Codex doivent être absolus.

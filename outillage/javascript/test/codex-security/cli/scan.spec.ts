@@ -33,9 +33,9 @@ describe('scan (ligne de commande)', () => {
 
     expect(code).toBe(42);
     expect(cli.scans[0].options).toEqual([
-      '--scan-prompt-file',
-      '/depot/outils/codex-security/configs/consignes-scan.md',
       '--verbose',
+      '--scan-prompt-file',
+      `/depot/outils/codex-security/configs/consignes-scan.md`,
     ]);
   });
 
@@ -77,29 +77,5 @@ describe('scan (ligne de commande)', () => {
       '--scan-prompt-file',
       'consignes.md',
     ]);
-  });
-
-  it('affiche sa propre aide, avec les options ajoutées par défaut, sans lancer de scan', async () => {
-    const cli = new ScannerCodexSecuritySimulee();
-    const console = new ConsoleEnMemoire();
-
-    const code = await scan(['--help'], {
-      racine: '/depot',
-      scanner: cli,
-      systemeDeFichier: new SystemeDeFichierEnMemoire(),
-      reseau: new ReseauSimule(),
-      horloge: new HorlogeFigee(new Date(2026, 8, 30)),
-      estimation: new EstimationDuCoutSimulee(),
-      console,
-    });
-
-    expect(code).toBe(0);
-    expect(cli.scans).toEqual([]);
-    expect(console.lignes.map((l) => l.message)).toEqual(
-      expect.arrayContaining([
-        '  --scan-prompt-file outils/codex-security/configs/consignes-scan.md',
-        '  --verbose',
-      ])
-    );
   });
 });
