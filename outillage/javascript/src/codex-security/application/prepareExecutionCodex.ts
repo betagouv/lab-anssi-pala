@@ -64,7 +64,7 @@ export class PrepareExecutionCodex {
       );
     if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
       throw new Error(
-        `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm start-proxy)`
+        `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm run genere-env)`
       );
     }
     if (!cible) {

@@ -64,7 +64,7 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  it("refuse de scanner sans l'environnement du proxy", async () => {
+  it("refuse de scanner si le fichier de variables d’environnement n’existe pas", async () => {
     const systemeDeFichier = unDepotDeFichiersPret();
     systemeDeFichier.fichiers.delete('outils/codex-security/codex-security.env');
 
@@ -75,7 +75,7 @@ describe('Lance Scan Codex', () => {
         config: 'config',
       })
     ).rejects.toThrow(
-      'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm start-proxy)'
+      'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm run genere-env)'
     );
   });
 

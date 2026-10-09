@@ -15,7 +15,7 @@
     "format:verifie": "prettier --check .",
     "generate-env": "node --require dotenv/config outillage/javascript/src/composition/generate-env.ts",
     "start-proxy": "node outillage/javascript/src/composition/start-proxy.ts",
-    "scan": "DOTENV_CONFIG_PATH=outils/codex-security/codex-security.env node --require dotenv/config outillage/javascript/src/composition/scan.ts",
+    "scan": "node --require dotenv/config outillage/javascript/src/composition/scan.ts",
     "validate": "node outillage/javascript/src/composition/validate.ts",
     "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
     "shannon-smoke": "node --require dotenv/config outillage/javascript/src/composition/shannon-smoke.ts",
