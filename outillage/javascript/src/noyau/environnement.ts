@@ -2,6 +2,7 @@ import type { SystemeDeFichier } from './ports/SystemeDeFichier.ts';
 import {
   CHEMIN_FICHIER_ENV_CODEX,
   CHEMIN_FICHIER_ENV_RACINE,
+  CHEMIN_FICHIER_ENV_SHANNON,
 } from '../codex-security/domaine/cheminEnvironnement.ts';
 import { parseEnv } from 'node:util';
 import * as process from 'node:process';
@@ -35,7 +36,7 @@ export type EnvironnementFournisseur = {
 
 type Environnement = {
   path: string;
-  pourShannon: () => EnvironnementShannon;
+  pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
   fournisseur: () => EnvironnementFournisseur;
   verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier): void;
@@ -70,14 +71,18 @@ export const environnement: Environnement = {
     url: process.env.FOURNISSEUR_BASE_URL || '',
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
-  pourShannon: (): EnvironnementShannon => ({
-    apiKey: process.env.FOURNISSEUR_API_KEY || '',
-    model: process.env.SHANNON_AI_MODEL || '',
-    nombreEssais: Number(process.env.RUNS) || 5,
-    portTestDeFumee: Number(process.env.SMOKE_PORT) || 8080,
-    testPipelineActive: process.env.TEST_PIPELINE_ACTIVE === 'true',
-    espaceDeTravail: process.env.SHANNON_ESPACE_DE_TRAVAIL || '',
-  }),
+  pourShannon: (systemeDeFichier: SystemeDeFichier): EnvironnementShannon => {
+    const variablesShannon = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_SHANNON);
+    const lesVariablesEnvironnement = parseEnv(variablesShannon);
+    return {
+      apiKey: lesVariablesEnvironnement.SHANNON_AI_API_KEY!,
+      model: lesVariablesEnvironnement.SHANNON_AI_MODEL!,
+      nombreEssais: Number(process.env.RUNS) || 5,
+      portTestDeFumee: Number(process.env.SMOKE_PORT) || 8080,
+      testPipelineActive: process.env.TEST_PIPELINE_ACTIVE === 'true',
+      espaceDeTravail: process.env.SHANNON_ESPACE_DE_TRAVAIL || '',
+    };
+  },
   verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier) {
     if (!systemeDeFichier.existe(CHEMIN_FICHIER_ENV_RACINE)) {
       throw new Error(

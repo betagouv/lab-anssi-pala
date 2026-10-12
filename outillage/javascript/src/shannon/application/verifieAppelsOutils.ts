@@ -8,6 +8,7 @@ import { jugeAppelOutil, MESSAGES_SONDE } from '../domaine/SondeAppelsOutils.ts'
 import { SpecModele } from '../domaine/SpecModele.ts';
 import type { ApiChat } from '../ports/ApiChat.ts';
 import { environnement } from '../../noyau/environnement.ts';
+import { CHEMIN_FICHIER_ENV_SHANNON } from '../../codex-security/domaine/cheminEnvironnement.ts';
 
 export type Dependances = {
   // Racine absolue du dépôt d'audit.
@@ -37,11 +38,13 @@ export class VerifieAppelsOutils {
     this.#console = console;
   }
 
-  // modele : force le modèle vérifié (« fournisseur:modèle ») ; défaut SHANNON_AI_MODEL.
   async execute({ modele }: { modele?: string }): Promise<number> {
-    const variables = this.#variables();
-    const destinataire = this.#destinataire(variables, modele);
-    const essais = environnement.pourShannon().nombreEssais;
+    if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_SHANNON))
+      throw new Error(
+        'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run genere-env)'
+      );
+    const destinataire = this.#destinataire(modele);
+    const essais = environnement.pourShannon(this.#systemeDeFichier).nombreEssais;
     this.#console.aLaLigne(
       `Modèle ${destinataire.modele} sur ${destinataire.url}, ${essais} essai(s)`,
       'BLEU'
@@ -66,30 +69,24 @@ export class VerifieAppelsOutils {
   // Environnement du shell, complété par shannon.env s'il est renseigné.
   #variables(): Record<string, string | undefined> {
     const envShannon = 'outils/shannon/shannon.env';
-    return {
+    let varEnv = {
       ...(this.#systemeDeFichier.existe(envShannon) &&
         parseEnv(this.#systemeDeFichier.lit(envShannon))),
     };
+    console.log('VARS', varEnv);
+    return varEnv;
   }
 
   // Le modèle que Shannon utilisera, chez le fournisseur, avec la clé de Shannon (jamais affichée).
-  #destinataire(
-    variables: Record<string, string | undefined>,
-    modeleImpose?: string
-  ): Destinataire {
-    const cle = environnement.pourShannon().apiKey;
-    if (!cle)
-      throw new Error(
-        'Clé absente : définir FOURNISSEUR_API_KEY dans le .env racine.'
-      );
+  #destinataire(modeleImpose?: string): Destinataire {
+    let environnementShannon = environnement.pourShannon(this.#systemeDeFichier);
+    const cle = environnementShannon.apiKey;
     const url = environnement.fournisseur().url;
     if (!url)
       throw new Error(
         'URL absente : définir FOURNISSEUR_BASE_URL dans le .env racine.'
       );
-    const modele = SpecModele.exigee(
-      modeleImpose || environnement.pourShannon().model
-    );
+    const modele = SpecModele.exigee(modeleImpose || environnementShannon.model);
     return {
       url,
       cle,

@@ -82,7 +82,7 @@ describe('validate (ligne de commande)', () => {
     );
 
     expect(code).toBe(0);
-    expect(validation.demandes[0].finding).toEqual({ title: "Exemple de finding" });
+    expect(validation.demandes[0].finding).toEqual({ title: 'Exemple de finding' });
   });
 
   it('fournit un fichier de config pour l’exécution de la validation', async () => {

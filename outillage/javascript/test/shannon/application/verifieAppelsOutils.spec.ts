@@ -32,25 +32,16 @@ describe('Verifie appels outils', () => {
     environnement.fournisseur = () => ENVIRONNEMENT_FOURNISSEUR;
   });
 
-  // TODO: Clef et modèle sont obligatoires
-  it.skip("exige la clé de Shannon, sans jamais l'afficher", async () => {
-    environnement.pourShannon = () => ({
-      ...ENVIRONNEMENT_SHANNON,
-      // apiKey: undefined,
-      // model: undefined,
-    });
+  it('refuse de scanner si le fichier de variables d’environnement n’existe pas', async () => {
     const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.ecritFichier(
-      'outils/shannon/shannon.env',
-      'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n'
-    );
+    systemeDeFichier.fichiers.delete('outils/shannon/shannon.env');
 
     await expect(uneVerification({ systemeDeFichier }).execute({})).rejects.toThrow(
-      'Clé absente : définir FOURNISSEUR_API_KEY dans le .env racine.'
+      'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run genere-env)'
     );
   });
 
-  it("interroge le modèle de Shannon chez le fournisseur, à l'URL FOURNISSEUR_BASE_URL", async () => {
+  it('interroge le modèle de Shannon chez le fournisseur conformément à son URL', async () => {
     const apiChat = new ApiChatSimulee();
 
     await uneVerification({ apiChat }).execute({});

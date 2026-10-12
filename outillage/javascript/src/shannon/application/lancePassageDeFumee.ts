@@ -44,8 +44,9 @@ export class LancePassageDeFumee {
   async execute(): Promise<number> {
     this.#installation.verifieEnvironnementRenseigne();
     this.#installation.verifieCliConstruite();
-    const modele = SpecModele.exigee(environnement.pourShannon().model);
-    const port = environnement.pourShannon().portTestDeFumee;
+    const environnementShannon = environnement.pourShannon(this.#systemeDeFichier);
+    const modele = SpecModele.exigee(environnementShannon.model);
+    const port = environnementShannon.portTestDeFumee;
     await this.#serveur.demarre(port);
     try {
       return await this.#shannon.demarre({
@@ -60,12 +61,12 @@ export class LancePassageDeFumee {
         // SMOKE_WORKSPACE force la reprise d'un workspace précis (ne rejoue que la partie en échec).
         // TODO : SMOKE_WORKSPACE non utilisée car non provisionnée OSEF le commentaire au dessus
         workspace:
-          environnement.pourShannon().espaceDeTravail ||
+          environnementShannon.espaceDeTravail ||
           `${modele.fournisseur}-smoke-${Math.floor(this.#horloge.maintenant().getTime() / 1000)}`,
-        pipelineTesting: !environnement.pourShannon().testPipelineActive,
+        pipelineTesting: !environnementShannon.testPipelineActive,
         environnement: {
-          SHANNON_AI_MODEL: environnement.pourShannon().model,
-          SHANNON_AI_API_KEY: environnement.pourShannon().apiKey,
+          SHANNON_AI_MODEL: environnementShannon.model,
+          SHANNON_AI_API_KEY: environnementShannon.apiKey,
           PATH: environnement.path,
         },
       });
