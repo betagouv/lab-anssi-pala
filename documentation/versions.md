@@ -13,8 +13,8 @@ garde la trace lisible.
 | typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | outillage TypeScript (`package.json` racine)                           |
 | python (hôte)                   | 3.9.6                  | scripts utilitaires (`check_tool_calls.py`)                            |
 
-> **un outil tiers** (un éditeur tiers, `outil-tiers 1.0.0`, sous-module supprimé le 28/09/2026 après
-> évaluation) a été écarté ; les runs restent tracés dans `resultats/rapports/`.
+> Un troisième outil d'analyse de code a été évalué puis écarté le 28/09/2026 (rapport coût/bruit
+> défavorable) ; son sous-module et son outillage ont été retirés du dépôt.
 
 ## Outil — Shannon
 

@@ -24,10 +24,10 @@ outillage/bash/<outil>/
 Hors du dossier de l'outil :
 
 - **Sorties brutes** : `resultats/brut/<outil>/` (non versionné).
-- **Rapports** : `resultats/rapports/` (versionnés, anonymisés).
-- **Cible à scanner** : `cible/cible-exemple` n'est jamais modifié ; un outil qui écrit
-  dans le dépôt analysé travaille sur une copie de `cible/copies/`.
-- **Clé Albert** : la source de vérité reste le `.env` racine ; un script
+- **Traces d'exploration** : conservées hors du dépôt (jamais versionnées).
+- **Cible à scanner** : la copie de référence dans `cible/` n'est jamais modifiée ; un outil qui
+  écrit dans le dépôt analysé travaille sur une copie de `cible/copies/`.
+- **Clé du fournisseur** : la source de vérité reste le `.env` racine ; un script
   `outillage/bash/<outil>/generate-env.sh` peut en dériver `<outil>.env` (voir Codex Security).
 
 ## Étapes

@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """Vérifie que le modèle du fournisseur émet de vrais `tool_calls` structurés.
 
-Contexte : lors du premier run un outil tiers, Qwen3-Coder n'a jamais émis un seul
-appel d'outil dans le champ structuré `tool_calls` (855 tentatives). Shannon
-pilote chaque phase par des appels d'outils multi-tours : ce test le vérifie
-avant de dépenser un scan.
+Contexte : certains modèles n'émettent jamais d'appel d'outil dans le champ
+structuré `tool_calls`. Shannon pilote chaque phase par des appels d'outils
+multi-tours : ce test le vérifie avant de dépenser un scan.
 
 Deux contrôles, répétés RUNS fois (5 par défaut) :
   1. émission : le modèle appelle l'outil `execute` avec un JSON valide
-     contenant `command` (l'erreur observée sur un outil tiers était un `command`
-     manquant) ;
+     contenant `command` (erreur fréquente : `command` manquant) ;
   2. multi-tour : après le résultat de l'outil, le modèle répond ou enchaîne
      un nouvel appel valide.
 

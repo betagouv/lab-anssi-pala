@@ -16,7 +16,7 @@ export const MESSAGES_SONDE: MessageChat[] = [
 ];
 
 // Premier appel d'outil du message s'il est exploitable par Shannon : l'outil execute, avec des
-// arguments JSON portant une commande non vide (l'erreur observée sur un outil tiers : `command` absent).
+// arguments JSON portant une commande non vide (erreur fréquente : `command` absent).
 export function jugeAppelOutil(
   message: MessageChat
 ): { appel: AppelOutilChat } | { raison: string } {
