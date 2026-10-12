@@ -4,13 +4,30 @@ export class DepotShannonSimule implements DepotShannon {
   readonly #patchs: string[];
   readonly #dejaAppliques: Set<string>;
   readonly patchsAppliques: string[] = [];
+  #cliConstruite: boolean;
+  construiteAppelee = false;
 
   constructor({
     patchs = [],
     dejaAppliques = [],
-  }: { patchs?: string[]; dejaAppliques?: string[] } = {}) {
+    cliConstruite = true,
+  }: {
+    patchs?: string[];
+    dejaAppliques?: string[];
+    cliConstruite?: boolean;
+  } = {}) {
     this.#patchs = patchs;
     this.#dejaAppliques = new Set(dejaAppliques);
+    this.#cliConstruite = cliConstruite;
+  }
+
+  cliEstConstruite(): boolean {
+    return this.#cliConstruite;
+  }
+
+  async construitCli(): Promise<void> {
+    this.construiteAppelee = true;
+    this.#cliConstruite = true;
   }
 
   patchsLocaux(): string[] {

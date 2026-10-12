@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   executeCommande,
@@ -40,6 +40,18 @@ export class DepotShannonGit implements DepotShannon {
       'apply',
       join(this.#outil, patch),
     ]);
+  }
+
+  cliEstConstruite(): boolean {
+    return existsSync(join(this.#source, 'apps/cli/dist/index.mjs'));
+  }
+
+  // Dépendances figées par pnpm-lock.yaml, puis build Turborepo (produit apps/cli/dist/index.mjs).
+  async construitCli(): Promise<void> {
+    await executeCommande('pnpm', ['install', '--frozen-lockfile'], {
+      cwd: this.#source,
+    });
+    await executeCommande('pnpm', ['run', 'build'], { cwd: this.#source });
   }
 
   get #source(): string {
