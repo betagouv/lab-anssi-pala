@@ -1,30 +1,22 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ApiChatSimulee } from '../../doubles/ApiChatSimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { checkToolCalls } from '../../../src/shannon/cli/check-tool-calls.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
-import {
-  ENVIRONNEMENT_FOURNISSEUR,
-  ENVIRONNEMENT_SHANNON,
-} from '../../doubles/environnement.ts';
+import { ENVIRONNEMENT_FOURNISSEUR } from '../../doubles/environnement.ts';
 
 describe('check-tool-calls (ligne de commande)', () => {
-  beforeEach(() => {
-    environnement.pourShannon = () => ({
-      ...ENVIRONNEMENT_SHANNON,
-    });
-    environnement.fournisseur = () => ENVIRONNEMENT_FOURNISSEUR;
-  });
-
   it('vérifie le modèle fourni en paramètre, chez le fournisseur', async () => {
     const apiChat = new ApiChatSimulee();
-    const systemeDeFichier = new SystemeDeFichierEnMemoire();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n',
+    });
+    environnement.fournisseur = () => ({ ...ENVIRONNEMENT_FOURNISSEUR });
 
     const code = await checkToolCalls(
       ['--model', 'scaleway:deepseek-v4-flash-0731'],
       {
-        racine: '/depot',
         apiChat,
         systemeDeFichier,
         console: new ConsoleEnMemoire(),

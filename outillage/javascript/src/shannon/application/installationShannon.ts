@@ -1,11 +1,5 @@
-// Installation locale de Shannon : fichier d'environnement (modèle, non versionné) et CLI
-// construite depuis les sources. Commune au pentest et au passage de fumée.
-import { parseEnv } from 'node:util';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import type { EnvironnementShannonDeLancement } from '../ports/Shannon.ts';
-import { environnement } from '../../noyau/environnement.ts';
-
-const ENV_SHANNON = 'outils/shannon/shannon.env';
+import { CHEMIN_FICHIER_ENV_SHANNON } from '../../codex-security/domaine/cheminEnvironnement.ts';
 
 export class InstallationShannon {
   readonly #systemeDeFichier: SystemeDeFichier;
@@ -15,9 +9,9 @@ export class InstallationShannon {
   }
 
   verifieEnvironnementRenseigne(): void {
-    if (!this.#systemeDeFichier.existe(ENV_SHANNON)) {
+    if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_SHANNON)) {
       throw new Error(
-        `Fichier manquant : ${ENV_SHANNON} (depuis shannon.env.template)`
+        `Fichier manquant : ${CHEMIN_FICHIER_ENV_SHANNON} (depuis shannon.env.template)`
       );
     }
   }
@@ -30,14 +24,5 @@ export class InstallationShannon {
         'CLI Shannon non construite (cd outils/shannon/source && pnpm build)'
       );
     }
-  }
-
-  environnement(): EnvironnementShannonDeLancement {
-    const variables = parseEnv(this.#systemeDeFichier.lit(ENV_SHANNON));
-    return {
-      SHANNON_AI_API_KEY: environnement.pourShannon().apiKey,
-      SHANNON_AI_MODEL: variables.SHANNON_AI_MODEL!,
-      PATH: variables.PATH!,
-    };
   }
 }

@@ -14,7 +14,7 @@ import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 const CIBLE = '/depot/cible/copies/app';
 const CONFIG_PAR_DEFAUT = '/depot/outils/codex-security/configs/config-defaut.yaml';
-const FINDING = { title: "Exemple de finding", cwe: ['CWE-200'] };
+const FINDING = { title: 'Exemple de finding', cwe: ['CWE-200'] };
 const SORTIE = '/depot/resultats/brut/codex-security/validate-20260930-140509';
 
 const unDepotDeFichiersPret = () => {
@@ -153,7 +153,7 @@ describe('Valide Finding', () => {
 
   it("refuse un finding qui n'est pas du JSON, sans lancer de validation", async () => {
     const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.ecritFichier('finding.json', "titre: exemple de finding");
+    systemeDeFichier.ecritFichier('finding.json', 'titre: exemple de finding');
     const validation = new ValidationCodexSimulee();
 
     await expect(

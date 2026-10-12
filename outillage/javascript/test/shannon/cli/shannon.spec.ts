@@ -7,7 +7,7 @@ import { ShannonSimule } from '../../doubles/ShannonSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { type DependancesCli, shannon } from '../../../src/shannon/cli/shannon.ts';
 
-function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
+const dependances = (doubles: Partial<DependancesCli> = {}): DependancesCli => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
     'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:openai/gpt-oss-120b\n',
     'outils/shannon/source/apps/cli/dist/index.mjs': '',
@@ -24,7 +24,7 @@ function dependances(doubles: Partial<DependancesCli> = {}): DependancesCli {
     console: new ConsoleEnMemoire(),
     ...doubles,
   };
-}
+};
 
 describe('shannon (ligne de commande)', () => {
   test("exige --project, --url et --config (erreur d'usage, code 2)", async () => {
