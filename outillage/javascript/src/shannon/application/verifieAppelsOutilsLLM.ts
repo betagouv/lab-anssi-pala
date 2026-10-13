@@ -1,4 +1,3 @@
-import { parseEnv } from 'node:util';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { jugeAppelOutil, MESSAGES_SONDE } from '../domaine/SondeAppelsOutils.ts';
@@ -20,7 +19,7 @@ type ResultatEssai = {
   details: Record<string, unknown>;
 };
 
-export class VerifieAppelsOutils {
+export class VerifieAppelsOutilsLLM {
   readonly #apiChat: ApiChat;
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #console: Console;
