@@ -43,7 +43,7 @@ configs/config-defaut.yaml        config par défaut (dépôt entier)
 configs/config-cible.template.yaml  template d'un scan ciblé (scope.paths à renseigner)
 configs/*-minimal.yaml            exemples de périmètre (chemins génériques)
 configs/consignes-scan.md         consignes de scan pas à pas (--scan-prompt-file)
-scripts/                          start-proxy.sh, env-runtime.sh, run-scan.sh,
+scripts/                          demarre-proxy.sh, env-runtime.sh, run-scan.sh,
                                   validate.sh + validate.mjs (SDK)
                                   (env généré par outillage/bash/environnement/genere-env.sh)
 codex-home/, state/               identité Codex et historique de scan (non versionnés)
