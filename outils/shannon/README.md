@@ -57,11 +57,11 @@ L’exécution de la CLI s’opère depuis la racine du projet PALA.
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run check-tool-calls --help
+pnpm run vérifie-appels-outils-llm --help
 ```
 
 ```bash
-pnpm run check-tool-calls
+pnpm run vérifie-appels-outils-llm
 ```
 
 ### Lancer un test de fumée (smoke test)

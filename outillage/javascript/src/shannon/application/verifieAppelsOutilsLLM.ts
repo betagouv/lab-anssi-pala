@@ -1,6 +1,3 @@
-// Vérifie que le modèle de Shannon émet de vrais `tool_calls` structurés, avant de dépenser un scan.
-// Portage TS de check_tool_calls.py, rendu agnostique du fournisseur : modèle de SHANNON_AI_MODEL,
-// URL et clé du fournisseur (FOURNISSEUR_BASE_URL, FOURNISSEUR_API_KEY), les mêmes que Shannon.
 import { parseEnv } from 'node:util';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
@@ -25,7 +22,7 @@ type ResultatEssai = {
   details: Record<string, unknown>;
 };
 
-export class VerifieAppelsOutils {
+export class VerifieAppelsOutilsLLM {
   readonly #racine: string;
   readonly #apiChat: ApiChat;
   readonly #systemeDeFichier: SystemeDeFichier;

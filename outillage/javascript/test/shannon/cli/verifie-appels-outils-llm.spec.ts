@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { ApiChatSimulee } from '../../doubles/ApiChatSimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
-import { checkToolCalls } from '../../../src/shannon/cli/check-tool-calls.ts';
+import { verifieAppelsOutilsLLM } from '../../../src/shannon/cli/verifie-appels-outils-llm.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import { ENVIRONNEMENT_FOURNISSEUR } from '../../doubles/environnement.ts';
 
-describe('check-tool-calls (ligne de commande)', () => {
+describe('vérifie-appels-outils-llm (ligne de commande)', () => {
   it('vérifie le modèle fourni en paramètre, chez le fournisseur', async () => {
     const apiChat = new ApiChatSimulee();
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
@@ -14,7 +14,7 @@ describe('check-tool-calls (ligne de commande)', () => {
     });
     environnement.fournisseur = () => ({ ...ENVIRONNEMENT_FOURNISSEUR });
 
-    const code = await checkToolCalls(
+    const code = await verifieAppelsOutilsLLM(
       ['--model', 'scaleway:deepseek-v4-flash-0731'],
       {
         racine: '/depot',

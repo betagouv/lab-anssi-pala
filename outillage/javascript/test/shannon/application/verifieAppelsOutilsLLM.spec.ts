@@ -4,8 +4,8 @@ import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
-  VerifieAppelsOutils,
-} from '../../../src/shannon/application/verifieAppelsOutils.ts';
+  VerifieAppelsOutilsLLM,
+} from '../../../src/shannon/application/verifieAppelsOutilsLLM.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import {
   ENVIRONNEMENT_FOURNISSEUR,
@@ -18,7 +18,7 @@ const unDepotDeFichiersPret = () =>
   });
 
 const uneVerification = (doubles: Partial<Dependances> = {}) =>
-  new VerifieAppelsOutils({
+  new VerifieAppelsOutilsLLM({
     racine: '/depot',
     apiChat: new ApiChatSimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
@@ -26,7 +26,7 @@ const uneVerification = (doubles: Partial<Dependances> = {}) =>
     ...doubles,
   });
 
-describe('Verifie appels outils', () => {
+describe('Verifie appels outils LLM', () => {
   beforeEach(() => {
     environnement.pourShannon = () => ENVIRONNEMENT_SHANNON;
     environnement.fournisseur = () => ENVIRONNEMENT_FOURNISSEUR;

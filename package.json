@@ -19,7 +19,7 @@
     "validate": "node outillage/javascript/src/composition/validate.ts",
     "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
     "shannon-smoke": "node --require dotenv/config outillage/javascript/src/composition/shannon-smoke.ts",
-    "check-tool-calls": "node --require dotenv/config outillage/javascript/src/composition/check-tool-calls.ts"
+    "vérifie-appels-outils-llm": "node --require dotenv/config outillage/javascript/src/composition/verifie-appels-outils-llm.ts"
   },
   "dependencies": {
     "commander": "^15.0.0",
