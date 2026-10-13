@@ -1,7 +1,6 @@
-// Racine de composition : génère l'environnement du proxy depuis la racine du dépôt.
 import { join } from 'node:path';
 import { GenerateurDeJetonAleatoire } from '../codex-security/adaptateurs/GenerateurDeJetonAleatoire.ts';
-import { genereEnv } from '../codex-security/cli/generate-env.ts';
+import { genereEnv } from '../environnement/cli/genere-env.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 

@@ -5,7 +5,7 @@ import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoi
 import {
   type Dependances,
   GenereEnvironnement,
-} from '../../../src/codex-security/application/genereEnvironnement.ts';
+} from '../../../src/environnement/application/genereEnvironnement.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import {
   ENVIRONNEMENT_CODEX_SECURITY,

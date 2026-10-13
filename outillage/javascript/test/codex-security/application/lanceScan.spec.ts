@@ -75,7 +75,7 @@ describe('Lance Scan Codex', () => {
         config: 'config',
       })
     ).rejects.toThrow(
-      'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm run genere-env)'
+      'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm run génère-env)'
     );
   });
 

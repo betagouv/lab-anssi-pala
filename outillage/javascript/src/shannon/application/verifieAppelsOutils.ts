@@ -41,7 +41,7 @@ export class VerifieAppelsOutils {
   async execute({ modele }: { modele?: string }): Promise<number> {
     if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_SHANNON))
       throw new Error(
-        'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run genere-env)'
+        'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run génère-env)'
       );
     const destinataire = this.#destinataire(modele);
     const essais = environnement.pourShannon(this.#systemeDeFichier).nombreEssais;

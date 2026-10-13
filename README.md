@@ -32,6 +32,7 @@ Il existe une CLI déclinée en bash et en Node. Les commandes fournies utilisen
 cp .env.example .env            # renseigner FOURNISSEUR_NOM / _BASE_URL / _API_KEY
 # préparer les sous-modules et cloner une cible arbitraire dans cible/copies/<nom> :
 pnpm run bootstrap --project <nom> --url <url git>
+pnpm run génère-env
 ```
 
 La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.env` racine

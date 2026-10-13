@@ -1,11 +1,11 @@
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import type { GenerateurDeJeton } from '../ports/GenerateurDeJeton.ts';
+import type { GenerateurDeJeton } from '../../codex-security/ports/GenerateurDeJeton.ts';
 import { environnement } from '../../noyau/environnement.ts';
 import {
   CHEMIN_FICHIER_ENV_CODEX,
   CHEMIN_FICHIER_ENV_SHANNON,
-} from '../domaine/cheminEnvironnement.ts';
+} from '../../codex-security/domaine/cheminEnvironnement.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
