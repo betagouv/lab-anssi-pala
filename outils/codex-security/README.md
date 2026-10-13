@@ -107,6 +107,6 @@ budget côté console du fournisseur.
 
 - Choisir un modèle qui gère bien les **appels d'outils en plusieurs tours** et, si le flux impose
   un schéma de sortie, le **décodage contraint** ; ces deux capacités varient d'un modèle à l'autre
-  (voir `outils/shannon/scripts/check_tool_calls.py`).
+  (voir `outils/shannon/scripts/verifie_appels_outils_llm.py`).
 - Certains fournisseurs ne comptent pas le raisonnement ni les tours d'outils dans les tokens de
   sortie : les estimations de coût correspondantes sont alors sous-estimées.

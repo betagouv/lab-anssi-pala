@@ -25,14 +25,14 @@ Les chemins ci-dessous sont relatifs à la racine du dépôt.
 Shannon parle Chat Completions en direct (sans proxy) : `configs/models.*.json` décrit le modèle
 (`api: openai-completions`), la clé vient de l'environnement. Dans `shannon.env` :
 `SHANNON_AI_MODEL` et `SHANNON_AI_API_KEY` (dérivés des variables `FOURNISSEUR_*` du `.env` racine).
-Le tool-calling d'un modèle se vérifie hors Shannon avec `scripts/check_tool_calls.py`.
+Le tool-calling d'un modèle se vérifie hors Shannon avec `scripts/verifie_appels_outils_llm.py`.
 
 ## Contenu de `outils/shannon/`
 
 ```
 source/                sous-module : dépôt amont (jamais modifié)
 configs/               models.*.json et config-<intention>-cible.template.yaml
-scripts/               check_tool_calls.py (test de tool-calling)
+scripts/               verifie_appels_outils_llm.py (test de tool-calling)
 patches/               patchs réappliqués par bootstrap.sh
 shannon.env.template   modèle ; shannon.env rempli (non versionné)
 smoke-target/          cible triviale locale pour un passage de vérification
