@@ -36,7 +36,7 @@ describe('Verifie appels outils', () => {
     systemeDeFichier.fichiers.delete('outils/shannon/shannon.env');
 
     await expect(uneVerification({ systemeDeFichier }).execute({})).rejects.toThrow(
-      'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run genere-env)'
+      'Fichier manquant : outils/shannon/shannon.env (lancer pnpm run génère-env)'
     );
   });
 
