@@ -130,7 +130,7 @@ echo "Workspace : $workspace"  >&2
 
 cd "$shannon_dir"
 statut=0
-direnv exec . node shannon start \
+node shannon start \
   -u "$url_shannon" \
   -r "$repo" \
   -c "$config" \

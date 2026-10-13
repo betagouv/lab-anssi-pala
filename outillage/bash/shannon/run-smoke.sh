@@ -55,7 +55,7 @@ mode=(--pipeline-testing)
 [ "${SMOKE_REAL:-0}" = "1" ] && mode=()
 
 cd "$shannon_dir"
-direnv exec . node shannon start \
+node shannon start \
   -u "http://host.docker.internal:$port" \
   -r "$outil/smoke-target" \
   --models-config "$(description_pi_du_fournisseur "$outil/configs/models.$fournisseur.json")" \
