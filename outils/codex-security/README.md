@@ -66,7 +66,7 @@ pnpm run scan --help
 
 Pour lancer le scan
 ```bash
-pnpm run start-proxy
+pnpm run démarre-proxy
 pnpm scan --cible <CHEMIN CIBLE> --config <CHEMIN CONFIG>
 ```
 

@@ -14,7 +14,7 @@
     "format:corrige": "prettier --write .",
     "format:verifie": "prettier --check .",
     "génère-env": "node --require dotenv/config outillage/javascript/src/composition/genere-env.ts",
-    "start-proxy": "node outillage/javascript/src/composition/start-proxy.ts",
+    "démarre-proxy": "node outillage/javascript/src/composition/demarre-proxy.ts",
     "scan": "node --require dotenv/config outillage/javascript/src/composition/scan.ts",
     "validate": "node outillage/javascript/src/composition/validate.ts",
     "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",

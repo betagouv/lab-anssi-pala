@@ -3,14 +3,14 @@ import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { ConteneurProxySimule } from '../../doubles/ConteneurProxySimule.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
-import { startProxy } from '../../../src/codex-security/cli/start-proxy.ts';
+import { demarreProxy } from '../../../src/codex-security/cli/demarre-proxy.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 
-describe('start-proxy (ligne de commande)', () => {
+describe('démarre-proxy (ligne de commande)', () => {
   it("signale l'échec du démarrage et sort en code 1", async () => {
     const console = new ConsoleEnMemoire();
 
-    const code = await startProxy([], {
+    const code = await demarreProxy([], {
       conteneur: new ConteneurProxySimule(),
       reseau: new ReseauSimule([false]),
       attente: new AttenteInstantanee(),
