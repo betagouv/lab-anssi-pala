@@ -1,0 +1,22 @@
+name: Préparer l'environnement
+description: Installe Node.js et restaure les dépendances mises en cache par le job « dependances »
+
+runs:
+  using: composite
+  steps:
+    - name: Installe pnpm
+      uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+      with:
+        version: 10.34.6
+
+    - name: Utiliser la version Node.js 24
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+
+    - name: Restaurer les dépendances
+      uses: actions/cache/restore@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        fail-on-cache-miss: true

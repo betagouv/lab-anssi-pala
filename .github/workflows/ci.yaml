@@ -1,0 +1,86 @@
+name: L'intégration continue
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependances:
+    name: Installation des dépendances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt Git
+        uses: actions/checkout@v4
+
+      - name: Utiliser la version Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Mettre les dépendances en cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Installe pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
+        with:
+          version: 10.34.6
+
+      - name: Installe les dépendances
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+  mise-en-forme:
+    name: Mise en forme (Prettier)
+    needs: dependances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt Git
+        uses: actions/checkout@v4
+      - name: Préparer l'environnement
+        uses: ./.github/actions/preparer-environnement
+      - name: Contrôler la mise en forme avec Prettier
+        run: pnpm run format:verifie
+
+  typage:
+    name: Typage du backend (tsc)
+    needs: dependances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt Git
+        uses: actions/checkout@v4
+      - name: Préparer l'environnement
+        uses: ./.github/actions/preparer-environnement
+      - name: Contrôler le TypeScript
+        run: pnpm run typecheck
+
+  tests:
+    name: Tests (Vitest)
+    needs: dependances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt Git
+        uses: actions/checkout@v4
+      - name: Préparer l'environnement
+        uses: ./.github/actions/preparer-environnement
+      - name: Exécuter les tests
+        run: ./node_modules/.bin/vitest --reporter junit --outputFile=./test-report.xml
+      - name: Rapport des tests
+        uses: dorny/test-reporter@v2
+        if: ${{ !cancelled() }} # On force l'exécution même si l'étape précédente a échoué
+        with:
+          name: Tests
+          path: ./test-report.xml
+          reporter: jest-junit
