@@ -16,7 +16,7 @@ PORT="${PORT_LITE_LLM:-4000}"
 IMAGE="${LITELLM_IMAGE:-ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02}"
 CONTAINER=codex-security-litellm
 
-"$(dirname "${BASH_SOURCE[0]}")/generate-env.sh"
+"$(dirname "${BASH_SOURCE[0]}")/../environnement/genere-env.sh"
 
 # Enforcement du budget : uniquement si une base est fournie (DATABASE_URL, requis par LiteLLM).
 db_args=()
