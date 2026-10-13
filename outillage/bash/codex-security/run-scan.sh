@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Lance un scan Codex Security sur une copie de la cible, via le proxy LiteLLM local
-# (voir start-proxy.sh, à lancer d'abord). Modèle par défaut : DeepSeek servi par Albert.
+# (voir demarre-proxy.sh, à lancer d'abord). Modèle par défaut : DeepSeek servi par Albert.
 #
 # Usage : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh [options…]
 #   ex. : CIBLE=$PWD/cible/copies/<nom> bash outillage/bash/codex-security/run-scan.sh --dry-run
