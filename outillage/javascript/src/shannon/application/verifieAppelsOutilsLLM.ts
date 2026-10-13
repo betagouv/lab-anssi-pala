@@ -25,7 +25,7 @@ type ResultatEssai = {
   details: Record<string, unknown>;
 };
 
-export class VerifieAppelsOutils {
+export class VerifieAppelsOutilsLLM {
   readonly #racine: string;
   readonly #apiChat: ApiChat;
   readonly #systemeDeFichier: SystemeDeFichier;
