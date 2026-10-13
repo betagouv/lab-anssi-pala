@@ -14,11 +14,11 @@ port="${PORT_LITE_LLM:-4000}"
 env_file="$outil/codex-security.env"
 
 [ -x "$outil/node_modules/.bin/codex-security" ] || { echo "CLI absente : lancer outillage/bash/bootstrap.sh (npm ci dans outils/codex-security)" >&2; exit 1; }
-[ -f "$env_file" ] || { echo "Fichier manquant : $env_file (lancer outillage/bash/codex-security/start-proxy.sh)" >&2; exit 1; }
+[ -f "$env_file" ] || { echo "Fichier manquant : $env_file (lancer outillage/bash/codex-security/demarre-proxy.sh)" >&2; exit 1; }
 [ -n "$cible" ] || { echo "CIBLE non défini : indiquer la cible, ex. CIBLE=\"\$PWD/cible/copies/<nom>\" (voir outillage/bash/bootstrap.sh --project <nom> --url <git-url>)" >&2; exit 1; }
 [ -d "$cible" ] || { echo "Cible manquante : $cible (cloner via outillage/bash/bootstrap.sh --project <nom> --url <git-url>)" >&2; exit 1; }
 curl -s -o /dev/null -m 5 "http://127.0.0.1:$port/health/liveliness" \
-  || { echo "Proxy LiteLLM injoignable sur 127.0.0.1:$port (lancer outillage/bash/codex-security/start-proxy.sh)" >&2; exit 1; }
+  || { echo "Proxy LiteLLM injoignable sur 127.0.0.1:$port (lancer outillage/bash/codex-security/demarre-proxy.sh)" >&2; exit 1; }
 
 # Le jeton local du proxy est la seule clé transmise à Codex ; la clé Albert reste dans le proxy.
 LITELLM_API_KEY="$(grep '^LITELLM_MASTER_KEY=' "$env_file" | cut -d= -f2-)"

@@ -2,7 +2,7 @@
 # Lance (ou relance) le proxy LiteLLM qui traduit l'API Responses (Codex) vers l'API Chat
 # Completions d'Albert. Exposé sur 127.0.0.1:${PORT_LITE_LLM:-4000} uniquement.
 #
-# Usage : ./outillage/bash/codex-security/start-proxy.sh
+# Usage : ./outillage/bash/codex-security/demarre-proxy.sh
 # Arrêt : docker rm -f codex-security-litellm
 #
 # Budget : les prix par modèle et max_budget sont dans litellm/config.yaml. LiteLLM n'APPLIQUE le

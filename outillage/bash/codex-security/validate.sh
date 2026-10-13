@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Valide un finding existant avec Codex Security (Albert via le proxy LiteLLM, voir start-proxy.sh).
+# Valide un finding existant avec Codex Security (Albert via le proxy LiteLLM, voir demarre-proxy.sh).
 # Flux plus simple que le scan : skill `validation` seule, plugins désactivés (ni outils MCP ni
 # brouillon de scan).
 #
