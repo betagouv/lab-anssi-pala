@@ -49,7 +49,7 @@ La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.e
   (plus le contexte grossi, plus le modèle et le raisonnement deviennent complexes et sujets à erreurs).
 - Il est préférable de scanner des fichiers individuels ou des répertoires spécifiques.
 
-1. **Analyse statique** avec Codex Security : `pnpm start-proxy`, puis `pnpm scan` (dépôt entier)
+1. **Analyse statique** avec Codex Security : `pnpm démarre-proxy`, puis `pnpm scan` (dépôt entier)
    ou un scan ciblé via une config copiée depuis `configs/config-cible.template.yaml`. La
    confrontation d'un point précis au code se fait avec `pnpm validate`.
 2. **Validation dynamique** avec Shannon : une instance **jetable** de la cible doit tourner en

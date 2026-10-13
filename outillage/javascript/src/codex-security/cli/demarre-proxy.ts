@@ -1,13 +1,12 @@
-// Adaptateur de ligne de commande du démarrage du proxy LiteLLM (start-proxy.sh).
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { DemarreProxy, type Dependances } from '../application/demarreProxy.ts';
 
-export async function startProxy(
+export const demarreProxy = async (
   argv: string[],
   dependances: Dependances
-): Promise<number> {
-  const programme = new Command('start-proxy')
+): Promise<number> => {
+  const programme = new Command('démarre-proxy')
     .description(
       'Lance (ou relance) le proxy LiteLLM sur 127.0.0.1:${PORT_LITE_LLM:-4000}.'
     )
@@ -22,4 +21,4 @@ fournie ; sinon le coût est suivi sans être bloqué (voir le README).`
     await new DemarreProxy(dependances).execute();
     return 0;
   });
-}
+};

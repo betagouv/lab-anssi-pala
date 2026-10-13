@@ -116,7 +116,7 @@ describe('Lance Scan Codex', () => {
         config: 'config',
       })
     ).rejects.toThrow(
-      'Proxy LiteLLM injoignable sur 127.0.0.1:4100 (lancer pnpm start-proxy)'
+      'Proxy LiteLLM injoignable sur 127.0.0.1:4100 (lancer pnpm démarre-proxy)'
     );
     expect(reseau.urlsInterrogees).toEqual([
       'http://127.0.0.1:4100/health/liveliness',

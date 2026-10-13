@@ -82,7 +82,7 @@ export class PrepareExecutionCodex {
       .proxy(this.#systemeDeFichier).portLiteLLM;
     if (!(await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`))) {
       throw new Error(
-        `Proxy LiteLLM injoignable sur 127.0.0.1:${port} (lancer pnpm start-proxy)`
+        `Proxy LiteLLM injoignable sur 127.0.0.1:${port} (lancer pnpm démarre-proxy)`
       );
     }
   }

@@ -1,5 +1,3 @@
-// Lance (ou relance) le proxy LiteLLM qui traduit l'API Responses (Codex) vers l'API Chat
-// Completions d'Albert et Scaleway. Portage TS de start-proxy.sh.
 import type { Attente } from '../../noyau/ports/Attente.ts';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { Reseau } from '../../noyau/ports/Reseau.ts';
