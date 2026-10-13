@@ -17,7 +17,7 @@ l'identifiant de SHANNON_AI_MODEL (partie après « fournisseur: »), ou MODEL.
 
 Usage :
     set -a; . ./.env; . outils/shannon/shannon.env; set +a
-    python3 outils/shannon/scripts/check_tool_calls.py
+    python3 outils/shannon/scripts/verifie_appels_outils_llm.py
 """
 
 import json
