@@ -18,6 +18,7 @@ import {
 import { type Cout, calculeCout } from '../../cout/domaine/cout.ts';
 import type { BusEvenements } from '../../noyau/ports/BusEvenements.ts';
 import { unScanTermine } from '../domaine/scanTermine.ts';
+import { type Constat, extraitLesConstats } from '../domaine/constat.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = DependancesExecution & {
@@ -74,9 +75,23 @@ export class LanceScan {
         cible,
         resultat: statut === 0 ? 'Succès' : 'Échec',
         cout,
+        constats: this.#lesConstats(sortie),
       })
     );
     return statut;
+  }
+
+  #lesConstats(sortie: DossierDeSortie): Constat[] {
+    const findings = join(sortie.chemin, 'findings.json');
+    if (!this.#systemeDeFichier.existe(findings)) return [];
+    try {
+      return extraitLesConstats(this.#systemeDeFichier.lit(findings));
+    } catch (erreur) {
+      this.#console.signaleErreur(
+        `Lecture des constats impossible : ${erreur instanceof Error ? erreur.message : erreur}`
+      );
+      return [];
+    }
   }
 
   #optionsDuScan(options: string[]): string[] {
