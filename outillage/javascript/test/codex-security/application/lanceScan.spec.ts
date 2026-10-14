@@ -5,6 +5,8 @@ import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.t
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
+import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
+import type { ScanTermine } from '../../../src/codex-security/domaine/scanTermine.ts';
 import {
   type Dependances,
   LanceScan,
@@ -40,8 +42,26 @@ const unScanCodex = (doubles: Partial<Dependances> = {}) =>
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     estimation: new EstimationDuCoutSimulee(),
     console: new ConsoleEnMemoire(),
+    busDEvenements: new BusEvenementsPALA(),
     ...doubles,
   });
+
+const unDepotAuTarifScaleway = () => {
+  const systemeDeFichier = unDepotDeFichiersPret();
+  systemeDeFichier.fichiers.set(
+    '/configs/scaleway.yaml',
+    'codex:\n  model: glm-5.2\n  model_provider: scaleway\n'
+  );
+  return systemeDeFichier;
+};
+
+const collecteLesScansTermines = (bus: BusEvenementsPALA) => {
+  const evenements: ScanTermine[] = [];
+  bus.sabonne<ScanTermine>('SCAN_TERMINÉ', (evenement) =>
+    evenements.push(evenement)
+  );
+  return evenements;
+};
 
 describe('Lance Scan Codex', () => {
   beforeEach(() => {
@@ -277,6 +297,62 @@ describe('Lance Scan Codex', () => {
     });
 
     expect(scanner.scans[0].options).toContain('--verbose');
+  });
+
+  it('publie un événement de fin de scan réussi, avec la cible et le coût estimé', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+
+    await unScanCodex({
+      scanner: new ScannerCodexSecuritySimulee({ statutDuScan: 0 }),
+      systemeDeFichier: unDepotAuTarifScaleway(),
+      busDEvenements: bus,
+    }).execute({ options: [], cible: CIBLE, config: '/configs/scaleway.yaml' });
+
+    expect(scansTermines).toEqual([
+      {
+        nom: 'SCAN_TERMINÉ',
+        cible: CIBLE,
+        resultat: 'Succès',
+        cout: {
+          type: 'estimé',
+          montantEnEuros: ((100_000 + 10_000) * 1.8) / 1e6 + (10_500 * 5.5) / 1e6,
+        },
+      },
+    ]);
+  });
+
+  it("publie un coût indisponible quand l'estimation échoue, sans empêcher la publication", async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+
+    await unScanCodex({ busDEvenements: bus }).execute(
+      { options: [], cible: CIBLE, config: 'scan.stdout.log' },
+      () => {
+        throw new Error('Fichier introuvable : scan.stdout.log');
+      }
+    );
+
+    expect(scansTermines).toEqual([
+      {
+        nom: 'SCAN_TERMINÉ',
+        cible: CIBLE,
+        resultat: 'Succès',
+        cout: { type: 'indisponible' },
+      },
+    ]);
+  });
+
+  it('publie un événement de fin de scan en échec quand le scanner renvoie un statut non nul', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+
+    await unScanCodex({
+      scanner: new ScannerCodexSecuritySimulee({ statutDuScan: 42 }),
+      busDEvenements: bus,
+    }).execute({ options: [], cible: CIBLE, config: CONFIG_PAR_DEFAUT });
+
+    expect(scansTermines).toMatchObject([{ cible: CIBLE, resultat: 'Échec' }]);
   });
 
   it("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {

@@ -15,11 +15,15 @@ import {
   type ConsommationDeTokens,
   unReleveDeConsommationDeTokensCodex,
 } from '../../cout/domaine/consommationDeTokens.ts';
+import { type Cout, calculeCout } from '../../cout/domaine/cout.ts';
+import type { BusEvenements } from '../../noyau/ports/BusEvenements.ts';
+import { unScanTermine } from '../domaine/scanTermine.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = DependancesExecution & {
   estimation: EstimationDuCout;
   console: Console;
+  busDEvenements: BusEvenements;
 };
 
 type CommandeScan = { options: string[]; cible: string; config: string };
@@ -31,6 +35,7 @@ export class LanceScan {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #estimation: EstimationDuCout;
   readonly #console: Console;
+  readonly #busDEvenements: BusEvenements;
 
   constructor(dependances: Dependances) {
     this.#racine = dependances.racine;
@@ -39,6 +44,7 @@ export class LanceScan {
     this.#systemeDeFichier = dependances.systemeDeFichier;
     this.#estimation = dependances.estimation;
     this.#console = dependances.console;
+    this.#busDEvenements = dependances.busDEvenements;
   }
 
   async execute(
@@ -62,7 +68,14 @@ export class LanceScan {
       options: this.#optionsDuScan(options),
       environnement: { ...environnementCodex, PATH: environnement.path },
     });
-    this.#estimeLeCout(config, sortie, releveDeTokens);
+    const cout = this.#estimeLeCout(config, sortie, releveDeTokens);
+    this.#busDEvenements.publie(
+      unScanTermine({
+        cible,
+        resultat: statut === 0 ? 'Succès' : 'Échec',
+        cout,
+      })
+    );
     return statut;
   }
 
@@ -88,7 +101,7 @@ export class LanceScan {
       fournisseur: string,
       modele: string
     ) => ConsommationDeTokens | null
-  ): void {
+  ): Cout {
     try {
       const { modele, fournisseur } = ConfigScan.depuisYaml(
         this.#systemeDeFichier.lit(config)
@@ -99,10 +112,12 @@ export class LanceScan {
         modele
       );
       this.#estimation.rapporte(consommation);
+      return calculeCout(consommation);
     } catch (erreur) {
       this.#console.signaleErreur(
         `Estimation du coût impossible : ${erreur instanceof Error ? erreur.message : erreur}`
       );
+      return { type: 'indisponible' };
     }
   }
 }
