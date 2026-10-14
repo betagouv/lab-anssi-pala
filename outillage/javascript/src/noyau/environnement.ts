@@ -35,6 +35,7 @@ export type EnvironnementFournisseur = {
 };
 
 type Environnement = {
+  mattermost: () => { urlWebhook: string };
   path: string;
   pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
@@ -69,6 +70,9 @@ export const environnement: Environnement = {
     modele: process.env.FOURNISSEUR_MODELE || '',
     nom: process.env.FOURNISSEUR_NOM || '',
     url: process.env.FOURNISSEUR_BASE_URL || '',
+  }),
+  mattermost: (): { urlWebhook: string } => ({
+    urlWebhook: process.env.MATTERMOST_URL || '',
   }),
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
   pourShannon: (systemeDeFichier: SystemeDeFichier): EnvironnementShannon => {
