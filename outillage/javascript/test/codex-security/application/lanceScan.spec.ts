@@ -318,8 +318,72 @@ describe('Lance Scan Codex', () => {
           type: 'estimé',
           montantEnEuros: ((100_000 + 10_000) * 1.8) / 1e6 + (10_500 * 5.5) / 1e6,
         },
+        constats: [],
       },
     ]);
+  });
+
+  describe('en ce qui concerne les constats', () => {
+    it('les publie depuis le fichier de findings du scan', async () => {
+      const bus = new BusEvenementsPALA();
+      const scansTermines = collecteLesScansTermines(bus);
+      const systemeDeFichier = unDepotDeFichiersPret();
+      systemeDeFichier.fichiers.set(
+        '/depot/resultats/brut/codex-security/scan-20260930-140509/findings.json',
+        JSON.stringify({
+          findings: [
+            {
+              title: 'UUID de conversation : seul contrôle de propriété',
+              confidence: { level: 'high' },
+              severity: { level: 'high' },
+              taxonomy: { cwe: ['CWE-639'] },
+              locations: [
+                {
+                  path: 'src/mon-fichier-impacte.ts',
+                  startLine: 110,
+                  endLine: 110,
+                },
+              ],
+            },
+          ],
+        })
+      );
+
+      await unScanCodex({ systemeDeFichier, busDEvenements: bus }).execute({
+        options: [],
+        cible: CIBLE,
+        config: CONFIG_PAR_DEFAUT,
+      });
+
+      expect(scansTermines[0].constats).toEqual([
+        {
+          titre: 'UUID de conversation : seul contrôle de propriété',
+          confiance: 'high',
+          severite: 'high',
+          cwe: ['CWE-639'],
+          emplacements: [
+            {
+              chemin: 'src/mon-fichier-impacte.ts',
+              ligneDebut: 110,
+              ligneFin: 110,
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('publie une liste de constats vide quand le scan ne produit pas de findings', async () => {
+      const bus = new BusEvenementsPALA();
+      const scansTermines = collecteLesScansTermines(bus);
+
+      await unScanCodex({ busDEvenements: bus }).execute({
+        options: [],
+        cible: CIBLE,
+        config: CONFIG_PAR_DEFAUT,
+      });
+
+      expect(scansTermines[0].constats).toEqual([]);
+    });
   });
 
   it("publie un coût indisponible quand l'estimation échoue, sans empêcher la publication", async () => {
@@ -339,6 +403,7 @@ describe('Lance Scan Codex', () => {
         cible: CIBLE,
         resultat: 'Succès',
         cout: { type: 'indisponible' },
+        constats: [],
       },
     ]);
   });
