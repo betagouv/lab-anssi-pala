@@ -10,6 +10,7 @@ import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichier
 import type { ScanTermine } from '../codex-security/domaine/scanTermine.ts';
 import { MessagerieMattermost } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 import { ApiHTTPFetch } from '../noyau/adaptateurs/node/apiHTTPFetch.ts';
+import type { Constat } from '../codex-security/domaine/constat.ts';
 
 const racine = join(import.meta.dirname, '../../../..');
 const repertoireAppel = process.env.INIT_CWD || process.cwd();
@@ -20,9 +21,24 @@ const busEvenementsPALA = new BusEvenementsPALA();
 busEvenementsPALA.sabonne<ScanTermine>('SCAN_TERMINÉ', async (evenement) => {
   const messagerie = new MessagerieMattermost(new ApiHTTPFetch());
 
-  const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan terminé
-  **Cible :** ${evenement.cible}
-  **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
+  const cible = evenement.cible
+    .substring(evenement.cible.lastIndexOf('/') + 1)
+    .toUpperCase();
+
+  const constat = (constat: Constat) => {
+    return `##### ${constat.titre} (${constat.cwe.join(' ')})
+    - **Sévérité :** ${constat.severite === 'high' ? '🔴' : constat.severite === 'medium' ? '🟠' : '⚪️'} ${constat.severite} 
+    - **Confiance :** ${constat.confiance}
+    ${constat.emplacements.map((emplacement) => `- ${emplacement.chemin} (lignes ${emplacement.ligneDebut} à ${emplacement.ligneFin})`).join('\n')}
+    `;
+  };
+
+  const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible}
+  - **Cible :** ${cible}
+  - **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
+  - **Nombre de constats trouvés :** ${evenement.constats.length}
+  #### Constats
+  ${evenement.constats.map((c) => constat(c)).join('\n')}
   `;
   await messagerie.envoyer({ contenu: message });
 });
