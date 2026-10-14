@@ -3,7 +3,7 @@
     "albert": {
       "baseUrl": "${FOURNISSEUR_BASE_URL}",
       "api": "openai-completions",
-      "apiKey": "YOUR_API_KEY",
+      "apiKey": "${FOURNISSEUR_API_KEY}",
       "models": [
         {
           "id": "openai/gpt-oss-120b",
