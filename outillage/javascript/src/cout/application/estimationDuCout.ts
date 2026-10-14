@@ -1,6 +1,7 @@
 import type { Console } from '../../noyau/ports/Console.ts';
 import { type ConsommationDeTokens } from '../domaine/consommationDeTokens.ts';
-import { estGratuit, type Tarif, TARIFS } from '../domaine/Tarifs.ts';
+import { calculeCout } from '../domaine/cout.ts';
+import { TARIFS } from '../domaine/Tarifs.ts';
 
 export type Dependances = { console: Console };
 
@@ -15,7 +16,8 @@ export class EstimationDuCout {
 
   rapporte(releve: ConsommationDeTokens | null): void {
     this.#console.aLaLigne('--- Coût estimé ---', 'GRIS');
-    if (!releve) {
+    const cout = calculeCout(releve);
+    if (cout.type === 'indisponible') {
       this.#console.aLaLigne(
         '  tokens indisponibles (run non terminé ?) : coût non calculable',
         'ORANGE'
@@ -23,21 +25,18 @@ export class EstimationDuCout {
       return;
     }
 
-    const entreeTotale = releve.entree + releve.cache;
-    const coutAu = (tarif: Tarif) =>
-      (entreeTotale * tarif.entree) / 1e6 + (releve.sortie * tarif.sortie) / 1e6;
-
-    const fournisseur = releve.fournisseur;
-    const modele = releve.modele;
+    const { fournisseur, modele, entree, cache, sortie } = releve!;
+    const entreeTotale = entree + cache;
     this.#console.aLaLigne(
       `  Modèle    : ${modele} (fournisseur ${fournisseur})`,
       'BLEU'
     );
     this.#console.aLaLigne(
-      `  Tokens    : ${milliers(entreeTotale)} entrée (dont ${milliers(releve.cache)} en cache), ${milliers(releve.sortie)} sortie`,
+      `  Tokens    : ${milliers(entreeTotale)} entrée (dont ${milliers(cache)} en cache), ${milliers(sortie)} sortie`,
       'VIOLET'
     );
-    if (estGratuit(fournisseur)) {
+
+    if (cout.type === 'gratuit') {
       this.#console.aLaLigne(
         '  Coût      : 0 € — Albert (DINUM), service gratuit',
         'VERT'
@@ -48,18 +47,19 @@ export class EstimationDuCout {
       );
       return;
     }
-    const tarif = TARIFS[modele];
-    if (!tarif) {
+
+    if (cout.type === 'tarifInconnu') {
       this.#console.aLaLigne(
         `  Coût      : tarif inconnu pour « ${modele} » — compléter TARIFS dans outillage/src/cout/domaine/Tarifs.ts`,
         'ROUGE'
       );
       return;
     }
-    const cout = coutAu(tarif);
+
+    const tarif = TARIFS[modele]!;
     this.#console.aLaLigne(
-      `  Coût      : ~${cout.toFixed(2)} € (${tarif.note} : ${tarif.entree} €/M entrée, ${tarif.sortie} €/M sortie)`,
-      cout > 10 ? 'ROUGE' : 'VERT'
+      `  Coût      : ~${cout.montantEnEuros.toFixed(2)} € (${tarif.note} : ${tarif.entree} €/M entrée, ${tarif.sortie} €/M sortie)`,
+      cout.montantEnEuros > 10 ? 'ROUGE' : 'VERT'
     );
     this.#console.aLaLigne(
       "  Note      : estimation haute (cache compté au tarif d'entrée) ; à confronter au relevé du fournisseur.",
