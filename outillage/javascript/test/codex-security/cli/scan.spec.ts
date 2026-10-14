@@ -5,9 +5,8 @@ import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.t
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
+import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
 import { scan } from '../../../src/codex-security/cli/scan.ts';
-import { environnement } from '../../../src/noyau/environnement.ts';
-import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 describe('scan (ligne de commande)', () => {
   it('fournit la cible et transmet ses options par défaut à codex-security scan', async () => {
@@ -26,6 +25,7 @@ describe('scan (ligne de commande)', () => {
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       estimation: new EstimationDuCoutSimulee(),
       console: new ConsoleEnMemoire(),
+      busDEvenements: new BusEvenementsPALA(),
     });
 
     expect(code).toBe(42);
@@ -60,6 +60,7 @@ describe('scan (ligne de commande)', () => {
         horloge: new HorlogeFigee(new Date(2026, 8, 30)),
         estimation: new EstimationDuCoutSimulee(),
         console: new ConsoleEnMemoire(),
+        busDEvenements: new BusEvenementsPALA(),
       }
     );
 
@@ -90,6 +91,7 @@ describe('scan (ligne de commande)', () => {
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       estimation: new EstimationDuCoutSimulee(),
       console: new ConsoleEnMemoire(),
+      busDEvenements: new BusEvenementsPALA(),
     });
 
     expect(code).toBe(42);
@@ -128,6 +130,7 @@ describe('scan (ligne de commande)', () => {
         horloge: new HorlogeFigee(new Date(2026, 8, 30)),
         estimation: new EstimationDuCoutSimulee(),
         console: new ConsoleEnMemoire(),
+        busDEvenements: new BusEvenementsPALA(),
       }
     );
 
