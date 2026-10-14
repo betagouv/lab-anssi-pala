@@ -3,10 +3,10 @@ import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { type Dependances, LanceScan } from '../application/lanceScan.ts';
 import { join } from 'node:path';
 
-export async function scan(
+export const scan = async (
   argv: string[],
   dependances: Dependances
-): Promise<number> {
+): Promise<number> => {
   const programme = new Command(
     "Lance un scan Codex Security sur la copie de travail de la cible, via le proxy LiteLLM local\n(pnpm démarre-proxy d'abord), puis en estime le coût.\nToutes les options spécifiques à la CLI de codex-security sont transmises telles quelles"
   )
@@ -36,4 +36,4 @@ export async function scan(
       config,
     });
   });
-}
+};
