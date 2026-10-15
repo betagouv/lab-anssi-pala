@@ -29,6 +29,10 @@ export class GenereConfigCible {
     const proxy = environnement.pourCodexSecurity().proxy(this.#systemeDeFichier);
     const cible = new Cible({ nom: nomCible });
     this.#depotGit.metAJour(cible.copieDeTravail);
+    this.#console.aLaLigne(
+      `Mise à jour de la copie de travail : ${cible.copieDeTravail}`,
+      'VERT'
+    );
     const chemins = this.#depotGit.fichiersModifiesDepuis(
       cible.copieDeTravail,
       nombreDeJours
