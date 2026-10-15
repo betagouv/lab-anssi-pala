@@ -28,6 +28,7 @@ export class GenereConfigCible {
     const fournisseur = environnement.fournisseur();
     const proxy = environnement.pourCodexSecurity().proxy(this.#systemeDeFichier);
     const cible = new Cible({ nom: nomCible });
+    this.#depotGit.metAJour(cible.copieDeTravail);
     const chemins = this.#depotGit.fichiersModifiesDepuis(
       cible.copieDeTravail,
       nombreDeJours

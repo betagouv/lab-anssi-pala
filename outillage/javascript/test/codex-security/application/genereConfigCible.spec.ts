@@ -100,6 +100,19 @@ describe('Génère Config Cible', () => {
     expect(depotGit.nombreDeJoursDemande).toBe(30);
   });
 
+  it('met à jour la copie de travail de la cible avant de calculer le diff', () => {
+    const depotGit = new DepotGitEnMemoire();
+    fournisseurAlbert();
+    proxySurLePort(4000);
+
+    uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
+
+    expect(depotGit.repertoireMisAJour).toBe(
+      new Cible({ nom: 'mon-projet' }).copieDeTravail
+    );
+    expect(depotGit.misAJourAvantLeDiff).toBe(true);
+  });
+
   it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
     const depotGit = new DepotGitEnMemoire();
     fournisseurAlbert();

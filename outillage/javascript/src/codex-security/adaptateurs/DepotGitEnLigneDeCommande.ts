@@ -2,13 +2,18 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import type { DepotGit } from '../ports/DepotGit.ts';
 
-// Équivalent de : git log --since="<N> days ago" --name-only --pretty=format: | sort -u
-// exécuté dans le dépôt `repertoireDepot` (résolu depuis `racine`), chemins relatifs à ce dépôt.
 export class DepotGitEnLigneDeCommande implements DepotGit {
   readonly #racine: string;
 
   constructor(racine: string) {
     this.#racine = racine;
+  }
+
+  metAJour(repertoireDepot: string): void {
+    execFileSync('git', ['pull', '--ff-only'], {
+      cwd: resolve(this.#racine, repertoireDepot),
+      encoding: 'utf8',
+    });
   }
 
   fichiersModifiesDepuis(repertoireDepot: string, nombreDeJours: number): string[] {
