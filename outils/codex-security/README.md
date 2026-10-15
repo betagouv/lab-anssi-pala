@@ -25,6 +25,12 @@ codex-security ──Responses──▶ LiteLLM (127.0.0.1:4000) ──Chat Comp
    jeton local LITELLM_API_KEY                   clé du fournisseur (reste dans le proxy)
 ```
 
+Le proxy peut aussi être **hébergé** (ex. une app LiteLLM sur Clever Cloud) plutôt que lancé
+localement en Docker : définir `LITELLM_BASE_URL` dans le `.env` racine (URL de l'app, sans `/v1`)
+et `LITELLM_API_KEY` = master key du proxy distant. `pnpm génère-env` recopie l'URL dans
+`codex-security.env` ; génère-config, scan et validate la reprennent automatiquement. Sans cette
+variable, le proxy local `http://127.0.0.1:${PORT_LITE_LLM:-4000}` s'applique (`pnpm démarre-proxy`).
+
 Réglages Codex utiles (section `codex` des configs) : fournisseur personnalisé pointant le proxy
 (`wire_api: responses`), `model_reasoning_effort: high`, `model_reasoning_summary: none` (sinon un
 champ de résumé de raisonnement provoque un 400 côté fournisseur), fenêtre de contexte explicite,
