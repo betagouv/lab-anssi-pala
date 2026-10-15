@@ -7,19 +7,18 @@ import {
   type Dependances,
   GenereConfigCible,
 } from '../../../src/codex-security/application/genereConfigCible.ts';
-import {
-  cheminConfigCible,
-  NOM_CIBLE_PAR_DEFAUT,
-} from '../../../src/codex-security/domaine/cheminConfig.ts';
+import { cheminConfigCible } from '../../../src/codex-security/domaine/cheminConfig.ts';
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/fenetreDeModification.ts';
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
-
-const CHEMIN_FICHIER_CONFIG_CIBLE = cheminConfigCible(NOM_CIBLE_PAR_DEFAUT);
 import { environnement } from '../../../src/noyau/environnement.ts';
 import {
   ENVIRONNEMENT_CODEX_SECURITY,
   ENVIRONNEMENT_PROXY,
 } from '../../doubles/environnement.ts';
+
+const UNE_CIBLE = 'la-cible';
+
+const CHEMIN_FICHIER_CONFIG_CIBLE = cheminConfigCible(UNE_CIBLE);
 
 const fournisseurAlbert = () => {
   environnement.fournisseur = () => ({
@@ -29,7 +28,6 @@ const fournisseurAlbert = () => {
     url: 'https://fournisseur.example/v1',
   });
 };
-
 const proxySurLePort = (portLiteLLM: number) => {
   environnement.pourCodexSecurity = () => ({
     ...ENVIRONNEMENT_CODEX_SECURITY,
@@ -58,7 +56,7 @@ describe('Génère Config Cible', () => {
     proxySurLePort(4000);
 
     uneGeneration({ systemeDeFichier }).execute(
-      NOM_CIBLE_PAR_DEFAUT,
+      UNE_CIBLE,
       NOMBRE_DE_JOURS_PAR_DEFAUT
     );
 
@@ -73,7 +71,7 @@ describe('Génère Config Cible', () => {
     proxySurLePort(4010);
 
     uneGeneration({ systemeDeFichier }).execute(
-      NOM_CIBLE_PAR_DEFAUT,
+      UNE_CIBLE,
       NOMBRE_DE_JOURS_PAR_DEFAUT
     );
 
@@ -92,7 +90,7 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ systemeDeFichier, depotGit }).execute(NOM_CIBLE_PAR_DEFAUT, 30);
+    uneGeneration({ systemeDeFichier, depotGit }).execute(UNE_CIBLE, 30);
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.scan.scope.paths).toEqual([
@@ -121,7 +119,7 @@ describe('Génère Config Cible', () => {
 
     expect(() =>
       uneGeneration({ systemeDeFichier }).execute(
-        NOM_CIBLE_PAR_DEFAUT,
+        UNE_CIBLE,
         NOMBRE_DE_JOURS_PAR_DEFAUT
       )
     ).toThrow(
@@ -135,13 +133,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ console }).execute(
-      NOM_CIBLE_PAR_DEFAUT,
-      NOMBRE_DE_JOURS_PAR_DEFAUT
-    );
+    uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
     expect(console.lignes.map((l) => l.message)).toEqual([
-      'Généré: outils/codex-security/configs/config-cible.yaml',
+      'Généré: outils/codex-security/configs/config-la-cible.yaml',
       '  Périmètre ciblé pour le fournisseur : albert (1 chemin)',
     ]);
   });
@@ -150,10 +145,7 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    const chemin = uneGeneration().execute(
-      NOM_CIBLE_PAR_DEFAUT,
-      NOMBRE_DE_JOURS_PAR_DEFAUT
-    );
+    const chemin = uneGeneration().execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
     expect(chemin).toBe(CHEMIN_FICHIER_CONFIG_CIBLE);
   });

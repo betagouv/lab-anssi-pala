@@ -31,7 +31,7 @@ describe('génère-config (ligne de commande)', () => {
   it("signale l'erreur et sort en code 1 quand la génération échoue", async () => {
     const console = new ConsoleEnMemoire();
 
-    const code = await genereConfig([], {
+    const code = await genereConfig(['--cible', 'test'], {
       systemeDeFichier: new SystemeDeFichierEnMemoire(),
       console,
       depotGit: new DepotGitEnMemoire(),
