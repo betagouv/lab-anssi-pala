@@ -8,7 +8,7 @@ export const scan = async (
   dependances: Dependances
 ): Promise<number> => {
   const programme = new Command(
-    "Lance un scan Codex Security sur la copie de travail de la cible, via le proxy LiteLLM local\n(pnpm démarre-proxy d'abord), puis en estime le coût.\nToutes les options spécifiques à la CLI de codex-security sont transmises telles quelles"
+    "Lance un scan Codex Security sur la copie de travail de la cible, via le proxy LiteLLM\n(local : pnpm démarre-proxy d'abord ; ou distant via LITELLM_BASE_URL), puis en estime le coût.\nToutes les options spécifiques à la CLI de codex-security sont transmises telles quelles"
   )
     .allowUnknownOption()
     .allowExcessArguments()
