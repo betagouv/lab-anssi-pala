@@ -141,6 +141,18 @@ describe('Génère Config Cible', () => {
     expect(systemeDeFichier.existe(CHEMIN_FICHIER_CONFIG_CIBLE)).toBe(false);
   });
 
+  it('annonce la mise à jour de la copie de travail en première étape', () => {
+    const console = new ConsoleEnMemoire();
+    fournisseurAlbert();
+    proxySurLePort(4000);
+
+    uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
+
+    expect(console.lignes.map((l) => l.message)[0]).toBe(
+      'Mise à jour de la copie de travail : cible/copies/la-cible'
+    );
+  });
+
   it('annonce le fichier généré et le fournisseur configuré', () => {
     const console = new ConsoleEnMemoire();
     fournisseurAlbert();
@@ -149,6 +161,7 @@ describe('Génère Config Cible', () => {
     uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
     expect(console.lignes.map((l) => l.message)).toEqual([
+      'Mise à jour de la copie de travail : cible/copies/la-cible',
       'Généré: outils/codex-security/configs/config-la-cible.yaml',
       '  Périmètre ciblé pour le fournisseur : albert (1 chemin)',
     ]);
