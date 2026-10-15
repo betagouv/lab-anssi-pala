@@ -6,7 +6,7 @@ import { Document, type YAMLSeq } from 'yaml';
 export type ParametresConfigurationCible = {
   modele: string;
   fournisseur: string;
-  portProxy: number;
+  urlProxy: string;
   chemins: string[];
 };
 
@@ -19,18 +19,18 @@ const EN_TETE =
 export class ConfigurationCible {
   readonly #modele: string;
   readonly #fournisseur: string;
-  readonly #portProxy: number;
+  readonly #urlProxy: string;
   readonly #chemins: string[];
 
   constructor({
     modele,
     fournisseur,
-    portProxy,
+    urlProxy,
     chemins,
   }: ParametresConfigurationCible) {
     this.#modele = modele;
     this.#fournisseur = fournisseur;
-    this.#portProxy = portProxy;
+    this.#urlProxy = urlProxy;
     this.#chemins = chemins;
   }
 
@@ -52,7 +52,7 @@ export class ConfigurationCible {
         model_providers: {
           [this.#fournisseur]: {
             name: `${this.#fournisseur} via LiteLLM`,
-            base_url: `http://127.0.0.1:${this.#portProxy}/v1`,
+            base_url: `${this.#urlProxy}/v1`,
             env_key: 'LITELLM_API_KEY',
             wire_api: 'responses',
           },

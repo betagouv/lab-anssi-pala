@@ -10,7 +10,7 @@ describe('Configuration Cible', () => {
       new ConfigurationCible({
         modele: 'deepseek-v4-flash-0731',
         fournisseur: 'albert',
-        portProxy: 4000,
+        urlProxy: 'http://127.0.0.1:4000',
         chemins: ['src'],
       })
     );
@@ -24,7 +24,7 @@ describe('Configuration Cible', () => {
       new ConfigurationCible({
         modele: 'deepseek-v4-flash-0731',
         fournisseur: 'albert',
-        portProxy: 4000,
+        urlProxy: 'http://127.0.0.1:4000',
         chemins: ['src/noyau', 'src/codex-security'],
       })
     );
@@ -37,7 +37,7 @@ describe('Configuration Cible', () => {
       new ConfigurationCible({
         modele: 'deepseek-v4-flash-0731',
         fournisseur: 'albert',
-        portProxy: 4010,
+        urlProxy: 'http://127.0.0.1:4010',
         chemins: ['src'],
       })
     );
@@ -55,7 +55,7 @@ describe('Configuration Cible', () => {
       new ConfigurationCible({
         modele: 'deepseek-v4-flash-0731',
         fournisseur: 'albert',
-        portProxy: 4000,
+        urlProxy: 'http://127.0.0.1:4000',
         chemins: ['src'],
       })
     );
@@ -83,11 +83,26 @@ describe('Configuration Cible', () => {
     });
   });
 
+  it('pointe le fournisseur vers l’URL du proxy, distante possible (ajoute /v1)', () => {
+    const lu = yamlParse(
+      new ConfigurationCible({
+        modele: 'deepseek-v4-flash-0731',
+        fournisseur: 'albert',
+        urlProxy: 'https://litellm.local',
+        chemins: ['src'],
+      })
+    );
+
+    expect(lu.codex.model_providers.albert.base_url).toBe(
+      'https://litellm.local/v1'
+    );
+  });
+
   it('porte l’en-tête de schéma pour la validation dans l’éditeur', () => {
     const yaml = new ConfigurationCible({
       modele: 'deepseek-v4-flash-0731',
       fournisseur: 'albert',
-      portProxy: 4000,
+      urlProxy: 'http://127.0.0.1:4000',
       chemins: ['src'],
     }).versYaml();
 
