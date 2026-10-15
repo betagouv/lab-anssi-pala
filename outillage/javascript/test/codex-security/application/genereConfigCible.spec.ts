@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
+import { DepotGitEnMemoire } from '../../doubles/DepotGitEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
@@ -10,6 +11,7 @@ import {
   cheminConfigCible,
   NOM_CIBLE_PAR_DEFAUT,
 } from '../../../src/codex-security/domaine/cheminConfig.ts';
+import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 
 const CHEMIN_FICHIER_CONFIG_CIBLE = cheminConfigCible(NOM_CIBLE_PAR_DEFAUT);
 import { environnement } from '../../../src/noyau/environnement.ts';
@@ -44,6 +46,7 @@ const uneGeneration = (doubles: Partial<Dependances> = {}) =>
   new GenereConfigCible({
     systemeDeFichier: systemeDeFichierConfigure(),
     console: new ConsoleEnMemoire(),
+    depotGit: new DepotGitEnMemoire(['src/noyau/environnement.ts']),
     ...doubles,
   });
 
@@ -73,15 +76,35 @@ describe('Génère Config Cible', () => {
     );
   });
 
-  it('délimite le périmètre avec les chemins à scanner par défaut', () => {
+  it('renseigne le périmètre avec les fichiers modifiés (diff git) sur 7 jours glissants', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
+    const depotGit = new DepotGitEnMemoire([
+      'src/codex-security/application/lanceScan.ts',
+      'src/noyau/environnement.ts',
+    ]);
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ systemeDeFichier }).execute(NOM_CIBLE_PAR_DEFAUT);
+    uneGeneration({ systemeDeFichier, depotGit }).execute(NOM_CIBLE_PAR_DEFAUT);
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
-    expect(lu.scan.scope.paths).toEqual(['src']);
+    expect(lu.scan.scope.paths).toEqual([
+      'src/codex-security/application/lanceScan.ts',
+      'src/noyau/environnement.ts',
+    ]);
+    expect(depotGit.nombreDeJoursDemande).toBe(7);
+  });
+
+  it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
+    const depotGit = new DepotGitEnMemoire();
+    fournisseurAlbert();
+    proxySurLePort(4000);
+
+    uneGeneration({ depotGit }).execute('mon-projet');
+
+    expect(depotGit.repertoireDemande).toBe(
+      new Cible({ nom: 'mon-projet' }).copieDeTravail
+    );
   });
 
   it('refuse de générer sans .env racine (fournisseur non configuré)', () => {
