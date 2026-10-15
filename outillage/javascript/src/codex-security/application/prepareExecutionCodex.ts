@@ -77,12 +77,13 @@ export class PrepareExecutionCodex {
         `Cible manquante : ${cible} (cloner via pnpm bootstrap --project <nom> --url <git-url>)`
       );
     }
-    const port = environnement
+    const urlProxy = environnement
       .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier).portLiteLLM;
-    if (!(await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`))) {
+      .proxy(this.#systemeDeFichier).urlLiteLLM;
+    if (!(await this.#reseau.repond(`${urlProxy}/health/liveliness`))) {
       throw new Error(
-        `Proxy LiteLLM injoignable sur 127.0.0.1:${port} (lancer pnpm démarre-proxy)`
+        `Proxy LiteLLM injoignable sur ${urlProxy} ` +
+          '(démarrer le proxy local via pnpm démarre-proxy, ou vérifier LITELLM_BASE_URL)'
       );
     }
   }

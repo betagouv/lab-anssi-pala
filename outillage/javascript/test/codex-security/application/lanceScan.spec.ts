@@ -119,12 +119,12 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son port', async () => {
+  it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son URL', async () => {
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
-        portLiteLLM: 4100,
+        urlLiteLLM: 'https://litellm.local',
       }),
     });
     const reseau = new ReseauSimule([false]);
@@ -136,10 +136,11 @@ describe('Lance Scan Codex', () => {
         config: 'config',
       })
     ).rejects.toThrow(
-      'Proxy LiteLLM injoignable sur 127.0.0.1:4100 (lancer pnpm démarre-proxy)'
+      'Proxy LiteLLM injoignable sur https://litellm.local ' +
+        '(démarrer le proxy local via pnpm démarre-proxy, ou vérifier LITELLM_BASE_URL)'
     );
     expect(reseau.urlsInterrogees).toEqual([
-      'http://127.0.0.1:4100/health/liveliness',
+      'https://litellm.local/health/liveliness',
     ]);
   });
 
