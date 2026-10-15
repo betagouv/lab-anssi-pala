@@ -42,6 +42,8 @@ type Environnement = {
   pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
   fournisseur: () => EnvironnementFournisseur;
+  // URL du proxy LiteLLM souhaitée (depuis le .env racine), vide si laissée au proxy local par défaut.
+  urlLiteLLMConfiguree: () => string;
   verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier): void;
 };
 
@@ -80,6 +82,8 @@ export const environnement: Environnement = {
   mattermost: (): { urlWebhook: string } => ({
     urlWebhook: process.env.MATTERMOST_URL || '',
   }),
+  urlLiteLLMConfiguree: (): string =>
+    process.env.LITELLM_BASE_URL?.replace(/\/+$/, '') || '',
   pourCodexSecurity: (): EnvironnementCodexSecurity => variablesCodexSecurity,
   pourShannon: (systemeDeFichier: SystemeDeFichier): EnvironnementShannon => {
     const variablesShannon = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_SHANNON);
