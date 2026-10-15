@@ -36,6 +36,7 @@ export class GenereEnvironnement {
       .proxy(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
 
+    const urlProxy = environnement.urlLiteLLMConfiguree();
     const toutesLesVariables = () => {
       let jetonLocal = environnementProxy.jeton;
       if (!jetonLocal || !jetonLocal.startsWith('sk-')) {
@@ -45,6 +46,7 @@ export class GenereEnvironnement {
         FOURNISSEUR_NOM: fournisseur.nom,
         FOURNISSEUR_API_KEY: fournisseur.apiKey,
         FOURNISSEUR_BASE_URL: fournisseur.url,
+        ...(urlProxy && { LITELLM_BASE_URL: urlProxy }),
         LITELLM_API_KEY: jetonLocal,
         CODEX_API_KEY: jetonLocal,
       })

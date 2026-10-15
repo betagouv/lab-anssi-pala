@@ -38,11 +38,30 @@ describe('Génère Environnement', () => {
         nom: 'albert',
         url: 'https://fournisseur.example/v1',
       });
+      environnement.urlLiteLLMConfiguree = () => '';
 
       uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
 
       expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toBe(
         'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nLITELLM_API_KEY=sk-local-neuf\nCODEX_API_KEY=sk-local-neuf\n'
+      );
+    });
+
+    it('persiste LITELLM_BASE_URL quand un proxy distant est configuré', () => {
+      const systemeDeFichier = new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
+      environnement.fournisseur = () => ({
+        apiKey: 'cle-fournisseur',
+        modele: 'modele-fournisseur',
+        nom: 'albert',
+        url: 'https://fournisseur.example/v1',
+      });
+      environnement.urlLiteLLMConfiguree = () =>
+        'https://litellm.local';
+
+      uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
+
+      expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toContain(
+        'LITELLM_BASE_URL=https://litellm.local\n'
       );
     });
 
