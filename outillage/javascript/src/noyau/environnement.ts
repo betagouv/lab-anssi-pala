@@ -25,6 +25,8 @@ export type EnvironnementProxy = {
   image: string;
   urlBaseDeDonnees?: string;
   portLiteLLM: number;
+  // URL de base du proxy LiteLLM (sans /v1 ni slash final) : 127.0.0.1 en local, app distante sur PaaS.
+  urlLiteLLM: string;
 };
 
 export type EnvironnementFournisseur = {
@@ -53,10 +55,14 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
       variablesProxy = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_CODEX);
     }
     const lesVariablesEnvironnement = parseEnv(variablesProxy);
+    const portLiteLLM = Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000;
     return {
       jeton: lesVariablesEnvironnement.LITELLM_API_KEY!,
       image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
-      portLiteLLM: Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000,
+      portLiteLLM,
+      urlLiteLLM:
+        lesVariablesEnvironnement.LITELLM_BASE_URL?.replace(/\/+$/, '') ||
+        `http://127.0.0.1:${portLiteLLM}`,
       ...(process.env.LITELLM_DATABASE_URL && {
         urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
       }),
