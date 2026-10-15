@@ -4,7 +4,7 @@
 // Idempotent : peut être relancé sans effet de bord (copie déjà présente = conservée).
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
-import type { Cible } from '../domaine/Cible.ts';
+import type { CibleBootstrap } from '../domaine/CibleBootstrap.ts';
 import type { PreparationOutil } from '../domaine/PreparationOutil.ts';
 import type { Git } from '../ports/Git.ts';
 
@@ -28,7 +28,7 @@ export class PrepareEnvironnement {
     this.#outils = outils;
   }
 
-  async execute({ cible }: { cible?: Cible }): Promise<void> {
+  async execute({ cible }: { cible?: CibleBootstrap }): Promise<void> {
     await this.#initialiseSousModules();
     await this.#prepareCopiesDeScan(cible);
     await this.#prepareOutils();
@@ -41,7 +41,7 @@ export class PrepareEnvironnement {
     await this.#git.initialiseSousModules();
   }
 
-  async #prepareCopiesDeScan(cible?: Cible): Promise<void> {
+  async #prepareCopiesDeScan(cible?: CibleBootstrap): Promise<void> {
     this.#console.aLaLigne(
       '==> Copies de scan (cible/copies/, non versionnées)',
       'GRIS'
@@ -100,7 +100,7 @@ export class PrepareEnvironnement {
     );
   }
 
-  #rappelleCommentCibler(cible: Cible): void {
+  #rappelleCommentCibler(cible: CibleBootstrap): void {
     const variableCible = `CIBLE="$PWD/${cible.copieDeTravail}"`;
     this.#console.aLaLigne('');
     this.#console.aLaLigne(`==> Cible prête : ${cible.copieDeTravail}`, 'VERT');
