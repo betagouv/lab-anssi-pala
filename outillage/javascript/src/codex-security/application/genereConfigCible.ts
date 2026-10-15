@@ -41,7 +41,7 @@ export class GenereConfigCible {
     const config = new ConfigurationCible({
       modele: fournisseur.modele,
       fournisseur: fournisseur.nom,
-      portProxy: proxy.portLiteLLM,
+      urlProxy: proxy.urlLiteLLM,
       chemins: fichiersModifies,
     });
 

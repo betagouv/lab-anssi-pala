@@ -31,7 +31,11 @@ const fournisseurAlbert = () => {
 const proxySurLePort = (portLiteLLM: number) => {
   environnement.pourCodexSecurity = () => ({
     ...ENVIRONNEMENT_CODEX_SECURITY,
-    proxy: () => ({ ...ENVIRONNEMENT_PROXY, portLiteLLM }),
+    proxy: () => ({
+      ...ENVIRONNEMENT_PROXY,
+      portLiteLLM,
+      urlLiteLLM: `http://127.0.0.1:${portLiteLLM}`,
+    }),
   });
 };
 
