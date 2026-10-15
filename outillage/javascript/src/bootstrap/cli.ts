@@ -5,7 +5,7 @@ import {
   type Dependances,
   PrepareEnvironnement,
 } from './application/prepareEnvironnement.ts';
-import { Cible } from './domaine/Cible.ts';
+import { CibleBootstrap } from './domaine/CibleBootstrap.ts';
 
 type Options = { project?: string; url?: string; branch?: string };
 
@@ -47,7 +47,9 @@ export async function bootstrap(
     if (url && !project)
       throw new ErreurUsage('Erreur : --url fourni sans --project.');
     const cible =
-      project && url ? new Cible({ nom: project, url, branche: branch }) : undefined;
+      project && url
+        ? new CibleBootstrap({ nom: project, url, branche: branch })
+        : undefined;
     await new PrepareEnvironnement(dependances).execute({ cible });
     return 0;
   });

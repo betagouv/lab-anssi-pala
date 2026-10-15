@@ -3,7 +3,7 @@ import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { GitSimule } from '../../doubles/GitSimule.ts';
 import { PreparationOutilSimulee } from '../../doubles/PreparationOutilSimulee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
-import { Cible } from '../../../src/bootstrap/domaine/Cible.ts';
+import { CibleBootstrap } from '../../../src/bootstrap/domaine/CibleBootstrap.ts';
 import {
   type Dependances,
   PrepareEnvironnement,
@@ -37,7 +37,10 @@ describe('Prépare l’environnement', () => {
 
   it('clone la cible demandée dans sa copie de travail, sur la branche par défaut du dépôt distant', async () => {
     const git = new GitSimule();
-    const cible = new Cible({ nom: 'app', url: 'https://git.example/app.git' });
+    const cible = new CibleBootstrap({
+      nom: 'app',
+      url: 'https://git.example/app.git',
+    });
 
     await unePreparation({ git }).execute({ cible });
 
@@ -57,7 +60,7 @@ describe('Prépare l’environnement', () => {
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ git, systemeDeFichier, console }).execute({
-      cible: new Cible({ nom: 'app', url: 'https://git.example/app.git' }),
+      cible: new CibleBootstrap({ nom: 'app', url: 'https://git.example/app.git' }),
     });
 
     expect(git.clonages).toEqual([]);
@@ -70,7 +73,7 @@ describe('Prépare l’environnement', () => {
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ console }).execute({
-      cible: new Cible({
+      cible: new CibleBootstrap({
         nom: 'app',
         url: 'https://git.example/app.git',
         branche: 'main',
@@ -143,7 +146,7 @@ describe('Prépare l’environnement', () => {
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ console }).execute({
-      cible: new Cible({ nom: 'app', url: 'https://git.example/app.git' }),
+      cible: new CibleBootstrap({ nom: 'app', url: 'https://git.example/app.git' }),
     });
 
     expect(console.lignes.slice(-6).map((ligne) => ligne.message)).toEqual([
@@ -160,7 +163,7 @@ describe('Prépare l’environnement', () => {
     const laConsole = new ConsoleEnMemoire();
 
     await unePreparation({ console: laConsole }).execute({
-      cible: new Cible({ nom: 'app', url: 'https://git.example/app.git' }),
+      cible: new CibleBootstrap({ nom: 'app', url: 'https://git.example/app.git' }),
     });
 
     let lesDernieresLignes = laConsole.lignes.slice(-6);

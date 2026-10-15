@@ -1,5 +1,5 @@
 import { executeCommande } from '../../noyau/adaptateurs/node/processus.ts';
-import type { Cible } from '../domaine/Cible.ts';
+import type { CibleBootstrap } from '../domaine/CibleBootstrap.ts';
 import type { Git } from '../ports/Git.ts';
 
 export class GitEnLigneDeCommande implements Git {
@@ -15,7 +15,7 @@ export class GitEnLigneDeCommande implements Git {
     });
   }
 
-  cloneCible(cible: Cible): Promise<void> {
+  cloneCible(cible: CibleBootstrap): Promise<void> {
     const branche = cible.branche ? ['--branch', cible.branche] : [];
     return executeCommande(
       'git',
