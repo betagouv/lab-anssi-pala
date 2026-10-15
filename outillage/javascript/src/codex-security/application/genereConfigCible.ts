@@ -33,7 +33,7 @@ export class GenereConfigCible {
       `Mise à jour de la copie de travail : ${cible.copieDeTravail}`,
       'VERT'
     );
-    const chemins = this.#depotGit.fichiersModifiesDepuis(
+    const fichiersModifies = this.#depotGit.fichiersModifiesDepuis(
       cible.copieDeTravail,
       nombreDeJours
     );
@@ -42,17 +42,17 @@ export class GenereConfigCible {
       modele: fournisseur.modele,
       fournisseur: fournisseur.nom,
       portProxy: proxy.portLiteLLM,
-      chemins,
+      chemins: fichiersModifies,
     });
 
     const cheminConfig = cheminConfigCible(nomCible);
     this.#systemeDeFichier.ecritFichier(cheminConfig, config.versYaml());
 
-    const nombreDeChemins = chemins.length;
+    const nombreDeFichiersModifies = fichiersModifies.length;
     this.#console.aLaLigne(`Généré: ${cheminConfig}`, 'VERT');
     this.#console.aLaLigne(
       `  Périmètre ciblé pour le fournisseur : ${fournisseur.nom} ` +
-        `(${nombreDeChemins} chemin${nombreDeChemins > 1 ? 's' : ''})`,
+        `(${nombreDeFichiersModifies} fichier${nombreDeFichiersModifies > 1 ? 's' : ''})`,
       'VERT'
     );
 

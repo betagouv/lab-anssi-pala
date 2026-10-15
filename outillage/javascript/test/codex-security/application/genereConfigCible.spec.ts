@@ -163,7 +163,7 @@ describe('Génère Config Cible', () => {
     expect(console.lignes.map((l) => l.message)).toEqual([
       'Mise à jour de la copie de travail : cible/copies/la-cible',
       'Généré: outils/codex-security/configs/config-la-cible.yaml',
-      '  Périmètre ciblé pour le fournisseur : albert (1 chemin)',
+      '  Périmètre ciblé pour le fournisseur : albert (1 fichier)',
     ]);
   });
 
