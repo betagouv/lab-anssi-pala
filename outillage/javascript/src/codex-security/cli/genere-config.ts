@@ -4,7 +4,6 @@ import {
   type Dependances,
   GenereConfigCible,
 } from '../application/genereConfigCible.ts';
-import { NOM_CIBLE_PAR_DEFAUT } from '../domaine/cheminConfig.ts';
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../domaine/fenetreDeModification.ts';
 
 export async function genereConfig(
@@ -15,10 +14,9 @@ export async function genereConfig(
     .description(
       'Génère la config Codex Security ciblée (configs/config-<cible>.yaml) à partir du .env racine.'
     )
-    .option(
+    .requiredOption(
       '--cible <nom>',
-      'Nom de la cible : fichier configs/config-<cible>.yaml et copie de travail cible/copies/<cible>',
-      NOM_CIBLE_PAR_DEFAUT
+      'Nom de la cible : fichier configs/config-<cible>.yaml et copie de travail cible/copies/<cible>'
     )
     .option(
       '--jours <n>',
