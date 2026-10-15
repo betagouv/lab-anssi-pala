@@ -4,7 +4,6 @@ import { environnement } from '../../noyau/environnement.ts';
 import { Cible } from '../../environnement/domaine/Cible.ts';
 import { ConfigurationCible } from '../domaine/ConfigurationCible.ts';
 import { cheminConfigCible } from '../domaine/cheminConfig.ts';
-import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../domaine/fenetreDeModification.ts';
 import type { DepotGit } from '../ports/DepotGit.ts';
 
 export type Dependances = {
@@ -24,14 +23,14 @@ export class GenereConfigCible {
     this.#depotGit = depotGit;
   }
 
-  execute(nomCible: string): string {
+  execute(nomCible: string, nombreDeJours: number): string {
     environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
     const proxy = environnement.pourCodexSecurity().proxy(this.#systemeDeFichier);
     const cible = new Cible({ nom: nomCible });
     const chemins = this.#depotGit.fichiersModifiesDepuis(
       cible.copieDeTravail,
-      NOMBRE_DE_JOURS_PAR_DEFAUT
+      nombreDeJours
     );
 
     const config = new ConfigurationCible({
