@@ -11,6 +11,7 @@ import {
   cheminConfigCible,
   NOM_CIBLE_PAR_DEFAUT,
 } from '../../../src/codex-security/domaine/cheminConfig.ts';
+import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/fenetreDeModification.ts';
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 
 const CHEMIN_FICHIER_CONFIG_CIBLE = cheminConfigCible(NOM_CIBLE_PAR_DEFAUT);
@@ -56,7 +57,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ systemeDeFichier }).execute(NOM_CIBLE_PAR_DEFAUT);
+    uneGeneration({ systemeDeFichier }).execute(
+      NOM_CIBLE_PAR_DEFAUT,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.codex.model).toBe('deepseek-v4-flash-0731');
@@ -68,7 +72,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4010);
 
-    uneGeneration({ systemeDeFichier }).execute(NOM_CIBLE_PAR_DEFAUT);
+    uneGeneration({ systemeDeFichier }).execute(
+      NOM_CIBLE_PAR_DEFAUT,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.codex.model_providers.albert.base_url).toBe(
@@ -76,7 +83,7 @@ describe('Génère Config Cible', () => {
     );
   });
 
-  it('renseigne le périmètre avec les fichiers modifiés (diff git) sur 7 jours glissants', () => {
+  it('renseigne le périmètre avec les fichiers modifiés (diff git) de la fenêtre demandée', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     const depotGit = new DepotGitEnMemoire([
       'src/codex-security/application/lanceScan.ts',
@@ -85,14 +92,14 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ systemeDeFichier, depotGit }).execute(NOM_CIBLE_PAR_DEFAUT);
+    uneGeneration({ systemeDeFichier, depotGit }).execute(NOM_CIBLE_PAR_DEFAUT, 30);
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.scan.scope.paths).toEqual([
       'src/codex-security/application/lanceScan.ts',
       'src/noyau/environnement.ts',
     ]);
-    expect(depotGit.nombreDeJoursDemande).toBe(7);
+    expect(depotGit.nombreDeJoursDemande).toBe(30);
   });
 
   it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
@@ -100,7 +107,7 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ depotGit }).execute('mon-projet');
+    uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
     expect(depotGit.repertoireDemande).toBe(
       new Cible({ nom: 'mon-projet' }).copieDeTravail
@@ -113,7 +120,10 @@ describe('Génère Config Cible', () => {
     proxySurLePort(4000);
 
     expect(() =>
-      uneGeneration({ systemeDeFichier }).execute(NOM_CIBLE_PAR_DEFAUT)
+      uneGeneration({ systemeDeFichier }).execute(
+        NOM_CIBLE_PAR_DEFAUT,
+        NOMBRE_DE_JOURS_PAR_DEFAUT
+      )
     ).toThrow(
       'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
     );
@@ -125,7 +135,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    uneGeneration({ console }).execute(NOM_CIBLE_PAR_DEFAUT);
+    uneGeneration({ console }).execute(
+      NOM_CIBLE_PAR_DEFAUT,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
 
     expect(console.lignes.map((l) => l.message)).toEqual([
       'Généré: outils/codex-security/configs/config-cible.yaml',
@@ -137,7 +150,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    const chemin = uneGeneration().execute(NOM_CIBLE_PAR_DEFAUT);
+    const chemin = uneGeneration().execute(
+      NOM_CIBLE_PAR_DEFAUT,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
 
     expect(chemin).toBe(CHEMIN_FICHIER_CONFIG_CIBLE);
   });
@@ -147,7 +163,10 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     proxySurLePort(4000);
 
-    const chemin = uneGeneration({ systemeDeFichier }).execute('projet-x');
+    const chemin = uneGeneration({ systemeDeFichier }).execute(
+      'projet-x',
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
 
     expect(chemin).toBe('outils/codex-security/configs/config-projet-x.yaml');
     expect(systemeDeFichier.existe(chemin)).toBe(true);
