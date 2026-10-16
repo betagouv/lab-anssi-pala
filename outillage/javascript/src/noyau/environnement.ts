@@ -59,7 +59,8 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
     const lesVariablesEnvironnement = parseEnv(variablesProxy);
     const portLiteLLM = Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000;
     return {
-      jeton: lesVariablesEnvironnement.LITELLM_API_KEY!,
+      // Clé fournie dans le .env racine (créée côté proxy : app LiteLLM distante ou conteneur local).
+      jeton: process.env.LITELLM_API_KEY || '',
       image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
       portLiteLLM,
       urlLiteLLM:
