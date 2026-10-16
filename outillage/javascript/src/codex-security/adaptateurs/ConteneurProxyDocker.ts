@@ -7,8 +7,6 @@ import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy
 
 const NOM = 'codex-security-litellm';
 
-// Conteneur docker du proxy : environnement codex-security.env, configuration litellm/ montée en
-// lecture seule, port publié sur 127.0.0.1 uniquement.
 export class ConteneurProxyDocker implements ConteneurProxy {
   readonly #outil: string;
 
@@ -30,8 +28,10 @@ export class ConteneurProxyDocker implements ConteneurProxy {
         '-d',
         '--name',
         NOM,
-        '--env-file',
-        join(this.#outil, 'codex-security.env'),
+        '-e',
+        'FOURNISSEUR_BASE_URL',
+        '-e',
+        'FOURNISSEUR_API_KEY',
         ...(baseDeDonnees ? ['-e', `DATABASE_URL=${baseDeDonnees}`] : []),
         '-v',
         `${join(this.#outil, 'litellm')}:/app/proxy-config:ro`,
