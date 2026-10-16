@@ -39,7 +39,7 @@ export class DemarreProxy {
     const configuration = this.#configuration();
     this.#annonceBudget(configuration);
     await this.#remplaceConteneur(configuration);
-    await this.#attendsLeProxy(configuration.port);
+    await this.#attendsLeProxy(configuration.url);
   }
 
   #configuration(): ConfigurationProxy {
@@ -47,8 +47,7 @@ export class DemarreProxy {
       .pourCodexSecurity()
       .proxy(this.#sytemeDeFichier).urlBaseDeDonnees;
     return {
-      port: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier)
-        .portLiteLLM,
+      url: environnement.urlLiteLLMConfiguree(),
       image: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier).image,
       ...(baseDeDonnees && { baseDeDonnees }),
     };
@@ -70,11 +69,11 @@ export class DemarreProxy {
   }
 
   // Jusqu'à 60 tentatives espacées de 2 s (environ 2 minutes).
-  async #attendsLeProxy(port: number): Promise<void> {
+  async #attendsLeProxy(url: string): Promise<void> {
     this.#console.sureUneSeuleLigne('Attente du proxy LiteLLM', 'GRIS');
     for (let tentative = 1; tentative <= 60; tentative++) {
-      if (await this.#reseau.repond(`http://127.0.0.1:${port}/health/liveliness`)) {
-        this.#console.aLaLigne(` : prêt sur http://127.0.0.1:${port}/v1`, 'VERT');
+      if (await this.#reseau.repond(`${url}/health/liveliness`)) {
+        this.#console.aLaLigne(` : prêt sur ${url}/v1`, 'VERT');
         return;
       }
       this.#console.sureUneSeuleLigne('.', 'GRIS');

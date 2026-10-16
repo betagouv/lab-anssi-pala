@@ -49,33 +49,34 @@ describe('Démarre Proxy Codex', () => {
     expect(journal).toEqual(['conteneur supprimé', 'conteneur démarré']);
   });
 
-  it("démarre par défaut sur le port 4000 avec l'image LiteLLM figée par digest", async () => {
+  it("publie à l'adresse de LITELLM_BASE_URL avec l'image LiteLLM figée par digest", async () => {
+    environnement.urlLiteLLMConfiguree = () => 'http://127.0.0.1:4000';
     const conteneur = new ConteneurProxySimule();
 
     await unDemarrageDuProxyCodex({ conteneur }).execute();
 
     expect(conteneur.configuration).toEqual({
-      port: 4000,
+      url: 'http://127.0.0.1:4000',
       image:
         'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02',
     });
   });
 
-  it("les variables d’environnement surchargent le port et l'image", async () => {
+  it("l'URL (LITELLM_BASE_URL) et l'image sont fixées par l'environnement", async () => {
     const conteneur = new ConteneurProxySimule();
+    environnement.urlLiteLLMConfiguree = () => 'http://127.0.0.1:4100';
     environnement.pourCodexSecurity = () => ({
       ...ENVIRONNEMENT_CODEX_SECURITY,
       proxy: () => ({
         ...ENVIRONNEMENT_PROXY,
         image: 'litellm:essai',
-        portLiteLLM: 4100,
       }),
     });
 
     await unDemarrageDuProxyCodex({ conteneur }).execute();
 
     expect(conteneur.configuration).toEqual({
-      port: 4100,
+      url: 'http://127.0.0.1:4100',
       image: 'litellm:essai',
     });
   });
@@ -110,6 +111,7 @@ describe('Démarre Proxy Codex', () => {
   });
 
   it("attend que le proxy réponde, toutes les 2 secondes, puis annonce qu'il est prêt", async () => {
+    environnement.urlLiteLLMConfiguree = () => 'http://127.0.0.1:4100';
     const reseau = new ReseauSimule([false, false, true]);
     const attente = new AttenteInstantanee();
     const console = new ConsoleEnMemoire();
@@ -117,11 +119,11 @@ describe('Démarre Proxy Codex', () => {
     await unDemarrageDuProxyCodex({ reseau, attente, console }).execute();
 
     expect(reseau.urlsInterrogees).toEqual(
-      Array(3).fill('http://127.0.0.1:4000/health/liveliness')
+      Array(3).fill('http://127.0.0.1:4100/health/liveliness')
     );
     expect(attente.attentes).toEqual([2000, 2000]);
     expect(console.lignes.map((l) => l.message).at(-1)).toBe(
-      'Attente du proxy LiteLLM.. : prêt sur http://127.0.0.1:4000/v1'
+      'Attente du proxy LiteLLM.. : prêt sur http://127.0.0.1:4100/v1'
     );
   });
 
