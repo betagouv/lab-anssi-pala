@@ -1,10 +1,7 @@
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { environnement } from '../../noyau/environnement.ts';
-import {
-  CHEMIN_FICHIER_ENV_CODEX,
-  CHEMIN_FICHIER_ENV_SHANNON,
-} from '../../codex-security/domaine/cheminEnvironnement.ts';
+import { CHEMIN_FICHIER_ENV_SHANNON } from '../../codex-security/domaine/cheminEnvironnement.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -22,36 +19,7 @@ export class GenereEnvironnement {
 
   execute(): void {
     environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
-    this.#genereLeFichierEnvPourCodexSecurity();
     this.#genereLeFichierEnvPourShannon();
-  }
-
-  #genereLeFichierEnvPourCodexSecurity() {
-    const environnementProxy = environnement.pourCodexSecurity().proxy();
-    const fournisseur = environnement.fournisseur();
-
-    const toutesLesVariables = () => {
-      const cleProxy = environnementProxy.jeton;
-      return `${Object.entries({
-        FOURNISSEUR_NOM: fournisseur.nom,
-        FOURNISSEUR_API_KEY: fournisseur.apiKey,
-        FOURNISSEUR_BASE_URL: fournisseur.url,
-        LITELLM_API_KEY: cleProxy,
-        CODEX_API_KEY: cleProxy,
-      })
-        .map(([nom, valeur]) => `${nom}=${valeur}`)
-        .join('\n')}\n`;
-    };
-
-    this.#systemeDeFichier.ecritFichierPrive(
-      CHEMIN_FICHIER_ENV_CODEX,
-      toutesLesVariables()
-    );
-    this.#console.aLaLigne(`Généré: ${CHEMIN_FICHIER_ENV_CODEX}`, 'VERT');
-    this.#console.aLaLigne(
-      `  Fournisseur configuré pour le proxy : ${fournisseur.nom} (${fournisseur.url})`,
-      'VERT'
-    );
   }
 
   #genereLeFichierEnvPourShannon() {

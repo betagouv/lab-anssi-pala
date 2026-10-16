@@ -10,7 +10,7 @@ export async function genereEnv(
   dependances: Dependances
 ): Promise<number> {
   const programme = new Command('génère-env').description(
-    'Génère outils/codex-security/codex-security.env à partir du .env racine (jamais versionné).'
+    'Génère outils/shannon/shannon.env à partir du .env racine (jamais versionné).'
   );
   return executeCommande(programme, argv, dependances.console, () => {
     new GenereEnvironnement(dependances).execute();
