@@ -4,7 +4,6 @@ import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { ConteneurProxySimule } from '../../doubles/ConteneurProxySimule.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { demarreProxy } from '../../../src/codex-security/cli/demarre-proxy.ts';
-import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 
 describe('démarre-proxy (ligne de commande)', () => {
   it("signale l'échec du démarrage et sort en code 1", async () => {
@@ -14,7 +13,6 @@ describe('démarre-proxy (ligne de commande)', () => {
       conteneur: new ConteneurProxySimule(),
       reseau: new ReseauSimule([false]),
       attente: new AttenteInstantanee(),
-      systemeDeFichier: new SystemeDeFichierEnMemoire(),
       console,
     });
 

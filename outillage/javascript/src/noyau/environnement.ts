@@ -16,7 +16,7 @@ export type EnvironnementShannon = {
 };
 
 export type EnvironnementCodexSecurity = {
-  proxy: (systemeDeFichier: SystemeDeFichier) => EnvironnementProxy;
+  proxy: () => EnvironnementProxy;
 };
 
 export type EnvironnementProxy = {
@@ -47,10 +47,8 @@ const IMAGE_LITE_LLM_PAR_DEFAUT =
   'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
 
 const variablesCodexSecurity: EnvironnementCodexSecurity = {
-  // systemeDeFichier encore porté par la signature ; le découplage total de codex-security.env
-  // (suppression du paramètre) est prévu en phase 2.1.
-  proxy: (_systemeDeFichier: SystemeDeFichier) => ({
-    // Tout vient du .env racine (process.env) : clé créée côté proxy, image et base optionnelles.
+  // Tout vient du .env racine (process.env) : clé créée côté proxy, image et base optionnelles.
+  proxy: () => ({
     jeton: process.env.LITELLM_API_KEY || '',
     image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
     ...(process.env.LITELLM_DATABASE_URL && {
