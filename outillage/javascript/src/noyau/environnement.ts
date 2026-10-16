@@ -1,6 +1,5 @@
 import type { SystemeDeFichier } from './ports/SystemeDeFichier.ts';
 import {
-  CHEMIN_FICHIER_ENV_CODEX,
   CHEMIN_FICHIER_ENV_RACINE,
   CHEMIN_FICHIER_ENV_SHANNON,
 } from '../codex-security/domaine/cheminEnvironnement.ts';
@@ -24,7 +23,6 @@ export type EnvironnementProxy = {
   jeton: string;
   image: string;
   urlBaseDeDonnees?: string;
-  portLiteLLM: number;
 };
 
 export type EnvironnementFournisseur = {
@@ -49,23 +47,16 @@ const IMAGE_LITE_LLM_PAR_DEFAUT =
   'ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02';
 
 const variablesCodexSecurity: EnvironnementCodexSecurity = {
-  proxy: (systemeDeFichier: SystemeDeFichier) => {
-    let variablesProxy = '';
-    if (systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
-      variablesProxy = systemeDeFichier.lit(CHEMIN_FICHIER_ENV_CODEX);
-    }
-    const lesVariablesEnvironnement = parseEnv(variablesProxy);
-    const portLiteLLM = Number(lesVariablesEnvironnement.PORT_LITE_LLM) || 4000;
-    return {
-      // Clé fournie dans le .env racine (créée côté proxy : app LiteLLM distante ou conteneur local).
-      jeton: process.env.LITELLM_API_KEY || '',
-      image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
-      portLiteLLM,
-      ...(process.env.LITELLM_DATABASE_URL && {
-        urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
-      }),
-    };
-  },
+  // systemeDeFichier encore porté par la signature ; le découplage total de codex-security.env
+  // (suppression du paramètre) est prévu en phase 2.1.
+  proxy: (_systemeDeFichier: SystemeDeFichier) => ({
+    // Tout vient du .env racine (process.env) : clé créée côté proxy, image et base optionnelles.
+    jeton: process.env.LITELLM_API_KEY || '',
+    image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
+    ...(process.env.LITELLM_DATABASE_URL && {
+      urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
+    }),
+  }),
 };
 export const environnement: Environnement = {
   path: process.env.PATH!,
