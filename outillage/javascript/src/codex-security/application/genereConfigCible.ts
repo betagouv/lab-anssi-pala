@@ -26,7 +26,6 @@ export class GenereConfigCible {
   execute(nomCible: string, nombreDeJours: number): string {
     environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
-    const proxy = environnement.pourCodexSecurity().proxy(this.#systemeDeFichier);
     const cible = new Cible({ nom: nomCible });
     this.#depotGit.metAJour(cible.copieDeTravail);
     this.#console.aLaLigne(
@@ -41,7 +40,7 @@ export class GenereConfigCible {
     const config = new ConfigurationCible({
       modele: fournisseur.modele,
       fournisseur: fournisseur.nom,
-      urlProxy: proxy.urlLiteLLM,
+      urlProxy: environnement.urlLiteLLMConfiguree(),
       chemins: fichiersModifies,
     });
 

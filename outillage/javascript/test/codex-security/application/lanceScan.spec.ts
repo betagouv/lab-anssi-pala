@@ -120,13 +120,7 @@ describe('Lance Scan Codex', () => {
   });
 
   it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son URL', async () => {
-    environnement.pourCodexSecurity = () => ({
-      ...ENVIRONNEMENT_CODEX_SECURITY,
-      proxy: () => ({
-        ...ENVIRONNEMENT_PROXY,
-        urlLiteLLM: 'https://litellm.local',
-      }),
-    });
+    environnement.urlLiteLLMConfiguree = () => 'https://litellm.local';
     const reseau = new ReseauSimule([false]);
 
     await expect(

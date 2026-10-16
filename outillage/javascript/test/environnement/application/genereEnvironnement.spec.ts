@@ -52,24 +52,6 @@ describe('Génère Environnement', () => {
       );
     });
 
-    it('persiste LITELLM_BASE_URL quand un proxy distant est configuré', () => {
-      const systemeDeFichier = new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
-      environnement.fournisseur = () => ({
-        apiKey: 'cle-fournisseur',
-        modele: 'modele-fournisseur',
-        nom: 'albert',
-        url: 'https://fournisseur.example/v1',
-      });
-      environnement.urlLiteLLMConfiguree = () =>
-        'https://litellm.local';
-
-      uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
-
-      expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toContain(
-        'LITELLM_BASE_URL=https://litellm.local\n'
-      );
-    });
-
     it('refuse de générer sans .env racine', () => {
       const systemeDeFichier = new SystemeDeFichierEnMemoire();
 

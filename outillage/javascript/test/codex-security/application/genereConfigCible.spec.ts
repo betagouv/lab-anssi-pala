@@ -11,10 +11,6 @@ import { cheminConfigCible } from '../../../src/codex-security/domaine/cheminCon
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/fenetreDeModification.ts';
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
-import {
-  ENVIRONNEMENT_CODEX_SECURITY,
-  ENVIRONNEMENT_PROXY,
-} from '../../doubles/environnement.ts';
 
 const UNE_CIBLE = 'la-cible';
 
@@ -28,15 +24,8 @@ const fournisseurAlbert = () => {
     url: 'https://fournisseur.example/v1',
   });
 };
-const proxySurLePort = (portLiteLLM: number) => {
-  environnement.pourCodexSecurity = () => ({
-    ...ENVIRONNEMENT_CODEX_SECURITY,
-    proxy: () => ({
-      ...ENVIRONNEMENT_PROXY,
-      portLiteLLM,
-      urlLiteLLM: `http://127.0.0.1:${portLiteLLM}`,
-    }),
-  });
+const urlDuProxy = (url: string) => {
+  environnement.urlLiteLLMConfiguree = () => url;
 };
 
 const ENV_RACINE =
@@ -57,7 +46,7 @@ describe('Génère Config Cible', () => {
   it('écrit la config ciblée, avec le modèle et le fournisseur de l’environnement', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ systemeDeFichier }).execute(
       UNE_CIBLE,
@@ -69,10 +58,10 @@ describe('Génère Config Cible', () => {
     expect(lu.codex.model_provider).toBe('albert');
   });
 
-  it('pointe le fournisseur vers le port du proxy lu dans l’environnement', () => {
+  it('pointe le fournisseur vers l’URL du proxy (LITELLM_BASE_URL)', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     fournisseurAlbert();
-    proxySurLePort(4010);
+    urlDuProxy('https://litellm.local');
 
     uneGeneration({ systemeDeFichier }).execute(
       UNE_CIBLE,
@@ -81,7 +70,7 @@ describe('Génère Config Cible', () => {
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.codex.model_providers.albert.base_url).toBe(
-      'http://127.0.0.1:4010/v1'
+      'https://litellm.local/v1'
     );
   });
 
@@ -92,7 +81,7 @@ describe('Génère Config Cible', () => {
       'src/noyau/environnement.ts',
     ]);
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ systemeDeFichier, depotGit }).execute(UNE_CIBLE, 30);
 
@@ -107,7 +96,7 @@ describe('Génère Config Cible', () => {
   it('met à jour la copie de travail de la cible avant de calculer le diff', () => {
     const depotGit = new DepotGitEnMemoire();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -120,7 +109,7 @@ describe('Génère Config Cible', () => {
   it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
     const depotGit = new DepotGitEnMemoire();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -132,7 +121,7 @@ describe('Génère Config Cible', () => {
   it('refuse de générer sans .env racine (fournisseur non configuré)', () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     expect(() =>
       uneGeneration({ systemeDeFichier }).execute(
@@ -148,7 +137,7 @@ describe('Génère Config Cible', () => {
   it('annonce la mise à jour de la copie de travail en première étape', () => {
     const console = new ConsoleEnMemoire();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -160,7 +149,7 @@ describe('Génère Config Cible', () => {
   it('annonce le fichier généré et le fournisseur configuré', () => {
     const console = new ConsoleEnMemoire();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -173,7 +162,7 @@ describe('Génère Config Cible', () => {
 
   it('renvoie le chemin du fichier généré, à passer ensuite au scan (--config)', () => {
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     const chemin = uneGeneration().execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -183,7 +172,7 @@ describe('Génère Config Cible', () => {
   it('génère un fichier distinct par cible pour industrialiser plusieurs projets', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     fournisseurAlbert();
-    proxySurLePort(4000);
+    urlDuProxy('http://127.0.0.1:4000');
 
     const chemin = uneGeneration({ systemeDeFichier }).execute(
       'projet-x',

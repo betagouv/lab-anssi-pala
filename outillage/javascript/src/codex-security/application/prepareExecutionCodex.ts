@@ -77,9 +77,7 @@ export class PrepareExecutionCodex {
         `Cible manquante : ${cible} (cloner via pnpm bootstrap --project <nom> --url <git-url>)`
       );
     }
-    const urlProxy = environnement
-      .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier).urlLiteLLM;
+    const urlProxy = environnement.urlLiteLLMConfiguree();
     if (!(await this.#reseau.repond(`${urlProxy}/health/liveliness`))) {
       throw new Error(
         `Proxy LiteLLM injoignable sur ${urlProxy} ` +

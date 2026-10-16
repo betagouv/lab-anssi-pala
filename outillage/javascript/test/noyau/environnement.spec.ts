@@ -1,25 +1,29 @@
-import { describe, expect, it } from 'vitest';
-import { SystemeDeFichierEnMemoire } from '../doubles/SystemeDeFichierEnMemoire.ts';
+import { afterEach, describe, expect, it } from 'vitest';
 import { environnement } from '../../src/noyau/environnement.ts';
-import { CHEMIN_FICHIER_ENV_CODEX } from '../../src/codex-security/domaine/cheminEnvironnement.ts';
 
-const codexEnv = (contenu: string) =>
-  new SystemeDeFichierEnMemoire({ [CHEMIN_FICHIER_ENV_CODEX]: contenu });
+const urlInitiale = process.env.LITELLM_BASE_URL;
 
-describe('environnement — proxy LiteLLM', () => {
-  it('par défaut, cible le proxy local sur le port LiteLLM', () => {
-    const proxy = environnement
-      .pourCodexSecurity()
-      .proxy(codexEnv('LITELLM_API_KEY=sk-x\nPORT_LITE_LLM=4010\n'));
+afterEach(() => {
+  if (urlInitiale === undefined) delete process.env.LITELLM_BASE_URL;
+  else process.env.LITELLM_BASE_URL = urlInitiale;
+});
 
-    expect(proxy.urlLiteLLM).toBe('http://127.0.0.1:4010');
+describe('environnement — URL du proxy LiteLLM', () => {
+  it('rend l’URL configurée dans le .env racine (LITELLM_BASE_URL)', () => {
+    process.env.LITELLM_BASE_URL = 'https://litellm.local';
+
+    expect(environnement.urlLiteLLMConfiguree()).toBe('https://litellm.local');
   });
 
-  it('cible le proxy distant quand LITELLM_BASE_URL est défini (sans slash final)', () => {
-    const proxy = environnement
-      .pourCodexSecurity()
-      .proxy(codexEnv('LITELLM_BASE_URL=https://litellm.local/\n'));
+  it('normalise le slash final', () => {
+    process.env.LITELLM_BASE_URL = 'http://127.0.0.1:4000/';
 
-    expect(proxy.urlLiteLLM).toBe('https://litellm.local');
+    expect(environnement.urlLiteLLMConfiguree()).toBe('http://127.0.0.1:4000');
+  });
+
+  it('rend une chaîne vide quand LITELLM_BASE_URL est absente', () => {
+    delete process.env.LITELLM_BASE_URL;
+
+    expect(environnement.urlLiteLLMConfiguree()).toBe('');
   });
 });

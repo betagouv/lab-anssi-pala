@@ -32,14 +32,12 @@ export class GenereEnvironnement {
       .proxy(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
 
-    const urlProxy = environnement.urlLiteLLMConfiguree();
     const toutesLesVariables = () => {
       const cleProxy = environnementProxy.jeton;
       return `${Object.entries({
         FOURNISSEUR_NOM: fournisseur.nom,
         FOURNISSEUR_API_KEY: fournisseur.apiKey,
         FOURNISSEUR_BASE_URL: fournisseur.url,
-        ...(urlProxy && { LITELLM_BASE_URL: urlProxy }),
         LITELLM_API_KEY: cleProxy,
         CODEX_API_KEY: cleProxy,
       })
