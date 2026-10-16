@@ -11,10 +11,7 @@ import { scan } from '../../../src/codex-security/cli/scan.ts';
 describe('scan (ligne de commande)', () => {
   it('fournit la cible et transmet ses options par défaut à codex-security scan', async () => {
     const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
-    const systemeDeFichier = new SystemeDeFichierEnMemoire({
-      'outils/codex-security/codex-security.env':
-        'LITELLM_MASTER_KEY=sk-local-jeton\n',
-    });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({});
     systemeDeFichier.creeDossier('/depot/cible/copies/cible');
 
     const code = await scan(['--cible', '/depot/cible/copies/cible'], {
@@ -39,10 +36,7 @@ describe('scan (ligne de commande)', () => {
 
   it('fournit la configuration du scanner et transmet ses options par défaut à codex-security scan', async () => {
     const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
-    const systemeDeFichier = new SystemeDeFichierEnMemoire({
-      'outils/codex-security/codex-security.env':
-        'LITELLM_MASTER_KEY=sk-local-jeton\n',
-    });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({});
     systemeDeFichier.creeDossier('/depot/cible/copies/cible');
 
     const code = await scan(
@@ -77,10 +71,7 @@ describe('scan (ligne de commande)', () => {
 
   it("scanne la cible avec la config par défaut, en transmettant les options de l'utilisateur", async () => {
     const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
-    const systemeDeFichier = new SystemeDeFichierEnMemoire({
-      'outils/codex-security/codex-security.env':
-        'LITELLM_MASTER_KEY=sk-local-jeton\n',
-    });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({});
     systemeDeFichier.creeDossier('/depot/cible/copies/cible');
 
     const code = await scan(['--cible', '/depot/cible/copies/cible'], {
@@ -107,10 +98,7 @@ describe('scan (ligne de commande)', () => {
 
   it('transmet ses options à codex-security scan et sort avec le statut du scan', async () => {
     const cli = new ScannerCodexSecuritySimulee({ statutDuScan: 42 });
-    const systemeDeFichier = new SystemeDeFichierEnMemoire({
-      'outils/codex-security/codex-security.env':
-        'LITELLM_MASTER_KEY=sk-local-jeton\n',
-    });
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({});
     systemeDeFichier.creeDossier('/depot/cible/copies/cible');
 
     const code = await scan(
