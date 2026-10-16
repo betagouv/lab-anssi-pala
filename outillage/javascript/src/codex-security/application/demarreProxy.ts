@@ -3,7 +3,6 @@ import type { Console } from '../../noyau/ports/Console.ts';
 import type { Reseau } from '../../noyau/ports/Reseau.ts';
 import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy.ts';
 import { environnement } from '../../noyau/environnement.ts';
-import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 
 // Image figée par digest (main-stable du 23/09/2026) : le pont Responses -> Chat évolue vite.
 export type Dependances = {
@@ -11,7 +10,6 @@ export type Dependances = {
   reseau: Reseau;
   attente: Attente;
   console: Console;
-  systemeDeFichier: SystemeDeFichier;
 };
 
 export class DemarreProxy {
@@ -19,20 +17,12 @@ export class DemarreProxy {
   readonly #reseau: Reseau;
   readonly #attente: Attente;
   readonly #console: Console;
-  readonly #sytemeDeFichier: SystemeDeFichier;
 
-  constructor({
-    conteneur,
-    reseau,
-    attente,
-    console,
-    systemeDeFichier,
-  }: Dependances) {
+  constructor({ conteneur, reseau, attente, console }: Dependances) {
     this.#conteneur = conteneur;
     this.#reseau = reseau;
     this.#attente = attente;
     this.#console = console;
-    this.#sytemeDeFichier = systemeDeFichier;
   }
 
   async execute(): Promise<void> {
@@ -43,12 +33,10 @@ export class DemarreProxy {
   }
 
   #configuration(): ConfigurationProxy {
-    const baseDeDonnees = environnement
-      .pourCodexSecurity()
-      .proxy(this.#sytemeDeFichier).urlBaseDeDonnees;
+    const baseDeDonnees = environnement.pourCodexSecurity().proxy().urlBaseDeDonnees;
     return {
       url: environnement.urlLiteLLMConfiguree(),
-      image: environnement.pourCodexSecurity().proxy(this.#sytemeDeFichier).image,
+      image: environnement.pourCodexSecurity().proxy().image,
       ...(baseDeDonnees && { baseDeDonnees }),
     };
   }

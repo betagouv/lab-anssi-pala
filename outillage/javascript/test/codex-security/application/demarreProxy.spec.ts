@@ -12,7 +12,6 @@ import {
   ENVIRONNEMENT_CODEX_SECURITY,
   ENVIRONNEMENT_PROXY,
 } from '../../doubles/environnement.ts';
-import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 
 const unDemarrageDuProxyCodex = (doubles: Partial<Dependances> = {}) =>
   new DemarreProxy({
@@ -20,7 +19,6 @@ const unDemarrageDuProxyCodex = (doubles: Partial<Dependances> = {}) =>
     reseau: new ReseauSimule(),
     attente: new AttenteInstantanee(),
     console: new ConsoleEnMemoire(),
-    systemeDeFichier: new SystemeDeFichierEnMemoire(),
     ...doubles,
   });
 

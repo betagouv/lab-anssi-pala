@@ -27,9 +27,7 @@ export class GenereEnvironnement {
   }
 
   #genereLeFichierEnvPourCodexSecurity() {
-    const environnementProxy = environnement
-      .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier);
+    const environnementProxy = environnement.pourCodexSecurity().proxy();
     const fournisseur = environnement.fournisseur();
 
     const toutesLesVariables = () => {

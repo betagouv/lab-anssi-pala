@@ -87,9 +87,7 @@ export class PrepareExecutionCodex {
   }
 
   #environnementCodex(): EnvironnementCodex {
-    const jeton = environnement
-      .pourCodexSecurity()
-      .proxy(this.#systemeDeFichier).jeton;
+    const jeton = environnement.pourCodexSecurity().proxy().jeton;
     // Identité et historique Codex isolés : rien n'est lu ni écrit dans ~/.codex.
     const codexHome = join(this.#racine, 'outils/codex-security/codex-home');
     const etat = join(this.#racine, 'outils/codex-security/state');
