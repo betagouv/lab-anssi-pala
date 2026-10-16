@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { GenerateurDeJetonFige } from '../../doubles/GenerateurDeJetonFige.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { genereEnv } from '../../../src/environnement/cli/genere-env.ts';
 
@@ -10,7 +9,6 @@ describe('génère-env (ligne de commande)', () => {
 
     const code = await genereEnv([], {
       systemeDeFichier: new SystemeDeFichierEnMemoire(),
-      generateurDeJeton: new GenerateurDeJetonFige('sk-local-neuf'),
       console,
     });
 

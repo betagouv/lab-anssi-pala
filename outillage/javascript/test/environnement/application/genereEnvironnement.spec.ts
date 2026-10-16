@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { GenerateurDeJetonFige } from '../../doubles/GenerateurDeJetonFige.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
@@ -23,14 +22,13 @@ const uneGenerationEnvironnementProxyCodex = (doubles: Partial<Dependances> = {}
       '.env': ENV_RACINE,
       ENV_PROXY: '',
     }),
-    generateurDeJeton: new GenerateurDeJetonFige('sk-local-neuf'),
     console: new ConsoleEnMemoire(),
     ...doubles,
   });
 
 describe('Génère Environnement', () => {
   describe('pour Codex Security', () => {
-    it("génère l'environnement depuis le .env racine, avec un jeton local neuf", async () => {
+    it('recopie la clé LITELLM_API_KEY du .env racine sans en générer', () => {
       const systemeDeFichier = new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
       environnement.fournisseur = () => ({
         apiKey: 'cle-fournisseur',
@@ -39,11 +37,18 @@ describe('Génère Environnement', () => {
         url: 'https://fournisseur.example/v1',
       });
       environnement.urlLiteLLMConfiguree = () => '';
+      environnement.pourCodexSecurity = () => ({
+        ...ENVIRONNEMENT_CODEX_SECURITY,
+        proxy: () => ({
+          ...ENVIRONNEMENT_PROXY,
+          jeton: 'cle-fournie-dans-le-env-racine',
+        }),
+      });
 
       uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
 
       expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toBe(
-        'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nLITELLM_API_KEY=sk-local-neuf\nCODEX_API_KEY=sk-local-neuf\n'
+        'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nLITELLM_API_KEY=cle-fournie-dans-le-env-racine\nCODEX_API_KEY=cle-fournie-dans-le-env-racine\n'
       );
     });
 
@@ -62,44 +67,6 @@ describe('Génère Environnement', () => {
 
       expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toContain(
         'LITELLM_BASE_URL=https://litellm.local\n'
-      );
-    });
-
-    it('conserve le jeton local existant pour ne pas invalider un proxy en marche', () => {
-      const systemeDeFichier = new SystemeDeFichierEnMemoire({
-        '.env': ENV_RACINE,
-      });
-      environnement.pourCodexSecurity = () => ({
-        ...ENVIRONNEMENT_CODEX_SECURITY,
-        proxy: () => ({
-          ...ENVIRONNEMENT_PROXY,
-          jeton: 'sk-local-existant',
-        }),
-      });
-
-      uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
-
-      expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toContain(
-        'LITELLM_API_KEY=sk-local-existant\n'
-      );
-    });
-
-    it("remplace un jeton existant qui n'a pas le format sk-…", () => {
-      const systemeDeFichier = new SystemeDeFichierEnMemoire({
-        '.env': ENV_RACINE,
-      });
-      environnement.pourCodexSecurity = () => ({
-        ...ENVIRONNEMENT_CODEX_SECURITY,
-        proxy: () => ({
-          ...ENVIRONNEMENT_PROXY,
-          jeton: 'a-remplacer',
-        }),
-      });
-
-      uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute();
-
-      expect(systemeDeFichier.lit(ENV_CODEX_SECURITY)).toContain(
-        'LITELLM_API_KEY=sk-local-neuf\n'
       );
     });
 
