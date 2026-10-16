@@ -16,6 +16,7 @@
     "génère-env": "node --require dotenv/config outillage/javascript/src/composition/genere-env.ts",
     "génère-config": "node --require dotenv/config outillage/javascript/src/composition/genere-config.ts",
     "démarre-proxy": "node --require dotenv/config outillage/javascript/src/composition/demarre-proxy.ts",
+    "scan-complet": "node --require dotenv/config outillage/javascript/src/composition/scan-complet.ts",
     "scan": "node --require dotenv/config outillage/javascript/src/composition/scan.ts",
     "validate": "node outillage/javascript/src/composition/validate.ts",
     "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
