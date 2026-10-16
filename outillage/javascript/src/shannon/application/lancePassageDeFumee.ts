@@ -1,6 +1,3 @@
-// Passage de vérification de Shannon contre une cible locale triviale, avant de dépenser un vrai
-// pentest. Portage TS de run-smoke.sh, rendu agnostique du fournisseur : le modèle et sa
-// description pi viennent de shannon.env.
 import { join } from 'node:path';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { Horloge } from '../../noyau/ports/Horloge.ts';
@@ -13,7 +10,6 @@ import { InstallationShannon } from './installationShannon.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = {
-  // Racine absolue du dépôt d'audit.
   racine: string;
   shannon: Shannon;
   serveur: ServeurCibleFumee;

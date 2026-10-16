@@ -1,4 +1,3 @@
-// Adaptateur de ligne de commande du passage de fumée Shannon (run-smoke.sh).
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import {

@@ -1,5 +1,3 @@
-// Lance un scan Codex Security sur la copie de travail d'une cible, via le proxy LiteLLM local, puis
-// en estime le coût. Portage TS de run-scan.sh.
 import { join } from 'node:path';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';

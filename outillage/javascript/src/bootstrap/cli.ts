@@ -1,4 +1,3 @@
-// Adaptateur de ligne de commande du bootstrap (équivalent de scripts/bootstrap.sh).
 import { Command } from 'commander';
 import { ErreurUsage, executeCommande } from '../noyau/ligne-de-commande.ts';
 import {

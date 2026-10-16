@@ -1,5 +1,5 @@
 // Prépare l'environnement d'audit : sous-modules des outils, copie de travail de la cible,
-// préparation propre à chaque outil. Portage TS de scripts/bootstrap.sh.
+// préparation propre à chaque outil.
 //
 // Idempotent : peut être relancé sans effet de bord (copie déjà présente = conservée).
 import type { Console } from '../../noyau/ports/Console.ts';

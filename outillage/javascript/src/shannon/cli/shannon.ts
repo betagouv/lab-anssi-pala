@@ -1,4 +1,3 @@
-// Adaptateur de ligne de commande du pentest Shannon (run-shannon.sh).
 import { resolve } from 'node:path';
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';

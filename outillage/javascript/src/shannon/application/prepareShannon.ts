@@ -1,6 +1,3 @@
-// Préparation propre à Shannon, appelée par le bootstrap après l'initialisation des sous-modules :
-// réapplique les patchs locaux sur les sources amont, puis construit la CLI si elle ne l'est pas
-// encore (comme Codex Security installe la sienne). Étend outils/shannon/bootstrap.sh.
 import type { PreparationOutil } from '../../bootstrap/domaine/PreparationOutil.ts';
 import type { Console } from '../../noyau/ports/Console.ts';
 import type { DepotShannon } from '../ports/DepotShannon.ts';
@@ -16,7 +13,6 @@ export class PrepareShannon implements PreparationOutil {
     this.#console = console;
   }
 
-  // Idempotent : un patch déjà appliqué est laissé tel quel.
   async prepare(): Promise<void> {
     for (const patch of this.#depot.patchsLocaux()) {
       if (await this.#depot.patchApplicable(patch)) {
