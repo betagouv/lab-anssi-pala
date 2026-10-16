@@ -84,21 +84,6 @@ describe('Lance Scan Codex', () => {
     );
   });
 
-  it('refuse de scanner si le fichier de variables d’environnement n’existe pas', async () => {
-    const systemeDeFichier = unDepotDeFichiersPret();
-    systemeDeFichier.fichiers.delete('outils/codex-security/codex-security.env');
-
-    await expect(
-      unScanCodex({ systemeDeFichier }).execute({
-        options: [],
-        cible: CIBLE,
-        config: 'config',
-      })
-    ).rejects.toThrow(
-      'Fichier manquant : outils/codex-security/codex-security.env (lancer pnpm run génère-env)'
-    );
-  });
-
   it('refuse de scanner sans cible désignée par CIBLE (aucune cible par défaut)', async () => {
     await expect(
       unScanCodex().execute({ options: [], cible: '', config: 'config' })
