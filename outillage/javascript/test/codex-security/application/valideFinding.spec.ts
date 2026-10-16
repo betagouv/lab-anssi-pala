@@ -19,8 +19,6 @@ const SORTIE = '/depot/resultats/brut/codex-security/validate-20260930-140509';
 
 const unDepotDeFichiersPret = () => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
-    'outils/codex-security/codex-security.env':
-      'LITELLM_MASTER_KEY=sk-local-jeton\n',
     'finding.json': JSON.stringify(FINDING),
   });
   systemeDeFichier.creeDossier(CIBLE);

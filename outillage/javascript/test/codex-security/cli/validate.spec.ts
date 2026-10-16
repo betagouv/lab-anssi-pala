@@ -15,10 +15,7 @@ import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 const lesDependancesPourLaValidation = (
   doubles: Partial<DependancesCli> = {}
 ): DependancesCli => {
-  const systemeDeFichier = new SystemeDeFichierEnMemoire({
-    'outils/codex-security/codex-security.env':
-      'LITELLM_MASTER_KEY=sk-local-jeton\n',
-  });
+  const systemeDeFichier = new SystemeDeFichierEnMemoire({});
   systemeDeFichier.creeDossier('/depot/cible/copies/app');
   return {
     racine: '/depot',
