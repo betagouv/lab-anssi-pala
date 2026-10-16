@@ -3,14 +3,10 @@ import type { PreparationOutil } from '../../src/bootstrap/domaine/PreparationOu
 // Consigne son nom dans un journal partagé quand elle est préparée : permet de vérifier l'ordre.
 export class PreparationOutilSimulee implements PreparationOutil {
   readonly nom: string;
-  readonly fichierEnvironnement: string;
+  readonly fichierEnvironnement?: string;
   readonly #journal: string[];
 
-  constructor(
-    nom: string,
-    journal: string[] = [],
-    fichierEnvironnement = `outils/${nom}/${nom}.env`
-  ) {
+  constructor(nom: string, journal: string[] = [], fichierEnvironnement?: string) {
     this.nom = nom;
     this.#journal = journal;
     this.fichierEnvironnement = fichierEnvironnement;

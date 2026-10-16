@@ -87,6 +87,7 @@ export class PrepareEnvironnement {
       'BLEU'
     );
     for (const { fichierEnvironnement: fichier } of this.#outils) {
+      if (!fichier) continue;
       const etat = this.#systemeDeFichier.existe(fichier) ? 'présent' : 'à créer';
       const modele = `${fichier.split('/').at(-1)}.template`;
       this.#console.aLaLigne(
