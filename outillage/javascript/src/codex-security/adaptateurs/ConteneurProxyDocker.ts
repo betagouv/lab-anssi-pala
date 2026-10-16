@@ -22,6 +22,7 @@ export class ConteneurProxyDocker implements ConteneurProxy {
 
   demarre({ url, image, baseDeDonnees }: ConfigurationProxy): Promise<void> {
     const { hostname, port } = new URL(url);
+    const portExpose = port || '4000';
     return executeCommande(
       'docker',
       [
@@ -35,12 +36,12 @@ export class ConteneurProxyDocker implements ConteneurProxy {
         '-v',
         `${join(this.#outil, 'litellm')}:/app/proxy-config:ro`,
         '-p',
-        `${hostname}:${port || '4000'}:4000`,
+        `${hostname}:${portExpose}:${portExpose}`,
         image,
         '--config',
         '/app/proxy-config/config.yaml',
         '--port',
-        `${port}`,
+        portExpose,
       ],
       { affichage: 'sansSortieStandard' }
     );
