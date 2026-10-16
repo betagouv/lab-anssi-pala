@@ -14,7 +14,7 @@ import {
 const ENV_CODEX_SECURITY = 'outils/codex-security/codex-security.env';
 const ENV_SHANNON = 'outils/shannon/shannon.env';
 const ENV_RACINE =
-  'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=modele-fournisseur\n';
+  'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=modele-fournisseur\nLITELLM_BASE_URL=http://127.0.0.1:4000\nLITELLM_API_KEY=sk-local\n';
 
 const uneGenerationEnvironnementProxyCodex = (doubles: Partial<Dependances> = {}) =>
   new GenereEnvironnement({
@@ -83,6 +83,28 @@ describe('Génère Environnement', () => {
       expect(() =>
         uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute()
       ).toThrow('Erreur: FOURNISSEUR_BASE_URL manquant ou vide dans .env');
+    });
+
+    it('refuse de générer sans LITELLM_BASE_URL (URL du proxy)', () => {
+      const systemeDeFichier = new SystemeDeFichierEnMemoire({
+        '.env':
+          'FOURNISSEUR_API_KEY=cle\nFOURNISSEUR_BASE_URL=https://f.example/v1\nFOURNISSEUR_MODELE=m\nLITELLM_API_KEY=sk-x\n',
+      });
+
+      expect(() =>
+        uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute()
+      ).toThrow('Erreur: LITELLM_BASE_URL manquant ou vide dans .env');
+    });
+
+    it('refuse de générer sans LITELLM_API_KEY (clé du proxy)', () => {
+      const systemeDeFichier = new SystemeDeFichierEnMemoire({
+        '.env':
+          'FOURNISSEUR_API_KEY=cle\nFOURNISSEUR_BASE_URL=https://f.example/v1\nFOURNISSEUR_MODELE=m\nLITELLM_BASE_URL=https://p.example\n',
+      });
+
+      expect(() =>
+        uneGenerationEnvironnementProxyCodex({ systemeDeFichier }).execute()
+      ).toThrow('Erreur: LITELLM_API_KEY manquant ou vide dans .env');
     });
 
     it('annonce le fichier généré et le fournisseur configuré, sans afficher de clé', () => {

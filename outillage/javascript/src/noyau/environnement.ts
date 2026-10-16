@@ -109,5 +109,11 @@ export const environnement: Environnement = {
     if (!lesVariables.FOURNISSEUR_MODELE) {
       throw new Error('Erreur: FOURNISSEUR_MODELE manquant ou vide dans .env');
     }
+    if (!lesVariables.LITELLM_BASE_URL) {
+      throw new Error('Erreur: LITELLM_BASE_URL manquant ou vide dans .env');
+    }
+    if (!lesVariables.LITELLM_API_KEY) {
+      throw new Error('Erreur: LITELLM_API_KEY manquant ou vide dans .env');
+    }
   },
 };
