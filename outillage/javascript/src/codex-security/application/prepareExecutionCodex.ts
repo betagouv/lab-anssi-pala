@@ -5,7 +5,6 @@ import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { DossierDeSortie } from '../domaine/DossierDeSortie.ts';
 import type { ScannerCodexSecurity } from '../ports/ScannerCodexSecurity.ts';
 import { environnement } from '../../noyau/environnement.ts';
-import { CHEMIN_FICHIER_ENV_CODEX } from '../domaine/cheminEnvironnement.ts';
 import type { EnvironnementCodex } from '../ports/EnvironnementCodex.ts';
 
 export type DependancesExecution = {
@@ -62,11 +61,6 @@ export class PrepareExecutionCodex {
       throw new Error(
         'CLI absente : lancer pnpm bootstrap (npm ci dans outils/codex-security)'
       );
-    if (!this.#systemeDeFichier.existe(CHEMIN_FICHIER_ENV_CODEX)) {
-      throw new Error(
-        `Fichier manquant : ${CHEMIN_FICHIER_ENV_CODEX} (lancer pnpm run génère-env)`
-      );
-    }
     if (!cible) {
       throw new Error(
         'CIBLE non défini : indiquer la cible, ex. CIBLE="$PWD/cible/copies/<nom>" (voir pnpm bootstrap --project <nom> --url <git-url>)'
