@@ -18,7 +18,6 @@ export const ENVIRONNEMENT_PROXY: EnvironnementProxy = {
   jeton: 'sk-local-neuf',
   image: 'image',
   portLiteLLM: 4000,
-  urlLiteLLM: 'http://127.0.0.1:4000',
 };
 
 export const ENVIRONNEMENT_FOURNISSEUR: EnvironnementFournisseur = {
