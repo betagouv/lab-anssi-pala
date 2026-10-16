@@ -28,8 +28,27 @@ compatible OpenAI (Albert ou Scaleway).
 
 Il existe une CLI déclinée en bash et en Node. Les commandes fournies utilisent la CLI Node
 
+### Cinématique
+
+```mermaid
+    gitGraph
+    commit id: "Bootstrap"
+    commit id: "Génération des variables d'environnement"
+    commit id: "Génération des fichiers de configuration"
+    branch develop
+    commit id: "Démarre proxy LiteLLM"
+    checkout main
+    merge develop
+    commit id: "Lancement d’un scan"
+```
+
+#### Préparation / bootstrap d’une cible
+
+Le bootstrap consiste à préparer les sous-modules (tirer Codex et Shannon) et cloner une cible arbitraire dans `cible/copies/<nom>`.
+L’installation de Codex et Shannon se fait une seule fois sur l’hôte. Tout nouvel appel au bootstrap pour une nouvelle cible va tirer le repo Git de la cible dans `cible/copies/<nom>`.
+
 ```bash
-cp .env.example .env            # renseigner FOURNISSEUR_NOM / _BASE_URL / _API_KEY
+cp .env.example .env            # renseigner les variables
 # préparer les sous-modules et cloner une cible arbitraire dans cible/copies/<nom> :
 pnpm run bootstrap --project <nom> --url <url git>
 pnpm run génère-env
@@ -38,7 +57,18 @@ pnpm run génère-env
 La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.env` racine
 (voir `documentation/albert-api.md` et `documentation/scaleway-ai-api.md`).
 
-## Lancer une évaluation
+#### Génération de la configuration
+
+La configuration d’un scan est générée à partir du `.env` racine et de la cible, un fichier `config-<cible>.yaml` va être créé dans `outils/codex-security/configs`.
+
+La configuration créée prend en compte un pull du repo de la cible pour le mettre à jour et la génération des fichiers à scanner en répertoriant les fichiers modifiés sur 7 jours glissants (par défaut, il est possible de fournir une autre valeur)
+
+```bash
+pnpm run génère-config --help
+pnpm run génère-config --cible <nom>
+```
+
+#### Lancer une évaluation
 
 **⚠️ Préconisation pour les scans :**
 
@@ -50,8 +80,12 @@ La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.e
 - Il est préférable de scanner des fichiers individuels ou des répertoires spécifiques.
 
 1. **Analyse statique** avec Codex Security : `pnpm démarre-proxy`, puis `pnpm scan` (dépôt entier)
-   ou un scan ciblé via une config copiée depuis `configs/config-cible.template.yaml`. La
-   confrontation d'un point précis au code se fait avec `pnpm validate`.
+   ```bash
+   pnpm démarre-proxy
+   pnpm scan --cible $PWD/cible/copies/<cible> --config $PWD/outils/codex-security/configs/config-<cible>.yaml
+   ```
+   Un compte rendu simple du scan est publié sur le webhook Mattermost (à renseigner dans le `.env` racine)
+   La confrontation d'un point précis au code se fait avec `pnpm validate`.
 2. **Validation dynamique** avec Shannon : une instance **jetable** de la cible doit tourner en
    local (base de données jetable, données de test). `pnpm shannon` lance le pentest ; les
    configurations par intention (analyse, authentifié, création de compte, focus, SAST) sont dans
