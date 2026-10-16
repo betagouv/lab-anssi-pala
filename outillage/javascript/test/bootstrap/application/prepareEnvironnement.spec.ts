@@ -123,20 +123,15 @@ describe('Prépare l’environnement', () => {
       'outils/shannon/shannon.env': 'SHANNON_AI_MODEL=albert:x',
     });
     const outils = [
-      new PreparationOutilSimulee(
-        'codex-security',
-        [],
-        'outils/codex-security/codex-security.env'
-      ),
+      new PreparationOutilSimulee('codex-security', []),
       new PreparationOutilSimulee('shannon', [], 'outils/shannon/shannon.env'),
     ];
 
     await unePreparation({ console, systemeDeFichier, outils }).execute({});
 
-    expect(console.lignes.slice(-5).map((ligne) => ligne.message)).toEqual([
+    expect(console.lignes.slice(-4).map((ligne) => ligne.message)).toEqual([
       "==> Terminé. Fichiers d'environnement à renseigner (non versionnés) :",
       '    .env                             (depuis .env.template)',
-      '    outils/codex-security/codex-security.env (depuis codex-security.env.template — à créer)',
       '    outils/shannon/shannon.env       (depuis shannon.env.template — présent)',
       '    ainsi que les configs Shannon remplies, depuis outils/shannon/configs/*.template.yaml.',
     ]);
