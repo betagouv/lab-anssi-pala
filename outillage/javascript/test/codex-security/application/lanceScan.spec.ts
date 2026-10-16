@@ -4,6 +4,7 @@ import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
+import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
 import type { ScanTermine } from '../../../src/codex-security/domaine/scanTermine.ts';
@@ -37,6 +38,7 @@ const unScanCodex = (doubles: Partial<Dependances> = {}) =>
     scanner: new ScannerCodexSecuritySimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
+    attente: new AttenteInstantanee(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     estimation: new EstimationDuCoutSimulee(),
     console: new ConsoleEnMemoire(),
@@ -102,6 +104,23 @@ describe('Lance Scan Codex', () => {
     );
   });
 
+  it('tolère un démarrage à froid du proxy : réessaie avant de renoncer', async () => {
+    environnement.urlLiteLLMConfiguree = () => 'https://litellm.local';
+    const reseau = new ReseauSimule([false, false, true]);
+    const attente = new AttenteInstantanee();
+
+    await unScanCodex({ reseau, attente }).execute({
+      options: [],
+      cible: CIBLE,
+      config: 'config',
+    });
+
+    expect(reseau.urlsInterrogees).toEqual(
+      Array(3).fill('https://litellm.local/health/liveliness')
+    );
+    expect(attente.attentes).toEqual([2000, 2000]);
+  });
+
   it('refuse de scanner quand le proxy LiteLLM ne répond pas sur son URL', async () => {
     environnement.urlLiteLLMConfiguree = () => 'https://litellm.local';
     const reseau = new ReseauSimule([false]);
@@ -116,9 +135,9 @@ describe('Lance Scan Codex', () => {
       'Proxy LiteLLM injoignable sur https://litellm.local ' +
         '(démarrer le proxy local via pnpm démarre-proxy, ou vérifier LITELLM_BASE_URL)'
     );
-    expect(reseau.urlsInterrogees).toEqual([
-      'https://litellm.local/health/liveliness',
-    ]);
+    expect(reseau.urlsInterrogees).toEqual(
+      Array(6).fill('https://litellm.local/health/liveliness')
+    );
   });
 
   it('la variable de configuration impose la configuration du scan', async () => {

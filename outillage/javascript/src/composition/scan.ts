@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { scan } from '../codex-security/cli/scan.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
+import { AttenteTemporisee } from '../noyau/adaptateurs/node/AttenteTemporisee.ts';
 import { BusEvenementsPALA } from '../noyau/adaptateurs/node/busEvenementsPALA.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
@@ -51,6 +52,7 @@ process.exitCode = await scan(process.argv.slice(2), {
   ),
   systemeDeFichier,
   reseau: new ReseauFetch(5000),
+  attente: new AttenteTemporisee(),
   horloge: new HorlogeSysteme(),
   estimation: new EstimationDuCout({ console }),
   console,

@@ -3,6 +3,7 @@ import { ScannerCodexSecuritySimulee } from '../../doubles/ScannerCodexSecurityS
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
+import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { ValidationCodexSimulee } from '../../doubles/ValidationCodexSimulee.ts';
 import {
@@ -32,6 +33,7 @@ const uneValidation = (doubles: Partial<Dependances> = {}) =>
     validation: new ValidationCodexSimulee(),
     systemeDeFichier: unDepotDeFichiersPret(),
     reseau: new ReseauSimule(),
+    attente: new AttenteInstantanee(),
     horloge: new HorlogeFigee(new Date(2026, 8, 30, 14, 5, 9)),
     console: new ConsoleEnMemoire(),
     ...doubles,

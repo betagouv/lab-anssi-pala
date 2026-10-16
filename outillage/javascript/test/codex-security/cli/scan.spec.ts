@@ -4,6 +4,7 @@ import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { EstimationDuCoutSimulee } from '../../doubles/EstimationDuCoutSimulee.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
+import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
 import { scan } from '../../../src/codex-security/cli/scan.ts';
@@ -19,6 +20,7 @@ describe('scan (ligne de commande)', () => {
       scanner: cli,
       systemeDeFichier,
       reseau: new ReseauSimule(),
+      attente: new AttenteInstantanee(),
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       estimation: new EstimationDuCoutSimulee(),
       console: new ConsoleEnMemoire(),
@@ -51,6 +53,7 @@ describe('scan (ligne de commande)', () => {
         scanner: cli,
         systemeDeFichier,
         reseau: new ReseauSimule(),
+        attente: new AttenteInstantanee(),
         horloge: new HorlogeFigee(new Date(2026, 8, 30)),
         estimation: new EstimationDuCoutSimulee(),
         console: new ConsoleEnMemoire(),
@@ -79,6 +82,7 @@ describe('scan (ligne de commande)', () => {
       scanner: cli,
       systemeDeFichier,
       reseau: new ReseauSimule(),
+      attente: new AttenteInstantanee(),
       horloge: new HorlogeFigee(new Date(2026, 8, 30)),
       estimation: new EstimationDuCoutSimulee(),
       console: new ConsoleEnMemoire(),
@@ -115,6 +119,7 @@ describe('scan (ligne de commande)', () => {
         scanner: cli,
         systemeDeFichier,
         reseau: new ReseauSimule(),
+        attente: new AttenteInstantanee(),
         horloge: new HorlogeFigee(new Date(2026, 8, 30)),
         estimation: new EstimationDuCoutSimulee(),
         console: new ConsoleEnMemoire(),
