@@ -42,16 +42,13 @@ télémétrie désactivée.
 ```
 source/                           sous-module : dépôt amont (jamais modifié)
 package.json, package-lock.json   CLI npm figée ; node_modules/ non versionné
-codex-security.env.template       modèle ; codex-security.env généré (non versionné)
 litellm/config.yaml               proxy Responses -> Chat Completions
 litellm/json_schema_to_object.py  hook du proxy (format de sortie, paramètres)
 configs/config-defaut.yaml        config par défaut (dépôt entier)
 configs/config-cible.template.yaml  template d'un scan ciblé (scope.paths à renseigner)
 configs/*-minimal.yaml            exemples de périmètre (chemins génériques)
 configs/consignes-scan.md         consignes de scan pas à pas (--scan-prompt-file)
-scripts/                          demarre-proxy.sh, env-runtime.sh, run-scan.sh,
-                                  validate.sh + validate.mjs (SDK)
-                                  (env généré par outillage/bash/environnement/genere-env.sh)
+scripts/                          validate.mjs (SDK), ecrit-artefacts-scan.py
 codex-home/, state/               identité Codex et historique de scan (non versionnés)
 ```
 

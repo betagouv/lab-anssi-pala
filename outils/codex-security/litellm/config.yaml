@@ -3,7 +3,7 @@
 # /v1/chat/completions du fournisseur (FOURNISSEUR_BASE_URL), qui n'expose pas /v1/responses
 # pour ces modèles (404 chez Albert, 422 chez Scaleway).
 #
-# Lancé par outillage/bash/codex-security/demarre-proxy.sh, exposé sur 127.0.0.1 uniquement.
+# Lancé par pnpm démarre-proxy, publié sur l'hôte de LITELLM_BASE_URL (127.0.0.1 en local).
 # La clé du fournisseur (FOURNISSEUR_API_KEY) reste dans le proxy ; Codex ne connaît que
 # LITELLM_MASTER_KEY (jeton local). Chaque entrée porte l'identifiant du modèle chez son
 # fournisseur : choisir dans la config Codex celle qui correspond à FOURNISSEUR_NOM.

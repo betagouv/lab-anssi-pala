@@ -4,7 +4,7 @@
 # Fichier de configuration de confiance (même autorité que les options CLI) : il choisit
 # la destination des appels modèle. Voir source/docs/project-configuration.md.
 #
-# Le chemin de sortie est passé en CLI (--output-dir) par outillage/bash/codex-security/run-scan.sh.
+# Le chemin de sortie est passé en CLI (--output-dir) par la commande scan (pnpm scan).
 auth: api-key
 scan:
   mode: standard

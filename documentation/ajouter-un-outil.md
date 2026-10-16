@@ -11,14 +11,10 @@ outils/<outil>/
   README.md               objectif, installation, lancement, retour d'expérience
   <outil>.env.template    modèle du fichier d'environnement (versionné, sans secret)
   <outil>.env             fichier rempli (ignoré par git : règle outils/*/*.env)
-  patches/                optionnel : patchs appliqués sur source/ par bootstrap.sh
+  patches/                optionnel : patchs appliqués sur source/ au bootstrap, idempotents
   configs/                optionnel : configurations de scan
-  scripts/                optionnel : scripts annexes non bash (Python, Node…)
+  scripts/                optionnel : scripts annexes (Python, Node…)
   docs/                   optionnel : documentation détaillée propre à l'outil
-
-outillage/bash/<outil>/
-  bootstrap.sh            optionnel : préparation après clone (patchs…), idempotent
-  *.sh                    scripts de lancement bash
 ```
 
 Hors du dossier de l'outil :
@@ -27,8 +23,9 @@ Hors du dossier de l'outil :
 - **Traces d'exploration** : conservées hors du dépôt (jamais versionnées).
 - **Cible à scanner** : la copie de référence dans `cible/` n'est jamais modifiée ; un outil qui
   écrit dans le dépôt analysé travaille sur une copie de `cible/copies/`.
-- **Clé du fournisseur** : la source de vérité reste le `.env` racine ; le script
-  `outillage/bash/environnement/genere-env.sh` peut en dériver `<outil>.env` (voir Codex Security).
+- **Clé du fournisseur** : la source de vérité reste le `.env` racine ; `pnpm génère-env` peut en
+  dériver un `<outil>.env` pour les outils qui en ont besoin (voir Shannon). Un outil peut aussi
+  tout lire directement du `.env` racine, sans fichier propre (voir Codex Security).
 
 ## Étapes
 
@@ -38,13 +35,12 @@ Hors du dossier de l'outil :
    ```
    Utiliser dans `.gitmodules` une URL utilisable par les autres contributeurs, pas un
    alias SSH personnel.
-2. Créer `README.md` et `<outil>.env.template` ; si nécessaire
-   `outillage/bash/<outil>/bootstrap.sh` (exécutable, idempotent), il sera appelé
-   automatiquement par `outillage/bash/bootstrap.sh`. Pour la chaîne TypeScript, écrire une
-   `PreparationOutil` (`../outillage/javascript/src/<outil>/application/`, testée avec des doubles) et l'inscrire au registre de `../outillage/javascript/src/composition/bootstrap.ts`.
-3. Scripts de lancement bash (`outillage/bash/<outil>/`) : calculer les chemins à partir de
-   l'emplacement du script (`racine="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"`,
-   puis `outil="$racine/outils/<outil>"`), jamais depuis le répertoire courant.
+2. Créer `README.md` et, si l'outil a un environnement propre, `<outil>.env.template`. Écrire une
+   `PreparationOutil` (`../outillage/javascript/src/<outil>/application/`, testée avec des doubles)
+   — préparation après clone (patchs, installation…), idempotente — et l'inscrire au registre de
+   `../outillage/javascript/src/composition/bootstrap.ts`.
+3. Écrire les commandes de lancement comme CLI TypeScript (`src/<outil>/cli/`, composées dans
+   `src/composition/`) et les brancher en scripts `pnpm` dans le `package.json` racine.
 4. Compléter `documentation/versions.md` et le tableau des outils du `README.md` racine.
 5. Ajouter au `.gitignore` les fichiers remplis avec des identifiants (seuls les
    `*.template.*` sont versionnés) et les sorties que l'outil dépose dans son dossier.

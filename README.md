@@ -64,8 +64,7 @@ Méthode d'ensemble : `documentation/demarche.md`.
 
 ```
 outils/<outil>/        source/ (sous-module amont), configs, README (voir documentation/ajouter-un-outil.md)
-outillage/bash/        scripts de lancement bash/Python
-outillage/javascript/  portage TypeScript (Node 24, vitest, architecture hexagonale)
+outillage/javascript/  outillage TypeScript (Node 24, vitest, architecture hexagonale)
 documentation/         démarche, notes API fournisseurs, versions
 cible/                 copies locales des cibles (jamais versionnées)
 ```
