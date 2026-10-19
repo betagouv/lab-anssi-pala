@@ -1,11 +1,8 @@
 import type { Console } from '../../noyau/ports/Console.ts';
+import type { CibleScan } from '../domaine/cibles.ts';
 
-export type CibleCinematique = { nom: string; url: string; branche?: string };
-
-// Les étapes de la cinématique, dans l'ordre. Chacune délègue à l'application correspondante :
-// un échec se propage par exception ; seul le scan renvoie un code (statut Codex Security).
 export interface EtapesScanComplet {
-  bootstrap(cible: CibleCinematique): void | Promise<void>;
+  bootstrap(cible: CibleScan): void | Promise<void>;
   genereEnv(): void | Promise<void>;
   genereConfig(nomCible: string, jours?: number): void | Promise<void>;
   demarreProxy(): void | Promise<void>;
@@ -17,7 +14,7 @@ export type Dependances = {
   console: Console;
 };
 
-export class LanceCinematique {
+export class LanceScanComplet {
   readonly #etapes: EtapesScanComplet;
   readonly #console: Console;
 
@@ -27,17 +24,15 @@ export class LanceCinematique {
   }
 
   async execute({
-    cible,
+    cibles,
     jours,
     proxyLocal,
   }: {
-    cible: CibleCinematique;
+    cibles: CibleScan[];
     jours?: number;
     proxyLocal: boolean;
   }): Promise<number> {
-    await this.#etapes.bootstrap(cible);
     await this.#etapes.genereEnv();
-    await this.#etapes.genereConfig(cible.nom, jours);
     if (proxyLocal) {
       await this.#etapes.demarreProxy();
     } else {
@@ -46,6 +41,25 @@ export class LanceCinematique {
         'ORANGE'
       );
     }
-    return this.#etapes.scan(cible.nom);
+
+    return await this.#scanToutesLesCibles(cibles, jours);
+  }
+
+  async #scanToutesLesCibles(cibles: CibleScan[], jours?: number) {
+    let echecs = 0;
+    for (const cible of cibles) {
+      try {
+        await this.#etapes.bootstrap(cible);
+        await this.#etapes.genereConfig(cible.nom, jours);
+        const resultatScan = await this.#etapes.scan(cible.nom);
+        echecs += resultatScan === 0 ? 0 : 1;
+      } catch (erreur) {
+        this.#console.signaleErreur(
+          `Échec de la cible « ${cible.nom} » : ${erreur instanceof Error ? erreur.message : erreur}`
+        );
+        echecs++;
+      }
+    }
+    return echecs;
   }
 }
