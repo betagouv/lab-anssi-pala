@@ -63,9 +63,7 @@ Aujourd'hui `resultat: 'Succès' | 'Échec'` est un simple littéral. On propose
 rend explicite qu'« un échec a toujours une origine » :
 
 ```ts
-type ResultatDeScan =
-  | { statut: 'Succès' }
-  | { statut: 'Échec'; origine: string };
+type ResultatDeScan = { statut: 'Succès' } | { statut: 'Échec'; origine: string };
 ```
 
 Porté par l'événement `ScanTermine` (en remplacement du champ `resultat` actuel).
