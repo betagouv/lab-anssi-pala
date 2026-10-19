@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { scanComplet } from '../cinematique/cli/scanComplet.ts';
-import type { EtapesScanComplet } from '../cinematique/application/lanceCinematique.ts';
+import { scanComplet } from '../scan-complet/cli/scanComplet.ts';
+import type { EtapesScanComplet } from '../scan-complet/application/lanceScanComplet.ts';
 import { PrepareEnvironnement } from '../bootstrap/application/prepareEnvironnement.ts';
 import { CibleBootstrap } from '../bootstrap/domaine/CibleBootstrap.ts';
 import { GenereEnvironnement } from '../environnement/application/genereEnvironnement.ts';
@@ -12,6 +12,7 @@ import { proxyEstLocal } from '../codex-security/domaine/proxyLocal.ts';
 import { cheminConfigCible } from '../codex-security/domaine/cheminConfig.ts';
 import { Cible } from '../environnement/domaine/Cible.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
+import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 import { environnement } from '../noyau/environnement.ts';
 import {
   lesDependancesPourLaGenerationConfig,
@@ -55,5 +56,6 @@ const etapes: EtapesScanComplet = {
 process.exitCode = await scanComplet(process.argv.slice(2), {
   etapes,
   console,
+  systemeDeFichier: new SystemeDeFichierNode(racine),
   proxyLocal: proxyEstLocal(environnement.urlLiteLLMConfiguree()),
 });
