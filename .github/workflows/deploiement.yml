@@ -4,6 +4,12 @@ run-name: Déploiement du commit "${{ github.event.head_commit.message }}"
 
 on:
   workflow_dispatch: # Pour activer le déclenchement manuel
+  workflow_call: # Pour être appelé par le workflow d'intégration continue
+    inputs:
+      environnement:
+        description: 'Environnement cible du déploiement (ex. DEMO)'
+        required: true
+        type: string
 
 jobs:
   deploiement-demo-proxy:
