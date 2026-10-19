@@ -24,7 +24,7 @@ export class GenereConfigCible {
   }
 
   execute(nomCible: string, nombreDeJours: number): string {
-    environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
+    environnement.verifiePresenceVariablesRacine(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
     const cible = new Cible({ nom: nomCible });
     this.#depotGit.metAJour(cible.copieDeTravail);
