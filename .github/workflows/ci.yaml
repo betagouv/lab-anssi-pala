@@ -87,7 +87,7 @@ jobs:
 
   deploiement-demo:
     name: DÉMO
-    needs: [ mise-en-forme, typage, tests ]
+    needs: [mise-en-forme, typage, tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploiement.yml
     with:
