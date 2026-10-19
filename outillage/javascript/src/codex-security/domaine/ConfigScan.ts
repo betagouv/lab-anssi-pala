@@ -1,15 +1,28 @@
+import { parse } from 'yaml';
+import { Perimetre } from './Perimetre.ts';
+
 export class ConfigScan {
   readonly modele: string;
   readonly fournisseur: string;
+  readonly perimetre: Perimetre;
 
-  private constructor(modele: string, fournisseur: string) {
+  private constructor(modele: string, fournisseur: string, perimetre: Perimetre) {
     this.modele = modele;
     this.fournisseur = fournisseur;
+    this.perimetre = perimetre;
   }
 
   static depuisYaml(yaml: string): ConfigScan {
-    const premiereValeur = (cle: string) =>
-      yaml.match(new RegExp(`^\\s*${cle}:\\s*(\\S*)`, 'm'))?.[1] ?? '';
-    return new ConfigScan(premiereValeur('model'), premiereValeur('model_provider'));
+    const config = parse(yaml);
+    const paths = config?.scan?.scope?.paths;
+    return new ConfigScan(
+      config?.codex?.model ?? '',
+      config?.codex?.model_provider ?? '',
+      Array.isArray(paths) ? Perimetre.deChemins(paths) : Perimetre.nonContraignant()
+    );
+  }
+
+  static inconnue(): ConfigScan {
+    return new ConfigScan('', '', Perimetre.nonContraignant());
   }
 }
