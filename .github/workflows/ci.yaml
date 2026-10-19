@@ -84,3 +84,12 @@ jobs:
           name: Tests
           path: ./test-report.xml
           reporter: jest-junit
+
+  deploiement-demo:
+    name: DÉMO
+    needs: [ mise-en-forme, typage, tests ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/deploiement.yml
+    with:
+      environnement: DEMO
+    secrets: inherit
