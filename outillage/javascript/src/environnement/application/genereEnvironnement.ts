@@ -18,7 +18,7 @@ export class GenereEnvironnement {
   }
 
   execute(): void {
-    environnement.verifiePresenceFichierRacine(this.#systemeDeFichier);
+    environnement.verifiePresenceVariablesRacine(this.#systemeDeFichier);
     this.#genereLeFichierEnvPourShannon();
   }
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
@@ -84,6 +84,51 @@ describe('Génère Environnement', () => {
       expect(() =>
         uneGenerationEnvironnement({ systemeDeFichier }).execute()
       ).toThrow('Erreur: LITELLM_API_KEY manquant ou vide dans .env');
+    });
+  });
+
+  describe('en production (variables via process.env, pas de .env racine)', () => {
+    const VARIABLES_PROD = {
+      NODE_ENV: 'production',
+      FOURNISSEUR_API_KEY: 'cle-fournisseur',
+      FOURNISSEUR_BASE_URL: 'https://fournisseur.example/v1',
+      FOURNISSEUR_MODELE: 'modele-fournisseur',
+      LITELLM_BASE_URL: 'https://proxy.example',
+      LITELLM_API_KEY: 'sk-prod',
+    };
+    const etatInitial = new Map<string, string | undefined>();
+
+    beforeEach(() => {
+      for (const [nom, valeur] of Object.entries(VARIABLES_PROD)) {
+        etatInitial.set(nom, process.env[nom]);
+        process.env[nom] = valeur;
+      }
+    });
+
+    afterEach(() => {
+      for (const [nom, valeur] of etatInitial) {
+        if (valeur === undefined) delete process.env[nom];
+        else process.env[nom] = valeur;
+      }
+      etatInitial.clear();
+    });
+
+    it('génère l’environnement sans .env racine quand les variables requises sont présentes', () => {
+      const systemeDeFichier = new SystemeDeFichierEnMemoire();
+
+      expect(() =>
+        uneGenerationEnvironnement({ systemeDeFichier }).execute()
+      ).not.toThrow();
+      expect(systemeDeFichier.existe(ENV_SHANNON)).toBe(true);
+    });
+
+    it('refuse de générer si une variable requise manque dans l’environnement', () => {
+      delete process.env.LITELLM_API_KEY;
+      const systemeDeFichier = new SystemeDeFichierEnMemoire();
+
+      expect(() =>
+        uneGenerationEnvironnement({ systemeDeFichier }).execute()
+      ).toThrow("Erreur: LITELLM_API_KEY manquant ou vide dans l'environnement");
     });
   });
 

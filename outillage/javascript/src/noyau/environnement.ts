@@ -38,9 +38,8 @@ type Environnement = {
   pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
   fournisseur: () => EnvironnementFournisseur;
-  // URL du proxy LiteLLM souhaitée (depuis le .env racine), vide si laissée au proxy local par défaut.
   urlLiteLLMConfiguree: () => string;
-  verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier): void;
+  verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier): void;
 };
 
 const IMAGE_LITE_LLM_PAR_DEFAUT =
@@ -56,6 +55,34 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
     }),
   }),
 };
+const VARIABLES_RACINE_REQUISES = [
+  'FOURNISSEUR_API_KEY',
+  'FOURNISSEUR_BASE_URL',
+  'FOURNISSEUR_MODELE',
+  'LITELLM_BASE_URL',
+  'LITELLM_API_KEY',
+] as const;
+
+const variablesRacine = (
+  systemeDeFichier: SystemeDeFichier
+): {
+  source: string;
+  variables: NodeJS.ProcessEnv;
+} => {
+  if (process.env.NODE_ENV === 'production') {
+    return { source: "l'environnement", variables: process.env };
+  }
+  if (!systemeDeFichier.existe(CHEMIN_FICHIER_ENV_RACINE)) {
+    throw new Error(
+      'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
+    );
+  }
+  return {
+    source: '.env',
+    variables: parseEnv(systemeDeFichier.lit(CHEMIN_FICHIER_ENV_RACINE)),
+  };
+};
+
 export const environnement: Environnement = {
   path: process.env.PATH!,
   fournisseur: (): EnvironnementFournisseur => ({
@@ -82,27 +109,12 @@ export const environnement: Environnement = {
       espaceDeTravail: process.env.SHANNON_ESPACE_DE_TRAVAIL || '',
     };
   },
-  verifiePresenceFichierRacine(systemeDeFichier: SystemeDeFichier) {
-    if (!systemeDeFichier.existe(CHEMIN_FICHIER_ENV_RACINE)) {
-      throw new Error(
-        'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)'
-      );
-    }
-    const lesVariables = parseEnv(systemeDeFichier.lit(CHEMIN_FICHIER_ENV_RACINE));
-    if (!lesVariables.FOURNISSEUR_API_KEY) {
-      throw new Error('Erreur: FOURNISSEUR_API_KEY manquant ou vide dans .env');
-    }
-    if (!lesVariables.FOURNISSEUR_BASE_URL) {
-      throw new Error('Erreur: FOURNISSEUR_BASE_URL manquant ou vide dans .env');
-    }
-    if (!lesVariables.FOURNISSEUR_MODELE) {
-      throw new Error('Erreur: FOURNISSEUR_MODELE manquant ou vide dans .env');
-    }
-    if (!lesVariables.LITELLM_BASE_URL) {
-      throw new Error('Erreur: LITELLM_BASE_URL manquant ou vide dans .env');
-    }
-    if (!lesVariables.LITELLM_API_KEY) {
-      throw new Error('Erreur: LITELLM_API_KEY manquant ou vide dans .env');
+  verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier) {
+    const { source, variables } = variablesRacine(systemeDeFichier);
+    for (const nom of VARIABLES_RACINE_REQUISES) {
+      if (!variables[nom]) {
+        throw new Error(`Erreur: ${nom} manquant ou vide dans ${source}`);
+      }
     }
   },
 };
