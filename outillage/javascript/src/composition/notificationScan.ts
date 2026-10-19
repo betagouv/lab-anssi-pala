@@ -4,9 +4,7 @@ import type { Constat } from '../codex-security/domaine/constat.ts';
 import { MessagerieMattermost } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 import { ApiHTTPFetch } from '../noyau/adaptateurs/node/apiHTTPFetch.ts';
 
-// Publie un compte rendu de scan sur Mattermost à la fin de chaque scan.
-// Partagé par les compositions `scan` et `cinématique`.
-export function abonneNotificationScan(bus: BusEvenementsPALA): void {
+export const abonneNotificationScan = (bus: BusEvenementsPALA): void => {
   bus.sabonne<ScanTermine>('SCAN_TERMINÉ', async (evenement) => {
     const messagerie = new MessagerieMattermost(new ApiHTTPFetch());
 
@@ -31,4 +29,4 @@ export function abonneNotificationScan(bus: BusEvenementsPALA): void {
   `;
     await messagerie.envoyer({ contenu: message });
   });
-}
+};
