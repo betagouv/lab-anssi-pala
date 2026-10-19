@@ -8,6 +8,7 @@ import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
 import type { ScanTermine } from '../../../src/codex-security/domaine/scanTermine.ts';
+import type { ScanNonEffectue } from '../../../src/codex-security/domaine/scanNonEffectue.ts';
 import {
   type Dependances,
   LanceScan,
@@ -415,6 +416,60 @@ describe('Lance Scan Codex', () => {
     }).execute({ options: [], cible: CIBLE, config: CONFIG_PAR_DEFAUT });
 
     expect(scansTermines).toMatchObject([{ cible: CIBLE, resultat: 'Échec' }]);
+  });
+
+  describe("quand il n'y a rien à scanner", () => {
+    const CONFIG_PERIMETRE_VIDE = '/configs/perimetre-vide.yaml';
+    const CONFIG_PERIMETRE_RENSEIGNE = '/configs/perimetre-renseigne.yaml';
+
+    const unDepotAvecConfigsDePerimetre = () => {
+      const systemeDeFichier = unDepotDeFichiersPret();
+      systemeDeFichier.fichiers.set(
+        CONFIG_PERIMETRE_VIDE,
+        'scan:\n  scope:\n    paths: []\n'
+      );
+      systemeDeFichier.fichiers.set(
+        CONFIG_PERIMETRE_RENSEIGNE,
+        'scan:\n  scope:\n    paths: [src/a.ts]\ncodex:\n  model: glm-5.2\n  model_provider: scaleway\n'
+      );
+      return systemeDeFichier;
+    };
+
+    it("n'exécute pas le scan et lève un événement quand le périmètre est vide", async () => {
+      const bus = new BusEvenementsPALA();
+      const scansNonEffectues: ScanNonEffectue[] = [];
+      bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', (evenement) =>
+        scansNonEffectues.push(evenement)
+      );
+      const scanner = new ScannerCodexSecuritySimulee();
+
+      const statut = await unScanCodex({
+        scanner,
+        systemeDeFichier: unDepotAvecConfigsDePerimetre(),
+        busDEvenements: bus,
+      }).execute({ options: [], cible: CIBLE, config: CONFIG_PERIMETRE_VIDE });
+
+      expect(statut).toBe(0);
+      expect(scanner.scans).toEqual([]);
+      expect(scansNonEffectues).toEqual([
+        { nom: 'SCAN_NON_EFFECTUÉ', cible: CIBLE },
+      ]);
+    });
+
+    it('scanne normalement quand le périmètre liste des fichiers', async () => {
+      const scanner = new ScannerCodexSecuritySimulee();
+
+      await unScanCodex({
+        scanner,
+        systemeDeFichier: unDepotAvecConfigsDePerimetre(),
+      }).execute({
+        options: [],
+        cible: CIBLE,
+        config: CONFIG_PERIMETRE_RENSEIGNE,
+      });
+
+      expect(scanner.scans).toHaveLength(1);
+    });
   });
 
   it("respecte les consignes de l'utilisateur, même écrites --scan-prompt-file=<fichier>", async () => {

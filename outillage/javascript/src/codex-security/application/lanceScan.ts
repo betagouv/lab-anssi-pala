@@ -16,6 +16,7 @@ import {
 import { type Cout, calculeCout } from '../../cout/domaine/cout.ts';
 import type { BusEvenements } from '../../noyau/ports/BusEvenements.ts';
 import { unScanTermine } from '../domaine/scanTermine.ts';
+import { unScanNonEffectue } from '../domaine/scanNonEffectue.ts';
 import { type Constat, extraitLesConstats } from '../domaine/constat.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
@@ -54,6 +55,16 @@ export class LanceScan {
       modele: string
     ) => ConsommationDeTokens | null = unReleveDeConsommationDeTokensCodex
   ): Promise<number> {
+    const configScan = this.#lisLaConfig(config);
+    if (configScan.perimetre.estVide()) {
+      this.#console.aLaLigne(
+        `Aucun fichier à scanner (périmètre vide) : scan non effectué pour ${cible}.`,
+        'ORANGE'
+      );
+      this.#busDEvenements.publie(unScanNonEffectue({ cible }));
+      return 0;
+    }
+
     const { sortie, environnementCodex } = await this.#execution.pour('scan', cible);
     this.#console.aLaLigne(`Cible  : ${cible}`, 'VIOLET');
     this.#console.aLaLigne(`Config : ${config}`, 'ORANGE');
@@ -67,7 +78,7 @@ export class LanceScan {
       options: this.#optionsDuScan(options),
       environnement: { ...environnementCodex, PATH: environnement.path },
     });
-    const cout = this.#estimeLeCout(config, sortie, releveDeTokens);
+    const cout = this.#estimeLeCout(configScan, sortie, releveDeTokens);
     this.#busDEvenements.publie(
       unScanTermine({
         cible,
@@ -106,8 +117,16 @@ export class LanceScan {
     ];
   }
 
+  #lisLaConfig(config: string): ConfigScan {
+    try {
+      return ConfigScan.depuisYaml(this.#systemeDeFichier.lit(config));
+    } catch {
+      return ConfigScan.inconnue();
+    }
+  }
+
   #estimeLeCout(
-    config: string,
+    configScan: ConfigScan,
     sortie: DossierDeSortie,
     releveDeTokens: (
       log: string,
@@ -116,13 +135,10 @@ export class LanceScan {
     ) => ConsommationDeTokens | null
   ): Cout {
     try {
-      const { modele, fournisseur } = ConfigScan.depuisYaml(
-        this.#systemeDeFichier.lit(config)
-      );
       const consommation = releveDeTokens(
         this.#systemeDeFichier.lit(sortie.journal),
-        fournisseur,
-        modele
+        configScan.fournisseur,
+        configScan.modele
       );
       this.#estimation.rapporte(consommation);
       return calculeCout(consommation);
