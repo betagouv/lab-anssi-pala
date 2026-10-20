@@ -329,10 +329,12 @@ describe('Lance Scan Codex', () => {
       options: [],
       cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
-      premierCommit: 'a1b2c3d4e5f60718293a4b5c6d7e8f9012345678',
+      informationsDeCommits: {
+        premierCommit: 'a1b2c3d4e5f60718293a4b5c6d7e8f9012345678',
+      },
     });
 
-    expect(scansTermines[0].premierCommit).toBe(
+    expect(scansTermines[0].informationsDeCommits?.premierCommit).toBe(
       'a1b2c3d4e5f60718293a4b5c6d7e8f9012345678'
     );
   });
@@ -345,10 +347,12 @@ describe('Lance Scan Codex', () => {
       options: [],
       cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
-      dernierCommit: '9f8e7d6c5b4a39281706f5e4d3c2b1a098765432',
+      informationsDeCommits: {
+        dernierCommit: '9f8e7d6c5b4a39281706f5e4d3c2b1a098765432',
+      },
     });
 
-    expect(scansTermines[0].dernierCommit).toBe(
+    expect(scansTermines[0].informationsDeCommits?.dernierCommit).toBe(
       '9f8e7d6c5b4a39281706f5e4d3c2b1a098765432'
     );
   });
@@ -361,10 +365,10 @@ describe('Lance Scan Codex', () => {
       options: [],
       cible: CIBLE,
       config: CONFIG_PAR_DEFAUT,
-      nombreDeJours: 7,
+      informationsDeCommits: { nombreDeJours: 7 },
     });
 
-    expect(scansTermines[0].nombreDeJours).toBe(7);
+    expect(scansTermines[0].informationsDeCommits?.nombreDeJours).toBe(7);
   });
 
   it('publie le nombre de fichiers du périmètre de la configuration', async () => {
