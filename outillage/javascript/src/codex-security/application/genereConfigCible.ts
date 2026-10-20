@@ -5,6 +5,7 @@ import { Cible } from '../../environnement/domaine/Cible.ts';
 import { ConfigurationCible } from '../domaine/ConfigurationCible.ts';
 import { cheminConfigCible } from '../domaine/cheminConfig.ts';
 import type { DepotGit } from '../ports/DepotGit.ts';
+import { join } from 'path';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -32,10 +33,11 @@ export class GenereConfigCible {
       `Mise à jour de la copie de travail : ${cible.copieDeTravail}`,
       'VERT'
     );
-    const fichiersModifies = this.#depotGit.fichiersModifiesDepuis(
-      cible.copieDeTravail,
-      nombreDeJours
-    );
+    const fichiersModifies = this.#depotGit
+      .fichiersModifiesDepuis(cible.copieDeTravail, nombreDeJours)
+      .filter((f) =>
+        this.#systemeDeFichier.existe(`${join(cible.copieDeTravail, f)}`)
+      );
 
     const config = new ConfigurationCible({
       modele: fournisseur.modele,

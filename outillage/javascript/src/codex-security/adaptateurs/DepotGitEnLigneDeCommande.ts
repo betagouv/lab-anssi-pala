@@ -20,6 +20,8 @@ export class DepotGitEnLigneDeCommande implements DepotGit {
     const sortie = execFileSync(
       'git',
       [
+        '-c',
+        'core.quotePath=false',
         'log',
         `--since=${nombreDeJours} days ago`,
         '--name-only',

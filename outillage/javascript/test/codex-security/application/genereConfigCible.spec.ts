@@ -32,7 +32,11 @@ const ENV_RACINE =
   'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=deepseek-v4-flash-0731\nLITELLM_BASE_URL=http://127.0.0.1:4000\nLITELLM_API_KEY=sk-local\n';
 
 const systemeDeFichierConfigure = () =>
-  new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
+  new SystemeDeFichierEnMemoire({
+    '.env': ENV_RACINE,
+    [`cible/copies/${UNE_CIBLE}/src/noyau/environnement.ts`]: '',
+    [`cible/copies/${UNE_CIBLE}/src/codex-security/application/lanceScan.ts`]: '',
+  });
 
 const uneGeneration = (doubles: Partial<Dependances> = {}) =>
   new GenereConfigCible({
@@ -181,5 +185,25 @@ describe('Génère Config Cible', () => {
 
     expect(chemin).toBe('outils/codex-security/configs/config-projet-x.yaml');
     expect(systemeDeFichier.existe(chemin)).toBe(true);
+  });
+
+  it('vérifie l’existence des fichiers modifiers dans le dossier cible', async () => {
+    const systemeDeFichier = systemeDeFichierConfigure();
+    const depotGit = new DepotGitEnMemoire([
+      'src/codex-security/application/lanceScan.ts',
+      'src/codex-security/ancien-dossier/ancien-fichier.ts',
+      'src/noyau/environnement.ts',
+    ]);
+    fournisseurAlbert();
+    urlDuProxy('http://127.0.0.1:4000');
+
+    uneGeneration({ systemeDeFichier, depotGit }).execute(UNE_CIBLE, 30);
+
+    const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
+    expect(lu.scan.scope.paths).toEqual([
+      'src/codex-security/application/lanceScan.ts',
+      'src/noyau/environnement.ts',
+    ]);
+    expect(depotGit.nombreDeJoursDemande).toBe(30);
   });
 });
