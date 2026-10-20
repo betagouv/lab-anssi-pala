@@ -14,6 +14,7 @@ export type ScanTermine = Evenement & {
   readonly dernierCommit?: string;
   readonly nombreDeJours?: number;
   readonly nombreDeFichiers?: number;
+  readonly dureeEnMs?: number;
 };
 
 export const unScanTermine = (details: {
@@ -25,4 +26,5 @@ export const unScanTermine = (details: {
   dernierCommit?: string;
   nombreDeJours?: number;
   nombreDeFichiers?: number;
+  dureeEnMs?: number;
 }): ScanTermine => ({ nom: 'SCAN_TERMINÉ', ...details });
