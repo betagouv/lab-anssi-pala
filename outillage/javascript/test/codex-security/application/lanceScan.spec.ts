@@ -353,6 +353,20 @@ describe('Lance Scan Codex', () => {
     );
   });
 
+  it('publie le nombre de jours de la fenêtre scannée quand il est fourni', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+
+    await unScanCodex({ busDEvenements: bus }).execute({
+      options: [],
+      cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
+      nombreDeJours: 7,
+    });
+
+    expect(scansTermines[0].nombreDeJours).toBe(7);
+  });
+
   describe('en ce qui concerne les constats', () => {
     it('les publie depuis le fichier de findings du scan', async () => {
       const bus = new BusEvenementsPALA();

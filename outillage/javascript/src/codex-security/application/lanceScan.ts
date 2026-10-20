@@ -32,6 +32,7 @@ type CommandeScan = {
   config: string;
   premierCommit?: string;
   dernierCommit?: string;
+  nombreDeJours?: number;
 };
 
 export class LanceScan {
@@ -54,7 +55,14 @@ export class LanceScan {
   }
 
   async execute(
-    { options, cible, config, premierCommit, dernierCommit }: CommandeScan,
+    {
+      options,
+      cible,
+      config,
+      premierCommit,
+      dernierCommit,
+      nombreDeJours,
+    }: CommandeScan,
     releveDeTokens: (
       log: string,
       fournisseur: string,
@@ -93,6 +101,7 @@ export class LanceScan {
         constats: this.#lesConstats(sortie),
         premierCommit,
         dernierCommit,
+        nombreDeJours,
       })
     );
     return statut;
