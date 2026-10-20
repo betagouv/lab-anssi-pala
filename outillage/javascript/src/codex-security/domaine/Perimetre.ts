@@ -13,6 +13,10 @@ export class Perimetre {
     return new Perimetre(undefined);
   }
 
+  nombreDeChemins(): number | undefined {
+    return this.#chemins?.length;
+  }
+
   estVide(): boolean {
     return this.#chemins !== undefined && this.#chemins.length === 0;
   }

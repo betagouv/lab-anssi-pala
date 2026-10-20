@@ -102,6 +102,7 @@ export class LanceScan {
         premierCommit,
         dernierCommit,
         nombreDeJours,
+        nombreDeFichiers: configScan.perimetre.nombreDeChemins(),
       })
     );
     return statut;

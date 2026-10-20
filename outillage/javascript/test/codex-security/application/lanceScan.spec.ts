@@ -367,6 +367,24 @@ describe('Lance Scan Codex', () => {
     expect(scansTermines[0].nombreDeJours).toBe(7);
   });
 
+  it('publie le nombre de fichiers du périmètre de la configuration', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+    const systemeDeFichier = unDepotDeFichiersPret();
+    systemeDeFichier.fichiers.set(
+      '/configs/deux-fichiers.yaml',
+      'scan:\n  scope:\n    paths: [src/a.ts, src/b.ts]\n'
+    );
+
+    await unScanCodex({ systemeDeFichier, busDEvenements: bus }).execute({
+      options: [],
+      cible: CIBLE,
+      config: '/configs/deux-fichiers.yaml',
+    });
+
+    expect(scansTermines[0].nombreDeFichiers).toBe(2);
+  });
+
   describe('en ce qui concerne les constats', () => {
     it('les publie depuis le fichier de findings du scan', async () => {
       const bus = new BusEvenementsPALA();
