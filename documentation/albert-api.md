@@ -1,8 +1,10 @@
 # Albert API
 
 - Endpoint : `https://albert.api.etalab.gouv.fr/v1`
-- Configuration (`.env` racine) : `FOURNISSEUR_NOM=albert`,
-  `FOURNISSEUR_BASE_URL=https://albert.api.etalab.gouv.fr/v1`, `FOURNISSEUR_API_KEY=<clé Albert>`.
+- Configuration (`.env` racine) :
+  - `FOURNISSEUR_NOM=albert`,
+  - `FOURNISSEUR_BASE_URL=https://albert.api.etalab.gouv.fr/v1`,
+  - `FOURNISSEUR_API_KEY=<clé Albert>`.
 - Authentification : `Authorization: Bearer ${FOURNISSEUR_API_KEY}` (clé non documentée ici, voir `.env` local).
 
 ## GET /v1/models

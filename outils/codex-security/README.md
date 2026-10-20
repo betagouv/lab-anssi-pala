@@ -80,6 +80,26 @@ Les consignes de scan sont **génériques** : le périmètre est fourni par le S
 (`ecrit-artefacts-scan.py --liste-perimetre`) et les contrôles s'appuient sur **l'OWASP API Security
 Top 10**. Pour votre cible, copier `config-cible.template.yaml` et y fixer `scope.paths`.
 
+### Lancer un scan complet (exécute les étapes bootstrap, génère-env, génère-config, scan)
+
+Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
+```bash
+pnpm run scan-complet --help
+```
+
+Pour lancer un scan complet :
+```bash
+pnpm run scan-complet --cible <CHEMIN CIBLE>
+```
+
+Sur plusieurs cibles :
+```bash
+pnpm run scan-complet --cible <CHEMIN CIBLE A> --cible <CHEMIN CIBLE B>
+```
+
+Une **estimation du coût** est affichée en fin de scan
+(tokens × tarif du fournisseur ; Albert gratuit).
+
 ### Validation d'un point précis
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
