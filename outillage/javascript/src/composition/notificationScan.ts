@@ -5,6 +5,7 @@ import type { Constat } from '../codex-security/domaine/constat.ts';
 import { MessagerieMattermost } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 import { ApiHTTPFetch } from '../noyau/adaptateurs/node/apiHTTPFetch.ts';
 import { environnement } from '../noyau/environnement.ts';
+import { intervalToDuration } from 'date-fns/intervalToDuration';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
@@ -26,9 +27,19 @@ export const abonneNotificationScan = (bus: BusEvenementsPALA): void => {
     `;
     };
 
+    const {
+      hours = 0,
+      minutes = 0,
+      seconds = 0,
+    } = intervalToDuration({
+      start: 0,
+      end: evenement.dureeEnMs ?? 0,
+    });
     const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible}
   - **Cible :** ${cible}
   - **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
+  - **Nombre de fichiers analysés :** ${evenement.nombreDeFichiers}
+  - **Durée du scan :** ${hours} H ${minutes} mn ${seconds} s
   - **Nombre de constats trouvés :** ${evenement.constats.length}
   #### Constats
   ${evenement.constats.map((c) => constat(c)).join('\n')}
