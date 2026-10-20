@@ -19,6 +19,7 @@ import { unScanTermine } from '../domaine/scanTermine.ts';
 import { unScanNonEffectue } from '../domaine/scanNonEffectue.ts';
 import { type Constat, extraitLesConstats } from '../domaine/constat.ts';
 import { extraitLaDuree } from '../domaine/dureeDuScan.ts';
+import type { InformationsDeCommits } from '../domaine/informationsDeCommits.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = DependancesExecution & {
@@ -31,9 +32,7 @@ type CommandeScan = {
   options: string[];
   cible: string;
   config: string;
-  premierCommit?: string;
-  dernierCommit?: string;
-  nombreDeJours?: number;
+  informationsDeCommits?: InformationsDeCommits;
 };
 
 export class LanceScan {
@@ -56,14 +55,7 @@ export class LanceScan {
   }
 
   async execute(
-    {
-      options,
-      cible,
-      config,
-      premierCommit,
-      dernierCommit,
-      nombreDeJours,
-    }: CommandeScan,
+    { options, cible, config, informationsDeCommits }: CommandeScan,
     releveDeTokens: (
       log: string,
       fournisseur: string,
@@ -100,9 +92,7 @@ export class LanceScan {
         resultat: statut === 0 ? 'Succès' : 'Échec',
         cout,
         constats: this.#lesConstats(sortie),
-        premierCommit,
-        dernierCommit,
-        nombreDeJours,
+        informationsDeCommits,
         nombreDeFichiers: configScan.perimetre.nombreDeChemins(),
         dureeEnMs: this.#laDuree(sortie),
       })
