@@ -15,4 +15,8 @@ describe('Périmètre', () => {
   it("n'est pas contraignant quand aucun périmètre n'est défini", () => {
     expect(Perimetre.nonContraignant().estVide()).toBe(false);
   });
+
+  it('compte les chemins à scanner', () => {
+    expect(Perimetre.deChemins(['src/a.ts', 'src/b.ts']).nombreDeChemins()).toBe(2);
+  });
 });
