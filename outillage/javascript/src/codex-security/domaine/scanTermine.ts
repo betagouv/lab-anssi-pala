@@ -11,6 +11,7 @@ export type ScanTermine = Evenement & {
   readonly cout: Cout;
   readonly constats: Constat[];
   readonly premierCommit?: string;
+  readonly dernierCommit?: string;
 };
 
 export const unScanTermine = (details: {
@@ -19,4 +20,5 @@ export const unScanTermine = (details: {
   cout: Cout;
   constats: Constat[];
   premierCommit?: string;
+  dernierCommit?: string;
 }): ScanTermine => ({ nom: 'SCAN_TERMINÉ', ...details });
