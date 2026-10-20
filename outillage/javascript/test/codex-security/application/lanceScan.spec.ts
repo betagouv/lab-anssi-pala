@@ -321,6 +321,22 @@ describe('Lance Scan Codex', () => {
     ]);
   });
 
+  it('publie le hash du premier commit de la fenêtre scannée quand il est fourni', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+
+    await unScanCodex({ busDEvenements: bus }).execute({
+      options: [],
+      cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
+      premierCommit: 'a1b2c3d4e5f60718293a4b5c6d7e8f9012345678',
+    });
+
+    expect(scansTermines[0].premierCommit).toBe(
+      'a1b2c3d4e5f60718293a4b5c6d7e8f9012345678'
+    );
+  });
+
   describe('en ce qui concerne les constats', () => {
     it('les publie depuis le fichier de findings du scan', async () => {
       const bus = new BusEvenementsPALA();
