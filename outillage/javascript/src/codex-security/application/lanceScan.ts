@@ -18,6 +18,7 @@ import type { BusEvenements } from '../../noyau/ports/BusEvenements.ts';
 import { unScanTermine } from '../domaine/scanTermine.ts';
 import { unScanNonEffectue } from '../domaine/scanNonEffectue.ts';
 import { type Constat, extraitLesConstats } from '../domaine/constat.ts';
+import { extraitLaDuree } from '../domaine/dureeDuScan.ts';
 import { environnement } from '../../noyau/environnement.ts';
 
 export type Dependances = DependancesExecution & {
@@ -103,6 +104,7 @@ export class LanceScan {
         dernierCommit,
         nombreDeJours,
         nombreDeFichiers: configScan.perimetre.nombreDeChemins(),
+        dureeEnMs: this.#laDuree(sortie),
       })
     );
     return statut;
@@ -118,6 +120,19 @@ export class LanceScan {
         `Lecture des constats impossible : ${erreur instanceof Error ? erreur.message : erreur}`
       );
       return [];
+    }
+  }
+
+  #laDuree(sortie: DossierDeSortie): number | undefined {
+    const manifeste = join(sortie.chemin, 'scan-manifest.json');
+    if (!this.#systemeDeFichier.existe(manifeste)) return undefined;
+    try {
+      return extraitLaDuree(this.#systemeDeFichier.lit(manifeste));
+    } catch (erreur) {
+      this.#console.signaleErreur(
+        `Lecture de la durée du scan impossible : ${erreur instanceof Error ? erreur.message : erreur}`
+      );
+      return undefined;
     }
   }
 

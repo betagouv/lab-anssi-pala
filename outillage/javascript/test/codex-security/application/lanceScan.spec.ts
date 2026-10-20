@@ -385,6 +385,52 @@ describe('Lance Scan Codex', () => {
     expect(scansTermines[0].nombreDeFichiers).toBe(2);
   });
 
+  it('publie la durée du scan relevée par la CLI dans le manifeste de sortie', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+    const systemeDeFichier = unDepotDeFichiersPret();
+    systemeDeFichier.fichiers.set(
+      '/depot/resultats/brut/codex-security/scan-20260930-140509/scan-manifest.json',
+      JSON.stringify({
+        scan: {
+          startedAt: '2026-10-13T08:27:07.699821Z',
+          completedAt: '2026-10-13T08:28:37.699821Z',
+        },
+      })
+    );
+
+    await unScanCodex({ systemeDeFichier, busDEvenements: bus }).execute({
+      options: [],
+      cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
+    });
+
+    expect(scansTermines[0].dureeEnMs).toBe(90_000);
+  });
+
+  it('signale un manifeste de sortie illisible sans empêcher la publication ni renseigner la durée', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+    const console = new ConsoleEnMemoire();
+    const systemeDeFichier = unDepotDeFichiersPret();
+    systemeDeFichier.fichiers.set(
+      '/depot/resultats/brut/codex-security/scan-20260930-140509/scan-manifest.json',
+      'pas du json'
+    );
+
+    await unScanCodex({
+      systemeDeFichier,
+      console,
+      busDEvenements: bus,
+    }).execute({ options: [], cible: CIBLE, config: CONFIG_PAR_DEFAUT });
+
+    expect(scansTermines[0].dureeEnMs).toBeUndefined();
+    expect(console.erreurs).toHaveLength(1);
+    expect(console.erreurs[0].message).toContain(
+      'Lecture de la durée du scan impossible'
+    );
+  });
+
   describe('en ce qui concerne les constats', () => {
     it('les publie depuis le fichier de findings du scan', async () => {
       const bus = new BusEvenementsPALA();
