@@ -26,7 +26,12 @@ export type Dependances = DependancesExecution & {
   busDEvenements: BusEvenements;
 };
 
-type CommandeScan = { options: string[]; cible: string; config: string };
+type CommandeScan = {
+  options: string[];
+  cible: string;
+  config: string;
+  premierCommit?: string;
+};
 
 export class LanceScan {
   readonly #racine: string;
@@ -48,7 +53,7 @@ export class LanceScan {
   }
 
   async execute(
-    { options, cible, config }: CommandeScan,
+    { options, cible, config, premierCommit }: CommandeScan,
     releveDeTokens: (
       log: string,
       fournisseur: string,
@@ -85,6 +90,7 @@ export class LanceScan {
         resultat: statut === 0 ? 'Succès' : 'Échec',
         cout,
         constats: this.#lesConstats(sortie),
+        premierCommit,
       })
     );
     return statut;
