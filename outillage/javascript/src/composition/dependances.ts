@@ -9,7 +9,6 @@ import { GitEnLigneDeCommande } from '../bootstrap/adaptateurs/GitEnLigneDeComma
 import { PrepareCodexSecurity } from '../codex-security/application/prepareCodexSecurity.ts';
 import { PrepareShannon } from '../shannon/application/prepareShannon.ts';
 import { DepotShannonGit } from '../shannon/adaptateurs/DepotShannonGit.ts';
-import { DepotGitEnLigneDeCommande } from '../codex-security/adaptateurs/DepotGitEnLigneDeCommande.ts';
 import { ConteneurProxyDocker } from '../codex-security/adaptateurs/ConteneurProxyDocker.ts';
 import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
@@ -56,7 +55,7 @@ export const lesDependancesPourLaGenerationConfig = ({
 }: ContexteDeComposition): DependancesGenerationConfig => ({
   systemeDeFichier: new SystemeDeFichierNode(racine),
   console,
-  depotGit: new DepotGitEnLigneDeCommande(racine),
+  git: new GitEnLigneDeCommande(racine),
 });
 
 export const lesDependancesPourLaGenerationEnvironnement = ({
