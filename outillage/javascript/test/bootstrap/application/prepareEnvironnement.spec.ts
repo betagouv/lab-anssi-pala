@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { GitSimule } from '../../doubles/GitSimule.ts';
+import { GitMemoire } from '../../doubles/GitMemoire.ts';
 import { PreparationOutilSimulee } from '../../doubles/PreparationOutilSimulee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { CibleBootstrap } from '../../../src/bootstrap/domaine/CibleBootstrap.ts';
@@ -11,7 +11,7 @@ import {
 
 const unePreparation = (doubles: Partial<Dependances> = {}) =>
   new PrepareEnvironnement({
-    git: new GitSimule(),
+    git: new GitMemoire(),
     systemeDeFichier: new SystemeDeFichierEnMemoire(),
     console: new ConsoleEnMemoire(),
     outils: [],
@@ -20,7 +20,7 @@ const unePreparation = (doubles: Partial<Dependances> = {}) =>
 
 describe('Prépare l’environnement', () => {
   it('initialise les sous-modules des outils', async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
 
     await unePreparation({ git }).execute({});
 
@@ -36,7 +36,7 @@ describe('Prépare l’environnement', () => {
   });
 
   it('clone la cible demandée dans sa copie de travail, sur la branche par défaut du dépôt distant', async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
     const cible = new CibleBootstrap({
       nom: 'app',
       url: 'https://git.example/app.git',
@@ -54,7 +54,7 @@ describe('Prépare l’environnement', () => {
   });
 
   it('conserve une copie de travail existante sans la recloner', async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
     systemeDeFichier.creeDossier('cible/copies/app');
     const console = new ConsoleEnMemoire();
@@ -89,7 +89,7 @@ describe('Prépare l’environnement', () => {
   });
 
   it("sans cible demandée, n'en clone aucune et indique comment en cloner une", async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
     const console = new ConsoleEnMemoire();
 
     await unePreparation({ git, console }).execute({});

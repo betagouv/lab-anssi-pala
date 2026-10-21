@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { DepotGitEnMemoire } from '../../doubles/DepotGitEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import {
   type Dependances,
@@ -11,6 +10,7 @@ import { cheminConfigCible } from '../../../src/codex-security/domaine/cheminCon
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/fenetreDeModification.ts';
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
+import { GitMemoire } from '../../doubles/GitMemoire.ts';
 
 const UNE_CIBLE = 'la-cible';
 
@@ -42,7 +42,7 @@ const uneGeneration = (doubles: Partial<Dependances> = {}) =>
   new GenereConfigCible({
     systemeDeFichier: systemeDeFichierConfigure(),
     console: new ConsoleEnMemoire(),
-    depotGit: new DepotGitEnMemoire(['src/noyau/environnement.ts']),
+    git: new GitMemoire(['src/noyau/environnement.ts']),
     ...doubles,
   });
 
@@ -80,44 +80,44 @@ describe('Génère Config Cible', () => {
 
   it('renseigne le périmètre avec les fichiers modifiés (diff git) de la fenêtre demandée', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
-    const depotGit = new DepotGitEnMemoire([
+    const git = new GitMemoire([
       'src/codex-security/application/lanceScan.ts',
       'src/noyau/environnement.ts',
     ]);
     fournisseurAlbert();
     urlDuProxy('http://127.0.0.1:4000');
 
-    uneGeneration({ systemeDeFichier, depotGit }).execute(UNE_CIBLE, 30);
+    uneGeneration({ systemeDeFichier, git }).execute(UNE_CIBLE, 30);
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.scan.scope.paths).toEqual([
       'src/codex-security/application/lanceScan.ts',
       'src/noyau/environnement.ts',
     ]);
-    expect(depotGit.nombreDeJoursDemande).toBe(30);
+    expect(git.nombreDeJoursDemande).toBe(30);
   });
 
   it('met à jour la copie de travail de la cible avant de calculer le diff', () => {
-    const depotGit = new DepotGitEnMemoire();
+    const git = new GitMemoire();
     fournisseurAlbert();
     urlDuProxy('http://127.0.0.1:4000');
 
-    uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
+    uneGeneration({ git }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
-    expect(depotGit.repertoireMisAJour).toBe(
+    expect(git.repertoireMisAJour).toBe(
       new Cible({ nom: 'mon-projet' }).copieDeTravail
     );
-    expect(depotGit.misAJourAvantLeDiff).toBe(true);
+    expect(git.misAJourAvantLeDiff).toBe(true);
   });
 
   it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
-    const depotGit = new DepotGitEnMemoire();
+    const git = new GitMemoire();
     fournisseurAlbert();
     urlDuProxy('http://127.0.0.1:4000');
 
-    uneGeneration({ depotGit }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
+    uneGeneration({ git }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
-    expect(depotGit.repertoireDemande).toBe(
+    expect(git.repertoireDemande).toBe(
       new Cible({ nom: 'mon-projet' }).copieDeTravail
     );
   });
@@ -189,7 +189,7 @@ describe('Génère Config Cible', () => {
 
   it('vérifie l’existence des fichiers modifiers dans le dossier cible', async () => {
     const systemeDeFichier = systemeDeFichierConfigure();
-    const depotGit = new DepotGitEnMemoire([
+    const git = new GitMemoire([
       'src/codex-security/application/lanceScan.ts',
       'src/codex-security/ancien-dossier/ancien-fichier.ts',
       'src/noyau/environnement.ts',
@@ -197,13 +197,13 @@ describe('Génère Config Cible', () => {
     fournisseurAlbert();
     urlDuProxy('http://127.0.0.1:4000');
 
-    uneGeneration({ systemeDeFichier, depotGit }).execute(UNE_CIBLE, 30);
+    uneGeneration({ systemeDeFichier, git }).execute(UNE_CIBLE, 30);
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_FICHIER_CONFIG_CIBLE));
     expect(lu.scan.scope.paths).toEqual([
       'src/codex-security/application/lanceScan.ts',
       'src/noyau/environnement.ts',
     ]);
-    expect(depotGit.nombreDeJoursDemande).toBe(30);
+    expect(git.nombreDeJoursDemande).toBe(30);
   });
 });

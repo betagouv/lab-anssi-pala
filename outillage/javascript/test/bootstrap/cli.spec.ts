@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../doubles/ConsoleEnMemoire.ts';
-import { GitSimule } from '../doubles/GitSimule.ts';
+import { GitMemoire } from '../doubles/GitMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../doubles/SystemeDeFichierEnMemoire.ts';
 import type { Dependances } from '../../src/bootstrap/application/prepareEnvironnement.ts';
 import { bootstrap } from '../../src/bootstrap/cli.ts';
@@ -8,7 +8,7 @@ import { bootstrap } from '../../src/bootstrap/cli.ts';
 const lesDependancesDuBootstrap = (
   doubles: Partial<Dependances> = {}
 ): Dependances => ({
-  git: new GitSimule(),
+  git: new GitMemoire(),
   systemeDeFichier: new SystemeDeFichierEnMemoire(),
   console: new ConsoleEnMemoire(),
   outils: [],
@@ -17,7 +17,7 @@ const lesDependancesDuBootstrap = (
 
 describe('bootstrap (ligne de commande)', () => {
   it("prépare l'environnement avec la cible désignée par --project, --url et --branch", async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
 
     const code = await bootstrap(
       [
@@ -42,7 +42,7 @@ describe('bootstrap (ligne de commande)', () => {
   });
 
   it("refuse --project sans --url, sans rien préparer (erreur d'usage, code 2)", async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
     const console = new ConsoleEnMemoire();
 
     const code = await bootstrap(
@@ -72,7 +72,7 @@ describe('bootstrap (ligne de commande)', () => {
   });
 
   it("affiche l'aide, avec des exemples, sans rien préparer", async () => {
-    const git = new GitSimule();
+    const git = new GitMemoire();
     const console = new ConsoleEnMemoire();
 
     const code = await bootstrap(

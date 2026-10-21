@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
-import { DepotGitEnMemoire } from '../../doubles/DepotGitEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { genereConfig } from '../../../src/codex-security/cli/genere-config.ts';
 import { cheminConfigCible } from '../../../src/codex-security/domaine/cheminConfig.ts';
@@ -10,6 +9,7 @@ import {
   ENVIRONNEMENT_CODEX_SECURITY,
   ENVIRONNEMENT_PROXY,
 } from '../../doubles/environnement.ts';
+import { GitMemoire } from '../../doubles/GitMemoire.ts';
 
 const ENV_RACINE =
   'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle-fournisseur\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=deepseek-v4-flash-0731\nLITELLM_BASE_URL=http://127.0.0.1:4000\nLITELLM_API_KEY=sk-local\n';
@@ -34,7 +34,7 @@ describe('génère-config (ligne de commande)', () => {
     const code = await genereConfig(['--cible', 'test'], {
       systemeDeFichier: new SystemeDeFichierEnMemoire(),
       console,
-      depotGit: new DepotGitEnMemoire(),
+      git: new GitMemoire(),
     });
 
     expect(code).toBe(1);
@@ -50,7 +50,7 @@ describe('génère-config (ligne de commande)', () => {
     const code = await genereConfig(['--cible', 'projet-x'], {
       systemeDeFichier,
       console: new ConsoleEnMemoire(),
-      depotGit: new DepotGitEnMemoire(['src/noyau/environnement.ts']),
+      git: new GitMemoire(['src/noyau/environnement.ts']),
     });
 
     expect(code).toBe(0);
@@ -60,12 +60,12 @@ describe('génère-config (ligne de commande)', () => {
   it('transmet la fenêtre de jours passée en option --jours', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
     environnementConfigure();
-    const depotGit = new DepotGitEnMemoire(['src/noyau/environnement.ts']);
+    const depotGit = new GitMemoire(['src/noyau/environnement.ts']);
 
     const code = await genereConfig(['--cible', 'projet-x', '--jours', '30'], {
       systemeDeFichier,
       console: new ConsoleEnMemoire(),
-      depotGit,
+      git: depotGit,
     });
 
     expect(code).toBe(0);
@@ -75,12 +75,12 @@ describe('génère-config (ligne de commande)', () => {
   it('utilise la fenêtre par défaut sans option --jours', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
     environnementConfigure();
-    const depotGit = new DepotGitEnMemoire(['src/noyau/environnement.ts']);
+    const depotGit = new GitMemoire(['src/noyau/environnement.ts']);
 
     await genereConfig(['--cible', 'projet-x'], {
       systemeDeFichier,
       console: new ConsoleEnMemoire(),
-      depotGit,
+      git: depotGit,
     });
 
     expect(depotGit.nombreDeJoursDemande).toBe(NOMBRE_DE_JOURS_PAR_DEFAUT);
@@ -92,7 +92,7 @@ describe('génère-config (ligne de commande)', () => {
     const code = await genereConfig(['--cible', 'projet-x', '--jours', '-3'], {
       systemeDeFichier: new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE }),
       console,
-      depotGit: new DepotGitEnMemoire(),
+      git: new GitMemoire(),
     });
 
     expect(code).toBe(2);
