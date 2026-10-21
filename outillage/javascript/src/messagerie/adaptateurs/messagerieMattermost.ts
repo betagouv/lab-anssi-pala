@@ -4,6 +4,7 @@ import type {
 } from '../domaine/messagerieInstantanee.ts';
 import type { ApiHTTP } from '../../noyau/ports/apiHTTP.ts';
 import { environnement } from '../../noyau/environnement.ts';
+import { ApiHTTPFetch } from '../../noyau/adaptateurs/node/apiHTTPFetch.ts';
 
 export class MessagerieMattermost implements MessagerieInstantanee {
   #apiHTTP: ApiHTTP;
@@ -18,3 +19,15 @@ export class MessagerieMattermost implements MessagerieInstantanee {
     });
   }
 }
+
+class MessagerieMemoire implements MessagerieInstantanee {
+  envoyer(message: Message): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+}
+
+export const fabriqueMessagerie = (): MessagerieInstantanee => {
+  if (environnement.mattermost().urlWebhook)
+    return new MessagerieMattermost(new ApiHTTPFetch());
+  return new MessagerieMemoire();
+};
