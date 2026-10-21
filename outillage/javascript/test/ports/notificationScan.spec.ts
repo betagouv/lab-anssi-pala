@@ -10,6 +10,7 @@ import type {
   MessagerieInstantanee,
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
 import { EntrepotDeScanMemoire } from '../../src/noyau/persistance/entrepots.ts';
+import { unScanNonEffectue } from '../../src/codex-security/domaine/scanNonEffectue.ts';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
@@ -84,6 +85,22 @@ describe('Les abonnés à la notification du scan', () => {
         '**Interval de commits :** [fghij, abcde]'
       );
       expect(messagerieDeTest.messages[0].contenu).not.toContain(
+        '**Historique git sur :** 777 jours'
+      );
+    });
+  });
+
+  describe('En ce qui concerne le scan non effectué ', () => {
+    it('envoie le message de constat avec les hashs de commit et le nombre de jours', async () => {
+      const messagerieDeTest = new MessagerieDeTest();
+
+      abonneNotificationScan(bus, messagerieDeTest, entrepot);
+      bus.publie(unScanNonEffectue({ cible: 'projet' }));
+
+      expect(messagerieDeTest.messages[0].contenu).toContain(
+        '**Interval de commits :** [fghij, abcde]'
+      );
+      expect(messagerieDeTest.messages[0].contenu).toContain(
         '**Historique git sur :** 777 jours'
       );
     });

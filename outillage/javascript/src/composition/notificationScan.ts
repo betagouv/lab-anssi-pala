@@ -18,7 +18,7 @@ export const abonneNotificationScan = (
   messagerie: MessagerieInstantanee,
   entrepot: EntrepotDeScanMemoire
 ): void => {
-  const recupereLesInformationsGit = (evenement: ScanTermine) => {
+  const recupereLesInformationsGit = (evenement: ScanTermine | ScanNonEffectue) => {
     try {
       const identifiant = evenement.cible.substring(
         evenement.cible.lastIndexOf('/') + 1
@@ -67,9 +67,12 @@ export const abonneNotificationScan = (
   bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', async (evenement) => {
     const cible = nomDeCible(evenement.cible);
 
+    const informationsGit = recupereLesInformationsGit(evenement);
+
     const message = `### ⚠️ Scan non effectué pour ${cible}
   - **Cible :** ${cible}
-  - Aucun fichier à scanner : le périmètre (scan.scope.paths) est vide sur la fenêtre demandée.`;
+  - Aucun fichier à scanner : le périmètre (scan.scope.paths) est vide sur la fenêtre demandée.
+  ${informationsGit}`;
     await messagerie.envoyer({ contenu: message });
   });
 };
