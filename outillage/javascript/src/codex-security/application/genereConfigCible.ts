@@ -35,7 +35,7 @@ export class GenereConfigCible {
     );
     const fichiersModifies = this.#git
       .fichiersModifiesDepuis(cible.copieDeTravail, nombreDeJours)
-      .filter((f) =>
+      .liste.filter((f) =>
         this.#systemeDeFichier.existe(`${join(cible.copieDeTravail, f)}`)
       );
 
