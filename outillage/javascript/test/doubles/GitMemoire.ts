@@ -1,5 +1,5 @@
 import type { CibleBootstrap } from '../../src/bootstrap/domaine/CibleBootstrap.ts';
-import type { Git } from '../../src/bootstrap/ports/Git.ts';
+import type { Git, Modifications } from '../../src/bootstrap/ports/Git.ts';
 
 export class GitMemoire implements Git {
   readonly #fichiers: string[];
@@ -30,10 +30,23 @@ export class GitMemoire implements Git {
     this.repertoireMisAJour = repertoireDepot;
   }
 
-  fichiersModifiesDepuis(repertoireDepot: string, nombreDeJours: number): string[] {
+  fichiersModifiesDepuis(
+    repertoireDepot: string,
+    nombreDeJours: number
+  ): Modifications {
     this.misAJourAvantLeDiff = this.repertoireMisAJour === repertoireDepot;
     this.repertoireDemande = repertoireDepot;
     this.nombreDeJoursDemande = nombreDeJours;
-    return this.#fichiers;
+    return {
+      premierCommit: {
+        court: '440e7be3',
+        long: '440e7be3397d56a67f4fbda13c1d0c0ad9a36374',
+      },
+      dernierCommit: {
+        court: 'd852e879',
+        long: 'd852e87954688029939791687afffe34c81bc361',
+      },
+      liste: this.#fichiers,
+    };
   }
 }

@@ -18,6 +18,8 @@ import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 import { abonneNotificationScan } from './notificationScan.ts';
+import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -25,6 +27,8 @@ export type ContexteDeComposition = {
 };
 
 const outilCodexSecurity = (racine: string) => join(racine, 'outils/codex-security');
+
+const entrepot = new EntrepotDeScanMemoire();
 
 export const lesDependancesPourLaPreparationEnvironnement = (
   { racine, console }: ContexteDeComposition,
@@ -56,6 +60,7 @@ export const lesDependancesPourLaGenerationConfig = ({
   systemeDeFichier: new SystemeDeFichierNode(racine),
   console,
   git: new GitEnLigneDeCommande(racine),
+  entrepot: entrepot,
 });
 
 export const lesDependancesPourLaGenerationEnvironnement = ({
@@ -82,7 +87,7 @@ export const lesDependancesPourLeScan = ({
 }: ContexteDeComposition): DependancesScan => {
   const repertoireAppel = process.env.INIT_CWD || process.cwd();
   const busDEvenements = new BusEvenementsPALA();
-  abonneNotificationScan(busDEvenements);
+  abonneNotificationScan(busDEvenements, fabriqueMessagerie(), entrepot);
   return {
     racine,
     scanner: new ScannerCodexSecurityNpm(

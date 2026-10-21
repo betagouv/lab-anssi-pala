@@ -1,21 +1,36 @@
 import type { BusEvenementsPALA } from '../noyau/adaptateurs/node/busEvenementsPALA.ts';
-import type { ScanTermine } from '../codex-security/domaine/scanTermine.ts';
+import type {
+  ResultatDeScan,
+  ScanTermine,
+} from '../codex-security/domaine/scanTermine.ts';
 import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.ts';
 import type { Constat } from '../codex-security/domaine/constat.ts';
-import { MessagerieMattermost } from '../messagerie/adaptateurs/messagerieMattermost.ts';
-import { ApiHTTPFetch } from '../noyau/adaptateurs/node/apiHTTPFetch.ts';
-import { environnement } from '../noyau/environnement.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
+import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
+import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import type { Evenement } from '../noyau/ports/BusEvenements.ts';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
 
-const publieSurMattermost = async (contenu: string): Promise<void> => {
-  if (!environnement.mattermost().urlWebhook) return;
-  await new MessagerieMattermost(new ApiHTTPFetch()).envoyer({ contenu });
-};
+export const abonneNotificationScan = (
+  bus: BusEvenementsPALA,
+  messagerie: MessagerieInstantanee,
+  entrepot: EntrepotDeScanMemoire
+): void => {
+  const recupereLesInformationsGit = (evenement: ScanTermine | ScanNonEffectue) => {
+    try {
+      const identifiant = evenement.cible.substring(
+        evenement.cible.lastIndexOf('/') + 1
+      );
+      const scan = entrepot.lis(identifiant);
+      return `- **Interval de commits :** [${scan[identifiant].premierCommit}, ${scan[identifiant].dernierCommit}]
+  - **Historique git sur :** ${scan[identifiant].dureeHistorique} jours`;
+    } catch (e) {
+      return '';
+    }
+  };
 
-export const abonneNotificationScan = (bus: BusEvenementsPALA): void => {
   bus.sabonne<ScanTermine>('SCAN_TERMINÉ', async (evenement) => {
     const cible = nomDeCible(evenement.cible);
 
@@ -26,6 +41,7 @@ export const abonneNotificationScan = (bus: BusEvenementsPALA): void => {
     ${constat.emplacements.map((emplacement) => `- ${emplacement.chemin} (lignes ${emplacement.ligneDebut} à ${emplacement.ligneFin})`).join('\n')}
     `;
     };
+    const informationsGit = recupereLesInformationsGit(evenement);
 
     const {
       hours = 0,
@@ -41,18 +57,22 @@ export const abonneNotificationScan = (bus: BusEvenementsPALA): void => {
   - **Nombre de fichiers analysés :** ${evenement.nombreDeFichiers}
   - **Durée du scan :** ${hours} H ${minutes} mn ${seconds} s
   - **Nombre de constats trouvés :** ${evenement.constats.length}
+  ${informationsGit}
   #### Constats
   ${evenement.constats.map((c) => constat(c)).join('\n')}
   `;
-    await publieSurMattermost(message);
+    await messagerie.envoyer({ contenu: message });
   });
 
   bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', async (evenement) => {
     const cible = nomDeCible(evenement.cible);
 
+    const informationsGit = recupereLesInformationsGit(evenement);
+
     const message = `### ⚠️ Scan non effectué pour ${cible}
   - **Cible :** ${cible}
-  - Aucun fichier à scanner : le périmètre (scan.scope.paths) est vide sur la fenêtre demandée.`;
-    await publieSurMattermost(message);
+  - Aucun fichier à scanner : le périmètre (scan.scope.paths) est vide sur la fenêtre demandée.
+  ${informationsGit}`;
+    await messagerie.envoyer({ contenu: message });
   });
 };
