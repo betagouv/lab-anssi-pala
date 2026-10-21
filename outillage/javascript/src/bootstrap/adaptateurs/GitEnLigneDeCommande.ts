@@ -1,6 +1,6 @@
 import { executeCommande } from '../../noyau/adaptateurs/node/processus.ts';
 import type { CibleBootstrap } from '../domaine/CibleBootstrap.ts';
-import type { Git } from '../ports/Git.ts';
+import type { Git, Modifications } from '../ports/Git.ts';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -33,7 +33,10 @@ export class GitEnLigneDeCommande implements Git {
     });
   }
 
-  fichiersModifiesDepuis(repertoireDepot: string, nombreDeJours: number): string[] {
+  fichiersModifiesDepuis(
+    repertoireDepot: string,
+    nombreDeJours: number
+  ): Modifications {
     const sortie = execFileSync(
       'git',
       [
@@ -50,6 +53,6 @@ export class GitEnLigneDeCommande implements Git {
       .split('\n')
       .map((ligne) => ligne.trim())
       .filter((ligne) => ligne.length > 0);
-    return [...new Set(fichiers)].sort();
+    return { liste: [...new Set(fichiers)].sort() };
   }
 }
