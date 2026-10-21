@@ -33,11 +33,13 @@ export class GenereConfigCible {
       `Mise à jour de la copie de travail : ${cible.copieDeTravail}`,
       'VERT'
     );
-    const fichiersModifies = this.#git
-      .fichiersModifiesDepuis(cible.copieDeTravail, nombreDeJours)
-      .liste.filter((f) =>
-        this.#systemeDeFichier.existe(`${join(cible.copieDeTravail, f)}`)
-      );
+    const modifications = this.#git.fichiersModifiesDepuis(
+      cible.copieDeTravail,
+      nombreDeJours
+    );
+    const fichiersModifies = modifications.liste.filter((f) =>
+      this.#systemeDeFichier.existe(`${join(cible.copieDeTravail, f)}`)
+    );
 
     const config = new ConfigurationCible({
       modele: fournisseur.modele,
@@ -54,6 +56,11 @@ export class GenereConfigCible {
     this.#console.aLaLigne(
       `  Périmètre ciblé pour le fournisseur : ${fournisseur.nom} ` +
         `(${nombreDeFichiersModifies} fichier${nombreDeFichiersModifies > 1 ? 's' : ''})`,
+      'VERT'
+    );
+    this.#console.aLaLigne(
+      `  Informations d’historique Git : ${nombreDeJours} derniers jours ` +
+        `(premier commit : ${modifications.premierCommit.court}, dernier commit : ${modifications.dernierCommit.court})`,
       'VERT'
     );
 
