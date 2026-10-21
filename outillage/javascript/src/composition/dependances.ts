@@ -28,6 +28,8 @@ export type ContexteDeComposition = {
 
 const outilCodexSecurity = (racine: string) => join(racine, 'outils/codex-security');
 
+const entrepot = new EntrepotDeScanMemoire();
+
 export const lesDependancesPourLaPreparationEnvironnement = (
   { racine, console }: ContexteDeComposition,
   { shannon = true }: { shannon?: boolean } = {}
@@ -58,7 +60,7 @@ export const lesDependancesPourLaGenerationConfig = ({
   systemeDeFichier: new SystemeDeFichierNode(racine),
   console,
   git: new GitEnLigneDeCommande(racine),
-  entrepot: new EntrepotDeScanMemoire(),
+  entrepot: entrepot,
 });
 
 export const lesDependancesPourLaGenerationEnvironnement = ({
@@ -85,7 +87,7 @@ export const lesDependancesPourLeScan = ({
 }: ContexteDeComposition): DependancesScan => {
   const repertoireAppel = process.env.INIT_CWD || process.cwd();
   const busDEvenements = new BusEvenementsPALA();
-  abonneNotificationScan(busDEvenements, fabriqueMessagerie());
+  abonneNotificationScan(busDEvenements, fabriqueMessagerie(), entrepot);
   return {
     racine,
     scanner: new ScannerCodexSecurityNpm(
