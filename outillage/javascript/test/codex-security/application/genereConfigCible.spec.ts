@@ -11,6 +11,7 @@ import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import { GitMemoire } from '../../doubles/GitMemoire.ts';
+import { EntrepotDeScanMemoire } from '../../../src/noyau/persistance/entrepots.ts';
 
 const UNE_CIBLE = 'la-cible';
 
@@ -23,9 +24,6 @@ const fournisseurAlbert = () => {
     nom: 'albert',
     url: 'https://fournisseur.example/v1',
   });
-};
-const urlDuProxy = (url: string) => {
-  environnement.urlLiteLLMConfiguree = () => url;
 };
 
 const ENV_RACINE =
@@ -43,6 +41,7 @@ const uneGeneration = (doubles: Partial<Dependances> = {}) =>
     systemeDeFichier: systemeDeFichierConfigure(),
     console: new ConsoleEnMemoire(),
     git: new GitMemoire(['src/noyau/environnement.ts']),
+    entrepot: new EntrepotDeScanMemoire(),
     ...doubles,
   });
 
@@ -50,7 +49,6 @@ describe('Génère Config Cible', () => {
   it('écrit la config ciblée, avec le modèle et le fournisseur de l’environnement', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ systemeDeFichier }).execute(
       UNE_CIBLE,
@@ -65,7 +63,7 @@ describe('Génère Config Cible', () => {
   it('pointe le fournisseur vers l’URL du proxy (LITELLM_BASE_URL)', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     fournisseurAlbert();
-    urlDuProxy('https://litellm.local');
+    environnement.urlLiteLLMConfiguree = () => 'https://litellm.local';
 
     uneGeneration({ systemeDeFichier }).execute(
       UNE_CIBLE,
@@ -84,8 +82,6 @@ describe('Génère Config Cible', () => {
       'src/codex-security/application/lanceScan.ts',
       'src/noyau/environnement.ts',
     ]);
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ systemeDeFichier, git }).execute(UNE_CIBLE, 30);
 
@@ -99,8 +95,6 @@ describe('Génère Config Cible', () => {
 
   it('met à jour la copie de travail de la cible avant de calculer le diff', () => {
     const git = new GitMemoire();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ git }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -112,8 +106,6 @@ describe('Génère Config Cible', () => {
 
   it('interroge le dépôt git sur la copie de travail de la cible passée en paramètre', () => {
     const git = new GitMemoire();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ git }).execute('mon-projet', NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -124,8 +116,6 @@ describe('Génère Config Cible', () => {
 
   it('refuse de générer sans .env racine (fournisseur non configuré)', () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     expect(() =>
       uneGeneration({ systemeDeFichier }).execute(
@@ -140,8 +130,6 @@ describe('Génère Config Cible', () => {
 
   it('annonce la mise à jour de la copie de travail en première étape', () => {
     const console = new ConsoleEnMemoire();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -152,8 +140,6 @@ describe('Génère Config Cible', () => {
 
   it('annonce le fichier généré et le fournisseur configuré', () => {
     const console = new ConsoleEnMemoire();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ console }).execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
@@ -166,9 +152,6 @@ describe('Génère Config Cible', () => {
   });
 
   it('renvoie le chemin du fichier généré, à passer ensuite au scan (--config)', () => {
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
-
     const chemin = uneGeneration().execute(UNE_CIBLE, NOMBRE_DE_JOURS_PAR_DEFAUT);
 
     expect(chemin).toBe(CHEMIN_FICHIER_CONFIG_CIBLE);
@@ -176,8 +159,6 @@ describe('Génère Config Cible', () => {
 
   it('génère un fichier distinct par cible pour industrialiser plusieurs projets', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     const chemin = uneGeneration({ systemeDeFichier }).execute(
       'projet-x',
@@ -188,15 +169,13 @@ describe('Génère Config Cible', () => {
     expect(systemeDeFichier.existe(chemin)).toBe(true);
   });
 
-  it('vérifie l’existence des fichiers modifiers dans le dossier cible', async () => {
+  it('vérifie l’existence des fichiers modifiers dans le dossier cible', () => {
     const systemeDeFichier = systemeDeFichierConfigure();
     const git = new GitMemoire([
       'src/codex-security/application/lanceScan.ts',
       'src/codex-security/ancien-dossier/ancien-fichier.ts',
       'src/noyau/environnement.ts',
     ]);
-    fournisseurAlbert();
-    urlDuProxy('http://127.0.0.1:4000');
 
     uneGeneration({ systemeDeFichier, git }).execute(UNE_CIBLE, 30);
 
@@ -206,5 +185,30 @@ describe('Génère Config Cible', () => {
       'src/noyau/environnement.ts',
     ]);
     expect(git.nombreDeJoursDemande).toBe(30);
+  });
+
+  it('persiste les informations de la configuration générée', () => {
+    const systemeDeFichier = systemeDeFichierConfigure();
+    const git = new GitMemoire([
+      'src/codex-security/application/lanceScan.ts',
+      'src/noyau/environnement.ts',
+    ]);
+    const entrepotMemoire = new EntrepotDeScanMemoire();
+
+    uneGeneration({ systemeDeFichier, git, entrepot: entrepotMemoire }).execute(
+      UNE_CIBLE,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
+
+    expect(entrepotMemoire.tousLesElements).toEqual([
+      {
+        [UNE_CIBLE]: {
+          premierCommit: '440e7be3397d56a67f4fbda13c1d0c0ad9a36374',
+          dernierCommit: 'd852e87954688029939791687afffe34c81bc361',
+          dureeHistorique: 7,
+          nombreDeFichiers: 2,
+        },
+      },
+    ]);
   });
 });
