@@ -1,17 +1,36 @@
 import type { BusEvenementsPALA } from '../noyau/adaptateurs/node/busEvenementsPALA.ts';
-import type { ScanTermine } from '../codex-security/domaine/scanTermine.ts';
+import type {
+  ResultatDeScan,
+  ScanTermine,
+} from '../codex-security/domaine/scanTermine.ts';
 import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.ts';
 import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
+import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import type { Evenement } from '../noyau/ports/BusEvenements.ts';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
 
 export const abonneNotificationScan = (
   bus: BusEvenementsPALA,
-  messagerie: MessagerieInstantanee
+  messagerie: MessagerieInstantanee,
+  entrepot: EntrepotDeScanMemoire
 ): void => {
+  const recupereLesInformationsGit = (evenement: ScanTermine) => {
+    try {
+      const identifiant = evenement.cible.substring(
+        evenement.cible.lastIndexOf('/') + 1
+      );
+      const scan = entrepot.lis(identifiant);
+      return `- **Interval de commits :** [${scan[identifiant].premierCommit}, ${scan[identifiant].dernierCommit}]
+  - **Historique git sur :** ${scan[identifiant].dureeHistorique} jours`;
+    } catch (e) {
+      return '';
+    }
+  };
+
   bus.sabonne<ScanTermine>('SCAN_TERMINÉ', async (evenement) => {
     const cible = nomDeCible(evenement.cible);
 
@@ -22,6 +41,7 @@ export const abonneNotificationScan = (
     ${constat.emplacements.map((emplacement) => `- ${emplacement.chemin} (lignes ${emplacement.ligneDebut} à ${emplacement.ligneFin})`).join('\n')}
     `;
     };
+    const informationsGit = recupereLesInformationsGit(evenement);
 
     const {
       hours = 0,
@@ -37,6 +57,7 @@ export const abonneNotificationScan = (
   - **Nombre de fichiers analysés :** ${evenement.nombreDeFichiers}
   - **Durée du scan :** ${hours} H ${minutes} mn ${seconds} s
   - **Nombre de constats trouvés :** ${evenement.constats.length}
+  ${informationsGit}
   #### Constats
   ${evenement.constats.map((c) => constat(c)).join('\n')}
   `;
