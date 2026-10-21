@@ -4,36 +4,36 @@ import { environnement } from '../../noyau/environnement.ts';
 import { Cible } from '../../environnement/domaine/Cible.ts';
 import { ConfigurationCible } from '../domaine/ConfigurationCible.ts';
 import { cheminConfigCible } from '../domaine/cheminConfig.ts';
-import type { DepotGit } from '../ports/DepotGit.ts';
 import { join } from 'path';
+import type { Git } from '../../bootstrap/ports/Git.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
   console: Console;
-  depotGit: DepotGit;
+  git: Git;
 };
 
 export class GenereConfigCible {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #console: Console;
-  readonly #depotGit: DepotGit;
+  readonly #git: Git;
 
-  constructor({ systemeDeFichier, console, depotGit }: Dependances) {
+  constructor({ systemeDeFichier, console, git }: Dependances) {
     this.#systemeDeFichier = systemeDeFichier;
     this.#console = console;
-    this.#depotGit = depotGit;
+    this.#git = git;
   }
 
   execute(nomCible: string, nombreDeJours: number): string {
     environnement.verifiePresenceVariablesRacine(this.#systemeDeFichier);
     const fournisseur = environnement.fournisseur();
     const cible = new Cible({ nom: nomCible });
-    this.#depotGit.metAJour(cible.copieDeTravail);
+    this.#git.metAJour(cible.copieDeTravail);
     this.#console.aLaLigne(
       `Mise à jour de la copie de travail : ${cible.copieDeTravail}`,
       'VERT'
     );
-    const fichiersModifies = this.#depotGit
+    const fichiersModifies = this.#git
       .fichiersModifiesDepuis(cible.copieDeTravail, nombreDeJours)
       .filter((f) =>
         this.#systemeDeFichier.existe(`${join(cible.copieDeTravail, f)}`)
