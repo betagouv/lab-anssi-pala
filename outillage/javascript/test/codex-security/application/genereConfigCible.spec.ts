@@ -161,6 +161,7 @@ describe('Génère Config Cible', () => {
       'Mise à jour de la copie de travail : cible/copies/la-cible',
       'Généré: outils/codex-security/configs/config-la-cible.yaml',
       '  Périmètre ciblé pour le fournisseur : albert (1 fichier)',
+      '  Informations d’historique Git : 7 derniers jours (premier commit : 440e7be3, dernier commit : d852e879)',
     ]);
   });
 
