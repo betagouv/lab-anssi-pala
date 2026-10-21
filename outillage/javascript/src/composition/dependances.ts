@@ -19,6 +19,7 @@ import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 import { abonneNotificationScan } from './notificationScan.ts';
 import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -84,7 +85,7 @@ export const lesDependancesPourLeScan = ({
 }: ContexteDeComposition): DependancesScan => {
   const repertoireAppel = process.env.INIT_CWD || process.cwd();
   const busDEvenements = new BusEvenementsPALA();
-  abonneNotificationScan(busDEvenements);
+  abonneNotificationScan(busDEvenements, fabriqueMessagerie());
   return {
     racine,
     scanner: new ScannerCodexSecurityNpm(
