@@ -9,6 +9,7 @@ import type {
   Message,
   MessagerieInstantanee,
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
+import { EntrepotDeScanMemoire } from '../../src/noyau/persistance/entrepots.ts';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
@@ -19,11 +20,21 @@ class MessagerieDeTest implements MessagerieInstantanee {
 
 describe('Les abonnés à la notification du scan', () => {
   let bus: BusEvenementsPALA;
+  let entrepot: EntrepotDeScanMemoire;
   beforeEach(() => {
     bus = new BusEvenementsPALA();
+    entrepot = new EntrepotDeScanMemoire();
+    entrepot.persiste({
+      projet: {
+        dernierCommit: 'abcde',
+        premierCommit: 'fghij',
+        dureeHistorique: 777,
+        nombreDeFichiers: 42,
+      },
+    });
   });
 
-  describe('En ce qui concernce le scan terminé ', () => {
+  describe('En ce qui concerne le scan terminé ', () => {
     const scanTermine: ScanTermine = {
       nom: 'SCAN_TERMINÉ',
       cible: 'projet',
@@ -39,13 +50,42 @@ describe('Les abonnés à la notification du scan', () => {
         },
       ],
     };
+
     it('envoie le message de constat', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest);
+      abonneNotificationScan(bus, messagerieDeTest, entrepot);
       bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages).toHaveLength(1);
+    });
+
+    it('envoie le message de constat avec les hashs de commit et le nombre de jours', async () => {
+      const messagerieDeTest = new MessagerieDeTest();
+
+      abonneNotificationScan(bus, messagerieDeTest, entrepot);
+      bus.publie(unScanTermine(scanTermine));
+
+      expect(messagerieDeTest.messages[0].contenu).toContain(
+        '**Interval de commits :** [fghij, abcde]'
+      );
+      expect(messagerieDeTest.messages[0].contenu).toContain(
+        '**Historique git sur :** 777 jours'
+      );
+    });
+
+    it('ne rajoute pas les hashs de commit et le nombre de jours si le scan n’est pas trouvé', async () => {
+      const messagerieDeTest = new MessagerieDeTest();
+
+      abonneNotificationScan(bus, messagerieDeTest, entrepot);
+      bus.publie(unScanTermine({ ...scanTermine, cible: 'cible-inconnue' }));
+
+      expect(messagerieDeTest.messages[0].contenu).not.toContain(
+        '**Interval de commits :** [fghij, abcde]'
+      );
+      expect(messagerieDeTest.messages[0].contenu).not.toContain(
+        '**Historique git sur :** 777 jours'
+      );
     });
   });
 });
