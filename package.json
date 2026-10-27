@@ -9,6 +9,7 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "dev:back": "node --require dotenv/config --watch --import tsx serveur/back/src/index.ts",
     "estimer-cout": "node outillage/javascript/src/composition/estimer-cout.ts",
     "bootstrap": "node outillage/javascript/src/composition/bootstrap.ts",
     "format:corrige": "prettier --write .",
@@ -27,11 +28,18 @@
     "commander": "^15.0.0",
     "date-fns": "^4.4.0",
     "dotenv": "^18.0.4",
+    "express": "^5.3.0",
+    "express-ip-filter": "^2.0.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/lusca": "^1.7.5",
     "@types/node": "24.19.0",
     "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
     "typescript": "7.0.2",
     "vitest": "5.0.2"
   }
