@@ -64,7 +64,7 @@ d'outil.
 
 Comparer les outils de façon **qualitative** (qualité du résultat et du raisonnement, coût, temps,
 robustesse), sans transposer de chiffres liés à une cible particulière. L'outillage a ensuite été
-porté en TypeScript (Node 24, architecture hexagonale, tests avec doubles) pour rendre les
+porté en TypeScript (Node 24.22.1, architecture hexagonale, tests avec doubles) pour rendre les
 lancements reproductibles et agnostiques du fournisseur.
 
 ## Enseignement d'ensemble
