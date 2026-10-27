@@ -1,9 +1,12 @@
+import { randomBytes } from 'node:crypto';
 import type { RequestHandler } from 'express';
 
 const CSP_BIBLIOTHEQUES = {
   viteHotReload: process.env.SVELTE_DEV_LOCAL_AVEC_HOT_RELOAD
     ? 'ws://localhost:3001'
     : '',
+  labAnssiUiKit:
+    'https://lab-anssi-ui-kit-prod-s3-assets.cellar-c2.services.clever-cloud.com',
 };
 
 export interface Middleware {
@@ -13,19 +16,26 @@ export interface Middleware {
 
 export const middleware = (): Middleware => {
   const positionneHeaders: RequestHandler = (_requete, reponse, suite) => {
+    const nonce = randomBytes(16).toString('base64');
+    reponse.locals['nonce'] = nonce;
+
+    const uiKit = CSP_BIBLIOTHEQUES.labAnssiUiKit;
+
     const defaultCsp = "default-src 'self'";
     const connectCsp = `connect-src 'self' ${CSP_BIBLIOTHEQUES.viteHotReload}`;
-    const imgCsp = `img-src 'self'`;
+    const imgCsp = `img-src 'self' data: ${uiKit}`;
+    const fontCsp = `font-src 'self' ${uiKit}`;
     const mediaCsp = `media-src 'self'`;
 
-    const styleCsp = `style-src 'self'`;
-    const styleSrcElemCsp = `style-src-elem 'self'`;
-    const scriptCsp = `script-src 'self'`;
+    const styleCsp = `style-src 'self' 'nonce-${nonce}' ${uiKit}`;
+    const styleSrcElemCsp = `style-src-elem 'self' 'nonce-${nonce}' ${uiKit}`;
+    const scriptCsp = `script-src 'self' 'nonce-${nonce}' ${uiKit}`;
 
     const toutesCsp = [
       defaultCsp,
       connectCsp,
       imgCsp,
+      fontCsp,
       mediaCsp,
       styleCsp,
       styleSrcElemCsp,

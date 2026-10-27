@@ -10,6 +10,30 @@ export type ConfigurationServeur = {
   middleware: Middleware;
 };
 
+const CDN_LAB_ANSSI_UI_KIT =
+  'https://lab-anssi-ui-kit-prod-s3-assets.cellar-c2.services.clever-cloud.com';
+
+const lisVersionUiKit = (): string => {
+  const cheminPkg = path.join(process.cwd(), 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(cheminPkg, 'utf8'));
+  const version = pkg.runtimeDependencies?.['@lab-anssi/ui-kit'];
+  if (!version)
+    throw new Error(
+      "Version de @lab-anssi/ui-kit absente de runtimeDependencies (package.json racine)."
+    );
+  return version;
+};
+
+const versionUiKit = lisVersionUiKit();
+
+const balisesUiKit = () => {
+  const base = `${CDN_LAB_ANSSI_UI_KIT}/${versionUiKit}`;
+  return (
+    `<link rel="stylesheet" nonce="%%NONCE%%" href="${base}/dsfr-variables.css">` +
+    `<script nonce="%%NONCE%%" src="${base}/lab-anssi-ui-kit.iife.js"></script>`
+  );
+};
+
 const creeApp = (config: ConfigurationServeur) => {
   const { adaptateurProtection, middleware } = config;
   const app = express();
@@ -19,6 +43,11 @@ const creeApp = (config: ConfigurationServeur) => {
   app.use(adaptateurProtection.protectionLimiteTrafic());
 
   app.use(middleware.positionneHeaders);
+
+  app.use(
+    '/statique',
+    express.static(path.join(process.cwd(), 'serveur/front/dist'))
+  );
 
   app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
 
@@ -37,10 +66,9 @@ const lisLeFichierIndex = () => {
 };
 
 const envoieIndexAvecNonce = (reponse: Response) => {
-  const indexAvecLeNonce = lisLeFichierIndex().replace(
-    '%%NONCE%%',
-    reponse.locals['nonce']
-  );
+  const indexAvecLeNonce = lisLeFichierIndex()
+    .replace('</head>', `${balisesUiKit()}</head>`)
+    .replaceAll('%%NONCE%%', reponse.locals['nonce']);
 
   reponse.setHeader('Content-Type', 'text/html').send(indexAvecLeNonce);
 };
