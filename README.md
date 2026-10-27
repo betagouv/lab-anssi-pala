@@ -23,7 +23,7 @@ garde la clé du fournisseur hors de l'environnement de l'agent (voir
 
 ## Démarrage
 
-Prérequis : Node.js ≥ 24, Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
+Prérequis : Node.js 24.22.1 (version épinglée dans `.nvmrc`), Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
 compatible OpenAI (Albert ou Scaleway).
 
 Il existe une CLI déclinée en bash et en Node. Les commandes fournies utilisent la CLI Node
@@ -98,7 +98,7 @@ Méthode d'ensemble : `documentation/demarche.md`.
 
 ```
 outils/<outil>/        source/ (sous-module amont), configs, README (voir documentation/ajouter-un-outil.md)
-outillage/javascript/  outillage TypeScript (Node 24, vitest, architecture hexagonale)
+outillage/javascript/  outillage TypeScript (Node 24.22.1, vitest, architecture hexagonale)
 documentation/         démarche, notes API fournisseurs, versions
 cible/                 copies locales des cibles (jamais versionnées)
 ```
