@@ -4,6 +4,10 @@
 !.env.template
 outils/*/*.env
 
+# Front PALA (Svelte/Vite) : dépendances et build (le dist est régénéré au déploiement)
+serveur/front/node_modules/
+serveur/front/dist/
+
 # Sources amont des OUTILS en sous-modules : le contenu vit dans le sous-module, pas ici
 #   outils/<outil>/source  -> voir .gitmodules
 
