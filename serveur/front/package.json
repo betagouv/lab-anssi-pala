@@ -1,0 +1,27 @@
+{
+  "name": "pala-front",
+  "private": true,
+  "type": "module",
+  "description": "Front PALA — SPA Svelte 5 au design system de l'État (@lab-anssi/ui-kit)",
+  "engines": {
+    "node": ">=24.22.1"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "dependencies": {
+    "svelte": "^5.57.0"
+  },
+  "devDependencies": {
+    "@gouvfr/dsfr": "^1.15.4",
+    "@lab-anssi/ui-kit": "1.64.0",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@tsconfig/svelte": "^5.0.4",
+    "svelte-check": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
+  }
+}

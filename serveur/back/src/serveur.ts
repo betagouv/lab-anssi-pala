@@ -19,7 +19,7 @@ const lisVersionUiKit = (): string => {
   const version = pkg.runtimeDependencies?.['@lab-anssi/ui-kit'];
   if (!version)
     throw new Error(
-      "Version de @lab-anssi/ui-kit absente de runtimeDependencies (package.json racine)."
+      'Version de @lab-anssi/ui-kit absente de runtimeDependencies (package.json racine).'
     );
   return version;
 };

@@ -10,6 +10,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "dev:back": "node --require dotenv/config --watch --import tsx serveur/back/src/index.ts",
+    "dev:front": "pnpm --dir serveur/front dev",
+    "build:front": "pnpm --dir serveur/front install && pnpm --dir serveur/front build",
     "estimer-cout": "node outillage/javascript/src/composition/estimer-cout.ts",
     "bootstrap": "node outillage/javascript/src/composition/bootstrap.ts",
     "format:corrige": "prettier --write .",
@@ -23,6 +25,9 @@
     "shannon": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
     "shannon-smoke": "node --require dotenv/config outillage/javascript/src/composition/shannon-smoke.ts",
     "vérifie-appels-outils-llm": "node --require dotenv/config outillage/javascript/src/composition/verifie-appels-outils-llm.ts"
+  },
+  "runtimeDependencies": {
+    "@lab-anssi/ui-kit": "1.64.0"
   },
   "dependencies": {
     "commander": "^15.0.0",
