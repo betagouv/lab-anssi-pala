@@ -3,8 +3,8 @@ import type { CibleBootstrap } from '../domaine/CibleBootstrap.ts';
 export type HashDeCommit = { long: string; court: string };
 
 export type Modifications = {
-  premierCommit: HashDeCommit;
-  dernierCommit: HashDeCommit;
+  premierCommit?: HashDeCommit;
+  dernierCommit?: HashDeCommit;
   liste: string[];
 };
 
