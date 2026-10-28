@@ -9,14 +9,19 @@ import {
   PrepareEnvironnement,
 } from '../../../src/bootstrap/application/prepareEnvironnement.ts';
 
-const unePreparation = (doubles: Partial<Dependances> = {}) =>
-  new PrepareEnvironnement({
+const unePreparation = (doubles: Partial<Dependances> = {}) => {
+  const systemeDeFichier = new SystemeDeFichierEnMemoire({
+    'outils/codex-security/source/.git': '',
+    'outils/shannon/source/.git': '',
+  });
+  return new PrepareEnvironnement({
     git: new GitMemoire(),
-    systemeDeFichier: new SystemeDeFichierEnMemoire(),
+    systemeDeFichier,
     console: new ConsoleEnMemoire(),
     outils: [],
     ...doubles,
   });
+};
 
 describe('Prépare l’environnement', () => {
   it('initialise les sous-modules des outils', async () => {
@@ -25,6 +30,36 @@ describe('Prépare l’environnement', () => {
     await unePreparation({ git }).execute({});
 
     expect(git.sousModulesInitialises).toBe(true);
+  });
+
+  it("n'initialise pas les sous-modules Git si l’entrepôt codex n’est pas un checkout git (ex. déploiement)", async () => {
+    const console = new ConsoleEnMemoire();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/codex-security/source/': '',
+      'outils/shannon/source/.git': '',
+    });
+
+    await unePreparation({ console, systemeDeFichier }).execute({});
+
+    expect(systemeDeFichier.aLu('outils/codex-security/source/.git')).toBe(true);
+    expect(console.lignes.map((ligne) => ligne.message)).toContain(
+      '==> Sous-modules des outils : pas de dépôt git ici (ex. déploiement) — sources supposées déjà présentes, étape ignorée'
+    );
+  });
+
+  it("n'initialise pas les sous-modules Git si l’entrepôt shannon n’est pas un checkout git (ex. déploiement)", async () => {
+    const console = new ConsoleEnMemoire();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/codex-security/source/.git': '',
+      'outils/shannon/source/': '',
+    });
+
+    await unePreparation({ console, systemeDeFichier }).execute({});
+
+    expect(systemeDeFichier.aLu('outils/shannon/source/.git')).toBe(true);
+    expect(console.lignes.map((ligne) => ligne.message)).toContain(
+      '==> Sous-modules des outils : pas de dépôt git ici (ex. déploiement) — sources supposées déjà présentes, étape ignorée'
+    );
   });
 
   it('crée le dossier des copies de scan', async () => {

@@ -15,6 +15,8 @@ export type Dependances = {
   outils: PreparationOutil[];
 };
 
+const OUTILS = ['outils/codex-security/source/.git', 'outils/shannon/source/.git'];
+
 export class PrepareEnvironnement {
   readonly #git: Git;
   readonly #systemeDeFichier: SystemeDeFichier;
@@ -37,6 +39,13 @@ export class PrepareEnvironnement {
   }
 
   async #initialiseSousModules(): Promise<void> {
+    if (OUTILS.some((o) => !this.#systemeDeFichier.existe(o))) {
+      this.#console.aLaLigne(
+        '==> Sous-modules des outils : pas de dépôt git ici (ex. déploiement) — sources supposées déjà présentes, étape ignorée',
+        'GRIS'
+      );
+      return;
+    }
     this.#console.aLaLigne('==> Initialisation des sous-modules des outils');
     await this.#git.initialiseSousModules();
   }

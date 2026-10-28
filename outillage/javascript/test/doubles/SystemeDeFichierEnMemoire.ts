@@ -5,6 +5,7 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   readonly dossiers = new Set<string>();
   readonly fichiersPrives = new Set<string>();
   readonly dossiersPrives = new Set<string>();
+  readonly cheminsLu = new Set<string>();
 
   constructor(fichiers: Record<string, string> = {}) {
     this.fichiers = new Map(Object.entries(fichiers));
@@ -17,6 +18,7 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   }
 
   existe(chemin: string): boolean {
+    this.cheminsLu.add(chemin);
     return this.fichiers.has(chemin) || this.dossiers.has(chemin);
   }
 
@@ -39,5 +41,9 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   ecritFichierPrive(chemin: string, contenu: string): void {
     this.fichiers.set(chemin, contenu);
     this.fichiersPrives.add(chemin);
+  }
+
+  aLu(chemin: string) {
+    return this.cheminsLu.has(chemin);
   }
 }
