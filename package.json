@@ -32,6 +32,11 @@
   "runtimeDependencies": {
     "@lab-anssi/ui-kit": "1.64.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "dependencies": {
     "commander": "^15.0.0",
     "date-fns": "^4.4.0",
