@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { defineConfig, type Plugin } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import path from 'node:path';
 
 const CDN_LAB_ANSSI_UI_KIT =
   'https://lab-anssi-ui-kit-prod-s3-assets.cellar-c2.services.clever-cloud.com';
@@ -41,9 +42,13 @@ export default defineConfig({
   plugins: [svelte(), estampilleNonce(), injecteUiKitDev()],
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
     emptyOutDir: true,
     modulePreload: { polyfill: false },
+  },
+  resolve: {
+    alias: {
+      '/assets': path.resolve(process.cwd(), 'assets'),
+    },
   },
   server: {
     port: 3001,

@@ -12,9 +12,6 @@ importers:
         specifier: ^5.57.0
         version: 5.57.3
     devDependencies:
-      '@gouvfr/dsfr':
-        specifier: ^1.15.4
-        version: 1.15.4
       '@lab-anssi/ui-kit':
         specifier: 1.64.0
         version: 1.64.0(svelte@5.57.3)
@@ -191,10 +188,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@gouvfr/dsfr@1.15.4':
-    resolution: {integrity: sha512-Yu+4TuR7wBI7bBuPMNH4fstwmMweve+lJhopLkPZJ7i4pygjEtzfq4zaniibH5QNd+xjTWb/fEJiqe8nmYqcxg==}
-    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -652,8 +645,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.2':
     optional: true
-
-  '@gouvfr/dsfr@1.15.4': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
