@@ -15,6 +15,11 @@
   "dependencies": {
     "svelte": "^5.57.0"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  },
   "devDependencies": {
     "@gouvfr/dsfr": "^1.15.4",
     "@lab-anssi/ui-kit": "1.64.0",
