@@ -60,8 +60,12 @@ export class GenereConfigCible {
 
     this.#entrepot.persiste({
       [nomCible]: {
-        premierCommit: modifications.premierCommit.long,
-        dernierCommit: modifications.dernierCommit.long,
+        ...(modifications.premierCommit && {
+          premierCommit: modifications.premierCommit.long,
+        }),
+        ...(modifications.dernierCommit && {
+          dernierCommit: modifications.dernierCommit.long,
+        }),
         dureeHistorique: nombreDeJours,
         nombreDeFichiers: nombreDeFichiersModifies,
       },
@@ -75,7 +79,7 @@ export class GenereConfigCible {
     );
     this.#console.aLaLigne(
       `  Informations d’historique Git : ${nombreDeJours} derniers jours ` +
-        `(premier commit : ${modifications.premierCommit.court}, dernier commit : ${modifications.dernierCommit.court})`,
+        `(premier commit : ${modifications.premierCommit?.court}, dernier commit : ${modifications.dernierCommit?.court})`,
       'VERT'
     );
 

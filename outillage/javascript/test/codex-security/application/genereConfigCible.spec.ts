@@ -211,4 +211,24 @@ describe('Génère Config Cible', () => {
       },
     ]);
   });
+
+  it('persiste les informations de la configuration générée avec absence de commits', () => {
+    const systemeDeFichier = systemeDeFichierConfigure();
+    const git = new GitMemoire([]);
+    const entrepotMemoire = new EntrepotDeScanMemoire();
+
+    uneGeneration({ systemeDeFichier, git, entrepot: entrepotMemoire }).execute(
+      UNE_CIBLE,
+      NOMBRE_DE_JOURS_PAR_DEFAUT
+    );
+
+    expect(entrepotMemoire.tousLesElements).toEqual([
+      {
+        [UNE_CIBLE]: {
+          dureeHistorique: 7,
+          nombreDeFichiers: 0,
+        },
+      },
+    ]);
+  });
 });

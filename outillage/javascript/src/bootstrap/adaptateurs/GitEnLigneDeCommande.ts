@@ -66,8 +66,8 @@ export class GitEnLigneDeCommande implements Git {
       .map((ligne) => ligne.trim())
       .filter((ligne) => ligne.length > 0);
     return {
-      premierCommit: this.hashDeCommit(premierCommit),
-      dernierCommit: this.hashDeCommit(dernierCommit),
+      ...(premierCommit && { premierCommit: this.hashDeCommit(premierCommit) }),
+      ...(dernierCommit && { dernierCommit: this.hashDeCommit(dernierCommit) }),
       liste: [...new Set(fichiers)].sort(),
     };
   }
