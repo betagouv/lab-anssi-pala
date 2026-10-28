@@ -11,6 +11,7 @@ import {
 
 const unePreparation = (doubles: Partial<Dependances> = {}) => {
   const systemeDeFichier = new SystemeDeFichierEnMemoire({
+    '.git': '',
     'outils/codex-security/source/.git': '',
     'outils/shannon/source/.git': '',
   });
@@ -32,9 +33,25 @@ describe('Prépare l’environnement', () => {
     expect(git.sousModulesInitialises).toBe(true);
   });
 
+  it("n'initialise pas les sous-modules Git si l’entrepôt PALA n’est pas un checkout git (ex. déploiement)", async () => {
+    const console = new ConsoleEnMemoire();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      'outils/codex-security/source/.git': '',
+      'outils/shannon/source/.git': '',
+    });
+
+    await unePreparation({ console, systemeDeFichier }).execute({});
+
+    expect(systemeDeFichier.aLu('.git')).toBe(true);
+    expect(console.lignes.map((ligne) => ligne.message)).toContain(
+      '==> Sous-modules des outils : pas de dépôt git ici (ex. déploiement) — sources supposées déjà présentes, étape ignorée'
+    );
+  });
+
   it("n'initialise pas les sous-modules Git si l’entrepôt codex n’est pas un checkout git (ex. déploiement)", async () => {
     const console = new ConsoleEnMemoire();
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      '.git': '',
       'outils/codex-security/source/': '',
       'outils/shannon/source/.git': '',
     });
@@ -50,6 +67,7 @@ describe('Prépare l’environnement', () => {
   it("n'initialise pas les sous-modules Git si l’entrepôt shannon n’est pas un checkout git (ex. déploiement)", async () => {
     const console = new ConsoleEnMemoire();
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
+      '.git': '',
       'outils/codex-security/source/.git': '',
       'outils/shannon/source/': '',
     });

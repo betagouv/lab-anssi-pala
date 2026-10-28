@@ -15,7 +15,11 @@ export type Dependances = {
   outils: PreparationOutil[];
 };
 
-const OUTILS = ['outils/codex-security/source/.git', 'outils/shannon/source/.git'];
+const OUTILS = [
+  '.git',
+  'outils/codex-security/source/.git',
+  'outils/shannon/source/.git',
+];
 
 export class PrepareEnvironnement {
   readonly #git: Git;
