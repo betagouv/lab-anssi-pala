@@ -103,7 +103,7 @@ Détails par outil :
 
 ⚠️ Renseigner le `.env` racine est indispensable pour lancer un scan complet.
 
-La commande `pnpm run codex:scan-complet --project <nom> --url <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
+La commande `pnpm run codex:scan-complet --cible <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
 
 ## Structure
 
