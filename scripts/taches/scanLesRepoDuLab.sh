@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 #
-if [[ "$INSTANCE_NUMBER" != "0" ]]; then
-  echo "L'instance n'est pas la 0, c'est la ${INSTANCE_NUMBER}. On s'arrête là."
-  exit 0
-fi
-
 echo "LANCE le scan complet des projets du LAB ${APP_HOME}"
 
 cd "${APP_HOME}" || exit
