@@ -7,8 +7,6 @@
   "commitMessagePrefix": "[RENOVATE]",
   "prHourlyLimit": 10,
   "prConcurrentLimit": 2,
-  "platform": "github",
-  "repositories": ["betagouv/lab-anssi-pala"],
   "packageRules": [
     {
       "description": "lockFileMaintenance",
@@ -30,24 +28,12 @@
     {
       "description": "typescript ne doit pas dépasser la v7 : typescript-eslint (peerDependencies typescript actuel : >=4.8.4 <6.1.0) ne supporte pas encore TS 7, ce qui fait échouer le lint en CI. À relever manuellement dès que typescript-eslint supporte TS 7.",
       "matchPackageNames": ["typescript"],
-      "allowedVersions": ">=7.0.0"
+      "allowedVersions": "<7.0.0"
     },
     {
       "description": "pnpm ne doit pas dépasser la v11 : Clever Cloud ne gère pas encore pnpm v12. À relever manuellement dès que Clever Cloud supporte pnpm v12.",
       "matchPackageNames": ["pnpm"],
       "allowedVersions": "<12.0.0"
-    },
-    {
-      "description": "lockFileMaintenance",
-      "matchUpdateTypes": [
-        "pin",
-        "digest",
-        "patch",
-        "minor",
-        "major",
-        "lockFileMaintenance"
-      ],
-      "minimumReleaseAge": "7 days"
     },
     {
       "description": "Regroupe les montées de version patch npm dans une seule PR",
