@@ -8,6 +8,7 @@
   },
   "packageManager": "pnpm@10.34.6",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "dev:back": "node --require dotenv/config --watch --import tsx serveur/back/src/index.ts",
@@ -44,9 +45,29 @@
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vitest": "5.0.2"
+  },
+  "lint-staged": {
+    "serveur/back/**/*.ts": [
+      "eslint --config serveur/back/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "outillage/**/*.ts": [
+      "eslint --config outillage/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "serveur/front/**/*.{ts,svelte}": [
+      "eslint --config serveur/front/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "*.js": [
+      "eslint --config eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md,yaml,yml,css,html}": "prettier --write"
   }
 }
