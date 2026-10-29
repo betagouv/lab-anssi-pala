@@ -1,2 +1,7 @@
+packages:
+  - serveur/back
+  - serveur/front
+  - outillage
+
 allowBuilds:
   esbuild: true

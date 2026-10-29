@@ -49,7 +49,7 @@ SVELTE_DEV_LOCAL_AVEC_HOT_RELOAD=1 NB_REQUETES_MAX_PAR_MINUTE=1000 pnpm dev:back
 ## Build
 
 ```bash
-pnpm build:front   # = pnpm --dir serveur/front install && pnpm --dir serveur/front build
+pnpm build:front   # = pnpm --filter pala-front build (dépendances installées par le workspace racine)
 ```
 
 ## Déploiement (Clever Cloud — app `lab-anssi-pala`)
