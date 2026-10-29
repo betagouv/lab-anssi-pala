@@ -5,6 +5,7 @@ packages:
   - serveur/back
   - serveur/front
   - outillage
+  - noyau-partage
 
 allowBuilds:
   esbuild: true
