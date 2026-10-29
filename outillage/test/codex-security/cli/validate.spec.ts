@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { ScannerCodexSecuritySimulee } from '../../doubles/ScannerCodexSecuritySimulee.ts';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
@@ -10,8 +10,6 @@ import {
   type DependancesCli,
   validate,
 } from '../../../src/codex-security/cli/validate.ts';
-import { environnement } from '../../../src/noyau/environnement.ts';
-import { ENVIRONNEMENT_CODEX_SECURITY } from '../../doubles/environnement.ts';
 
 const lesDependancesPourLaValidation = (
   doubles: Partial<DependancesCli> = {}

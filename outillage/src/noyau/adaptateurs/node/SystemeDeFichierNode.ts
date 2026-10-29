@@ -8,8 +8,6 @@ import {
 import { resolve } from 'node:path';
 import type { SystemeDeFichier } from '../../ports/SystemeDeFichier.ts';
 
-// Les chemins relatifs s'entendent depuis le répertoire de base : sous pnpm, le répertoire d'où
-// l'utilisateur a lancé la commande (INIT_CWD), pnpm exécutant les scripts depuis la racine.
 export class SystemeDeFichierNode implements SystemeDeFichier {
   readonly #base: string;
 
@@ -22,7 +20,7 @@ export class SystemeDeFichierNode implements SystemeDeFichier {
       return readFileSync(resolve(this.#base, chemin), 'utf8');
     } catch (erreur) {
       if ((erreur as NodeJS.ErrnoException).code === 'ENOENT')
-        throw new Error(`Fichier introuvable : ${chemin}`);
+        throw new Error(`Fichier introuvable : ${chemin}`, { cause: erreur });
       throw erreur;
     }
   }

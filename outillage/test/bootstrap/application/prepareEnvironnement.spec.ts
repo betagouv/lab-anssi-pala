@@ -214,8 +214,7 @@ describe('Prépare l’environnement', () => {
       cible: new CibleBootstrap({ nom: 'app', url: 'https://git.example/app.git' }),
     });
 
-    let lesDernieresLignes = laConsole.lignes.slice(-6);
-
+    const lesDernieresLignes = laConsole.lignes.slice(-6);
     expect(lesDernieresLignes[1].couleur).toBe('VERT');
     expect(lesDernieresLignes.slice(2, 4).every((l) => l.couleur === 'BLEU')).toBe(
       true

@@ -60,7 +60,7 @@ export class VerifieAppelsOutilsLLM {
 
   // Le modèle que Shannon utilisera, chez le fournisseur, avec la clé de Shannon (jamais affichée).
   #destinataire(modeleImpose?: string): Destinataire {
-    let environnementShannon = environnement.pourShannon(this.#systemeDeFichier);
+    const environnementShannon = environnement.pourShannon(this.#systemeDeFichier);
     const cle = environnementShannon.apiKey;
     const url = environnement.fournisseur().url;
     if (!url)

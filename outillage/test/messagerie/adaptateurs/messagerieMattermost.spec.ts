@@ -30,7 +30,7 @@ describe('Messagerie Mattermost', () => {
   it('envoie un message', () => {
     environnement.mattermost = () => ({ urlWebhook: 'http://messagerie.local' });
     const apiHTTP = new ApiHTTPMemoire();
-    let messagerie = new MessagerieMattermost(apiHTTP);
+    const messagerie = new MessagerieMattermost(apiHTTP);
 
     messagerie.envoyer({ contenu: 'Mon super message' });
 
