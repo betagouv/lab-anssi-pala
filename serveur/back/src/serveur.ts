@@ -4,9 +4,11 @@ import * as http from 'http';
 import express, { type Request, type Response } from 'express';
 import { type AdaptateurProtection } from './adaptateurs/adaptateurProtection.ts';
 import type { Middleware } from './http/middleware.ts';
+import type { Environnement } from './infra/environnement.ts';
 
 export type ConfigurationServeur = {
   adaptateurProtection: AdaptateurProtection;
+  adaptateurEnvironnement: Environnement;
   middleware: Middleware;
 };
 
@@ -35,12 +37,13 @@ const balisesUiKit = () => {
 };
 
 const creeApp = (config: ConfigurationServeur) => {
-  const { adaptateurProtection, middleware } = config;
+  const { adaptateurProtection, middleware, adaptateurEnvironnement } = config;
   const app = express();
 
-  app.disable('x-powered-by');
-
   app.use(adaptateurProtection.protectionLimiteTrafic());
+
+  app.disable('x-powered-by');
+  app.set('trust proxy', adaptateurEnvironnement.trustProxy());
 
   app.use(middleware.positionneHeaders);
 
