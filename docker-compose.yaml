@@ -44,6 +44,8 @@ services:
       dockerfile: ./Dockerfile-BACK
       args:
         NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+    env_file:
+      - .env
     ports:
       - '8086:8086'
     volumes:
@@ -66,8 +68,10 @@ services:
         - action: rebuild
           path: ./serveur/back
     depends_on:
-      - ui
-      - pala-db
+      ui:
+        condition: service_started
+      pala-db:
+        condition: service_healthy
 
   cli:
     build:
@@ -75,7 +79,9 @@ services:
       dockerfile: ./Dockerfile-CLI
       args:
         NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
-    command: ['tail', '-f', '/dev/null']
+    env_file:
+      - .env
+    command: ['sh', '-c', 'pnpm run migration-bdd && tail -f /dev/null']
     init: true
     networks:
       - reseau-pala
@@ -87,7 +93,8 @@ services:
         - action: rebuild
           path: ./outillage
     depends_on:
-      - pala-db
+      pala-db:
+        condition: service_healthy
 
 networks:
   reseau-pala:

@@ -21,6 +21,7 @@
     "format:verifie": "prettier --check .",
     "lint": "eslint . && pnpm -r lint",
     "lint:fix": "eslint . --fix && pnpm -r lint:fix",
+    "migration-bdd": "tsx node_modules/knex/bin/cli.js migrate:latest --knexfile noyau-partage/src/knex/configurationKnex.ts",
     "pala:estimer-cout": "node outillage/src/composition/estimer-cout.ts",
     "pala:bootstrap": "node outillage/src/composition/bootstrap.ts",
     "pala:génère-env": "node --require dotenv/config outillage/src/composition/genere-env.ts",
@@ -38,6 +39,7 @@
   },
   "dependencies": {
     "dotenv": "^18.0.4",
+    "pg": "^8.23.1",
     "knex": "^3.3.0"
   },
   "devDependencies": {

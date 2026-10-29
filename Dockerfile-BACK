@@ -17,4 +17,4 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @app/noyau-partage build
 RUN pnpm --filter @app/seurveur/back build
 
-CMD ["pnpm", "run", "dev:back"]
+CMD ["sh", "-c", "pnpm run migration-bdd && pnpm run dev:back"]
