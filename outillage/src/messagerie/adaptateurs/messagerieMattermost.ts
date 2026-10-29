@@ -21,7 +21,7 @@ export class MessagerieMattermost implements MessagerieInstantanee {
 }
 
 class MessagerieMemoire implements MessagerieInstantanee {
-  envoyer(message: Message): Promise<void> {
+  envoyer(_message: Message): Promise<void> {
     return Promise.resolve(undefined);
   }
 }

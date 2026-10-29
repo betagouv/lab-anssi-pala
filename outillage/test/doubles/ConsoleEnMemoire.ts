@@ -20,7 +20,7 @@ export class ConsoleEnMemoire implements Console {
     this.#ligneEnCours = '';
   }
 
-  sureUneSeuleLigne(texte: string, couleur: Couleur = 'NOIR'): void {
+  sureUneSeuleLigne(texte: string, _couleur: Couleur = 'NOIR'): void {
     this.#ligneEnCours += texte;
   }
 

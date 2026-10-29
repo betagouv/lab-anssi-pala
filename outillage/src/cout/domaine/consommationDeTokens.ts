@@ -2,8 +2,8 @@ export type ConsommationDeTokens = {
   entree: number;
   cache: number;
   sortie: number;
-  fournisseur: any;
-  modele: any;
+  fournisseur: string;
+  modele: string;
 };
 
 export const unReleveDeConsommationDeTokensCodex = (
@@ -42,7 +42,6 @@ export const unReleveDeConsommationDeTokensShannon = (
     entree: somme('total_input_tokens'),
     cache: 0,
     sortie: somme('total_output_tokens'),
-
     fournisseur,
     modele: modele.join(':'),
   };

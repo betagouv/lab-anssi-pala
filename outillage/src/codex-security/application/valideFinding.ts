@@ -108,7 +108,8 @@ export class ValideFinding {
     } catch (erreur) {
       if (erreur instanceof SyntaxError)
         throw new Error(
-          `Finding illisible : ${findingFile} n'est pas un JSON valide`
+          `Finding illisible : ${findingFile} n'est pas un JSON valide`,
+          { cause: erreur }
         );
       throw erreur;
     }

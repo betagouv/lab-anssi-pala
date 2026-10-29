@@ -1,14 +1,10 @@
 import type { BusEvenementsPALA } from '../noyau/adaptateurs/node/busEvenementsPALA.ts';
-import type {
-  ResultatDeScan,
-  ScanTermine,
-} from '../codex-security/domaine/scanTermine.ts';
+import type { ScanTermine } from '../codex-security/domaine/scanTermine.ts';
 import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.ts';
 import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
 import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
-import type { Evenement } from '../noyau/ports/BusEvenements.ts';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
@@ -26,7 +22,7 @@ export const abonneNotificationScan = (
       const scan = entrepot.lis(identifiant);
       return `- **Interval de commits :** [${scan[identifiant].premierCommit}, ${scan[identifiant].dernierCommit}]
   - **Historique git sur :** ${scan[identifiant].dureeHistorique} jours`;
-    } catch (e) {
+    } catch (_e) {
       return '';
     }
   };

@@ -18,6 +18,8 @@
     "start": "node --require dotenv/config serveur/back/src/index.ts",
     "format:corrige": "prettier --write .",
     "format:verifie": "prettier --check .",
+    "lint": "eslint . && pnpm -r lint",
+    "lint:fix": "eslint . --fix && pnpm -r lint:fix",
     "pala:estimer-cout": "node outillage/src/composition/estimer-cout.ts",
     "pala:bootstrap": "node outillage/src/composition/bootstrap.ts",
     "pala:génère-env": "node --require dotenv/config outillage/src/composition/genere-env.ts",
@@ -37,7 +39,11 @@
     "dotenv": "^18.0.4"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "24.19.0",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
