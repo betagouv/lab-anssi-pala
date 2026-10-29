@@ -8,7 +8,7 @@ fi
 echo "LANCE le scan complet des projets du LAB ${APP_HOME}"
 
 cd "${APP_HOME}" || exit
-pnpm run scan-complet \
+pnpm run codex:scan-complet \
   --cible https://github.com/betagouv/lab-anssi-admin.git \
   --cible https://github.com/betagouv/anssi-lab-utilitaires.git \
   --cible https://github.com/betagouv/anssi-recommandations-cyber-data.git \

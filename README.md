@@ -50,8 +50,8 @@ L’installation de Codex et Shannon se fait une seule fois sur l’hôte. Tout 
 ```bash
 cp .env.example .env            # renseigner les variables
 # préparer les sous-modules et cloner une cible arbitraire dans cible/copies/<nom> :
-pnpm run bootstrap --project <nom> --url <url git>
-pnpm run génère-env
+pnpm run pala:bootstrap --project <nom> --url <url git>
+pnpm run pala:génère-env
 ```
 
 La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.env` racine :
@@ -66,8 +66,8 @@ La configuration d’un scan est générée à partir du `.env` racine et de la 
 La configuration créée prend en compte un pull du repo de la cible pour le mettre à jour et la génération des fichiers à scanner en répertoriant les fichiers modifiés sur 7 jours glissants (par défaut, il est possible de fournir une autre valeur)
 
 ```bash
-pnpm run génère-config --help
-pnpm run génère-config --cible <nom>
+pnpm run pala:génère-config --help
+pnpm run pala:génère-config --cible <nom>
 ```
 
 #### Lancer une évaluation
@@ -83,8 +83,8 @@ pnpm run génère-config --cible <nom>
 
 1. **Analyse statique** avec Codex Security : `pnpm démarre-proxy`, puis `pnpm scan` (dépôt entier)
    ```bash
-   pnpm démarre-proxy
-   pnpm scan --cible $PWD/cible/copies/<cible> --config $PWD/outils/codex-security/configs/config-<cible>.yaml
+   pnpm codex:démarre-proxy
+   pnpm codex:scan --cible $PWD/cible/copies/<cible> --config $PWD/outils/codex-security/configs/config-<cible>.yaml
    ```
    Un compte rendu simple du scan est publié sur le webhook Mattermost (à renseigner dans le `.env` racine)
    La confrontation d'un point précis au code se fait avec `pnpm validate`.
@@ -103,7 +103,7 @@ Détails par outil :
 
 ⚠️ Renseigner le `.env` racine est indispensable pour lancer un scan complet.
 
-La commande `pnpm run scan-complet --project <nom> --url <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
+La commande `pnpm run codex:scan-complet --project <nom> --url <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
 
 ## Structure
 

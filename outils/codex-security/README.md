@@ -64,13 +64,13 @@ L’exécution de la CLI s’opère depuis la racine du projet PALA.
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run scan --help
+pnpm run codex:scan --help
 ```
 
 Pour lancer le scan
 ```bash
-pnpm run démarre-proxy
-pnpm scan --cible <CHEMIN CIBLE> --config <CHEMIN CONFIG>
+pnpm run codex:démarre-proxy
+pnpm codex:scan --cible <CHEMIN CIBLE> --config <CHEMIN CONFIG>
 ```
 
 Une **estimation du coût** est affichée en fin de scan
@@ -84,17 +84,17 @@ Top 10**. Pour votre cible, copier `config-cible.template.yaml` et y fixer `scop
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run scan-complet --help
+pnpm run codex:scan-complet --help
 ```
 
 Pour lancer un scan complet :
 ```bash
-pnpm run scan-complet --cible <CHEMIN CIBLE>
+pnpm run codex:scan-complet --cible <CHEMIN CIBLE>
 ```
 
 Sur plusieurs cibles :
 ```bash
-pnpm run scan-complet --cible <CHEMIN CIBLE A> --cible <CHEMIN CIBLE B>
+pnpm run codex:scan-complet --cible <CHEMIN CIBLE A> --cible <CHEMIN CIBLE B>
 ```
 
 Une **estimation du coût** est affichée en fin de scan
@@ -104,12 +104,12 @@ Une **estimation du coût** est affichée en fin de scan
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run validate --help
+pnpm run codex:validate --help
 ```
 
 Pour lancer la validation d'un point précis :
 ```bash
-pnpm run validate --cible <CHEMIN CIBLE>  --finding-file <CHEMIN FICHIER finding.json>
+pnpm run codex:validate --cible <CHEMIN CIBLE>  --finding-file <CHEMIN FICHIER finding.json>
 ```
 
 `finding.json` décrit un point à confronter au code (titre, emplacement, catégorie, description).
