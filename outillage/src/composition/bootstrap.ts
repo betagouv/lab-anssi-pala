@@ -4,7 +4,7 @@ import { bootstrap } from '../bootstrap/cli.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { lesDependancesPourLaPreparationEnvironnement } from './dependances.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const console = new ConsoleNode();
 
 process.exitCode = await bootstrap(

@@ -4,7 +4,7 @@ import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichier
 import { ApiChatFetch } from '../shannon/adaptateurs/ApiChatFetch.ts';
 import { verifieAppelsOutilsLLM } from '../shannon/cli/verifie-appels-outils-llm.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 
 process.exitCode = await verifieAppelsOutilsLLM(process.argv.slice(2), {
   apiChat: new ApiChatFetch({ maxTokens: Number(process.env.MAX_TOKENS || '4000') }),

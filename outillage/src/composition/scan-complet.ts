@@ -22,7 +22,7 @@ import {
   lesDependancesPourLeScan,
 } from './dependances.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const console = new ConsoleNode();
 const contexte = { racine, console };
 

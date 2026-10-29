@@ -8,7 +8,7 @@ import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const outil = join(racine, 'outils/codex-security');
 const repertoireAppel = process.env.INIT_CWD || process.cwd();
 

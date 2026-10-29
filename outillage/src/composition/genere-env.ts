@@ -3,7 +3,7 @@ import { genereEnv } from '../environnement/cli/genere-env.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { lesDependancesPourLaGenerationEnvironnement } from './dependances.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const console = new ConsoleNode();
 
 process.exitCode = await genereEnv(

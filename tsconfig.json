@@ -14,9 +14,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": [
-    "outillage/javascript/**/*.ts",
-    "vitest.config.ts",
-    "serveur/back/src/**/*.ts"
-  ]
+  "include": ["outillage/**/*.ts", "vitest.config.ts", "serveur/back/src/**/*.ts"]
 }
