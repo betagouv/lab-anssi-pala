@@ -57,11 +57,11 @@ L’exécution de la CLI s’opère depuis la racine du projet PALA.
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run vérifie-appels-outils-llm --help
+pnpm run shannon:vérifie-appels-outils-llm --help
 ```
 
 ```bash
-pnpm run vérifie-appels-outils-llm
+pnpm run shannon:vérifie-appels-outils-llm
 ```
 
 ### Lancer un test de fumée (smoke test)
@@ -69,11 +69,11 @@ pnpm run vérifie-appels-outils-llm
 
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run shannon-smoke --help
+pnpm run shannon:smoke-test --help
 ```
 
 ```bash
-pnpm run shannon-smoke
+pnpm run shannon:smoke-test
 ```
 
 #### ⚠️ Résultat du test de fumée
@@ -85,11 +85,11 @@ pnpm run shannon-smoke
 ### Valider par la preuve une vulnérabilité découverte
 Pour afficher l'aide et obtenir la liste des paramètres (et leurs valeurs par défaut) :
 ```bash
-pnpm run shannon-smoke --help
+pnpm run shannon:pen-test --help
 ```
 
 ```bash
-pnpm run shannon --project <nom> --url <url de l’app à tester> --config <chemin vers le fichier de configuration>
+pnpm run shannon:pen-test --project <nom> --url <url de l’app à tester> --config <chemin vers le fichier de configuration>
 ```
 
 Suivi : 
