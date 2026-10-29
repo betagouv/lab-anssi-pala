@@ -46,6 +46,18 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
+  lint:
+    name: Analyse du code (Eslint)
+    needs: dependances
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt Git
+        uses: actions/checkout@v4
+      - name: Préparer l'environnement
+        uses: ./.github/actions/preparer-environnement
+      - name: Détecter les erreurs et harmoniser le style
+        run: pnpm run lint
+
   mise-en-forme:
     name: Mise en forme (Prettier)
     needs: dependances
