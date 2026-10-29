@@ -18,8 +18,8 @@ import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
 import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
 import { abonneNotificationScan } from './notificationScan.ts';
-import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
 import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
+import { EntrepotDeScanMemoire } from '../../test/noyau/persistance/entrepots.ts';
 
 export type ContexteDeComposition = {
   racine: string;

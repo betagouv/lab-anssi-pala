@@ -4,7 +4,8 @@ import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.
 import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
-import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+
+import { EntrepotDeScanMemoire } from '../../test/noyau/persistance/entrepots.ts';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();

@@ -11,7 +11,8 @@ import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../../../src/codex-security/domaine/
 import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import { GitMemoire } from '../../doubles/GitMemoire.ts';
-import { EntrepotDeScanMemoire } from '../../../src/noyau/persistance/entrepots.ts';
+
+import { EntrepotDeScanMemoire } from '../../noyau/persistance/entrepots.ts';
 
 const UNE_CIBLE = 'la-cible';
 

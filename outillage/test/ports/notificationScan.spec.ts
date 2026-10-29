@@ -9,8 +9,8 @@ import type {
   Message,
   MessagerieInstantanee,
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
-import { EntrepotDeScanMemoire } from '../../src/noyau/persistance/entrepots.ts';
 import { unScanNonEffectue } from '../../src/codex-security/domaine/scanNonEffectue.ts';
+import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
