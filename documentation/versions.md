@@ -5,13 +5,13 @@ garde la trace lisible.
 
 ## Environnement hôte
 
-| Outil                           | Version                | Notes                                                                                             |
-| ------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------- |
-| docker                          | 29.4.3 (build 055a478) | daemon actif                                                                                      |
-| docker compose                  | v5.1.3                 | plugin CLI                                                                                        |
-| node / pnpm                     | requis pour Shannon    | Node.js 24.22.1 (épinglé dans `.nvmrc`) pour l'outillage TypeScript (exécution directe des `.ts`) |
-| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | outillage TypeScript (`package.json` racine)                                                      |
-| python (hôte)                   | 3.9.6                  | scripts utilitaires (`verifie_appels_outils_llm.py`)                                              |
+| Outil                           | Version                | Notes                                                                                                         |
+| ------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| docker                          | 29.4.3 (build 055a478) | daemon actif                                                                                                  |
+| docker compose                  | v5.1.3                 | plugin CLI                                                                                                    |
+| node / pnpm                     | requis pour Shannon    | Node.js 24.22.1 (épinglé dans `.nvmrc`) pour l'outillage TypeScript (exécution directe des `.ts`)             |
+| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | typescript & vitest : outillage de dev partagé à la racine du workspace ; commander : paquet `pala-outillage` |
+| python (hôte)                   | 3.9.6                  | scripts utilitaires (`verifie_appels_outils_llm.py`)                                                          |
 
 > Un troisième outil d'analyse de code a été évalué puis écarté le 28/09/2026 (rapport coût/bruit
 > défavorable) ; son sous-module et son outillage ont été retirés du dépôt.

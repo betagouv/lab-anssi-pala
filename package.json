@@ -1,7 +1,7 @@
 {
-  "name": "pala-outillage",
+  "name": "pala",
   "private": true,
-  "description": "Outillage TypeScript du laboratoire d'audit (en parallèle des scripts bash/Python)",
+  "description": "PALA — Pen test Agentique Lab ANSSI",
   "type": "module",
   "engines": {
     "node": ">=24.22.1"
@@ -10,10 +10,10 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "dev:back": "node --require dotenv/config --watch --import tsx serveur/back/src/index.ts",
-    "dev:front": "pnpm --dir serveur/front dev",
+    "dev:front": "pnpm --filter pala-front dev",
     "build": "pnpm build:back && pnpm build:front",
     "build:back": "tsc --noEmit",
-    "build:front": "pnpm --dir serveur/front install && pnpm --dir serveur/front build",
+    "build:front": "pnpm --filter pala-front build",
     "start": "node --require dotenv/config serveur/back/src/index.ts",
     "format:corrige": "prettier --write .",
     "format:verifie": "prettier --check .",
@@ -33,18 +33,9 @@
     "@lab-anssi/ui-kit": "1.64.0"
   },
   "dependencies": {
-    "commander": "^15.0.0",
-    "date-fns": "^4.4.0",
-    "dotenv": "^18.0.4",
-    "express": "^5.3.0",
-    "express-ip-filter": "^2.0.0",
-    "express-rate-limit": "^8.7.1",
-    "helmet": "^8.3.0",
-    "yaml": "^2.9.1"
+    "dotenv": "^18.0.4"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/lusca": "^1.7.5",
     "@types/node": "24.19.0",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",

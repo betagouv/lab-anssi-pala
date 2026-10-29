@@ -1,7 +1,4 @@
 {
-  // Vérification de types seule : les .ts sont exécutés directement par Node 24 (type stripping),
-  // d'où erasableSyntaxOnly (pas d'enum, de namespace ni de parameter properties) et des imports
-  // suffixés en .ts.
   "compilerOptions": {
     "target": "es2024",
     "module": "nodenext",

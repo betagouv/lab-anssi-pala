@@ -107,9 +107,15 @@ La commande `pnpm run codex:scan-complet --project <nom> --url <url-git>` permet
 
 ## Structure
 
+Le dépôt est un **workspace pnpm** : trois paquets (`pala-back`, `pala-front`, `pala-outillage`)
+et une racine qui porte l'outillage de dev partagé (TypeScript, vitest, prettier, tsx) et les
+scripts de lancement.
+
 ```
+serveur/back/          workspace « pala-back » : serveur Express (sert la SPA, protection CSP/rate-limit)
+serveur/front/         workspace « pala-front » : SPA Svelte 5 au design system de l'État
+outillage/             workspace « pala-outillage » : CLI TypeScript d'audit (Node 24.22.1, vitest, archi hexagonale)
 outils/<outil>/        source/ (sous-module amont), configs, README (voir documentation/ajouter-un-outil.md)
-outillage/            outillage TypeScript (Node 24.22.1, vitest, architecture hexagonale)
 documentation/         démarche, notes API fournisseurs, versions
 cible/                 copies locales des cibles (jamais versionnées)
 ```

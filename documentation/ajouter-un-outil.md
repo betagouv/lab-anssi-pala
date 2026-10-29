@@ -39,8 +39,10 @@ Hors du dossier de l'outil :
    `PreparationOutil` (`../outillage/src/<outil>/application/`, testée avec des doubles)
    — préparation après clone (patchs, installation…), idempotente — et l'inscrire au registre de
    `../outillage/src/composition/bootstrap.ts`.
-3. Écrire les commandes de lancement comme CLI TypeScript (`src/<outil>/cli/`, composées dans
-   `src/composition/`) et les brancher en scripts `pnpm` dans le `package.json` racine.
+3. Écrire les commandes de lancement comme CLI TypeScript (`outillage/src/<outil>/cli/`, composées
+   dans `outillage/src/composition/`) et les brancher en scripts `pnpm` dans le `package.json`
+   racine (point d'entrée du workspace). Toute nouvelle dépendance npm de l'outil va dans le paquet
+   `outillage/package.json`.
 4. Compléter `documentation/versions.md` et le tableau des outils du `README.md` racine.
 5. Ajouter au `.gitignore` les fichiers remplis avec des identifiants (seuls les
    `*.template.*` sont versionnés) et les sorties que l'outil dépose dans son dossier.

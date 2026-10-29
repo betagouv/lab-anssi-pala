@@ -2,7 +2,7 @@
   "name": "pala-front",
   "private": true,
   "type": "module",
-  "description": "Front PALA — SPA Svelte 5 au design system de l'État (@lab-anssi/ui-kit)",
+  "description": "Front PALA — SPA",
   "engines": {
     "node": ">=24.22.1"
   },
