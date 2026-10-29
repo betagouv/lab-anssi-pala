@@ -1,0 +1,20 @@
+ARG NODE_VERSION
+FROM docker.io/node:${NODE_VERSION}
+
+RUN apt-get update -y
+
+RUN corepack enable
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY noyau-partage ./noyau-partage
+COPY serveur/back ./serveur/back
+COPY .env .env
+
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter @app/noyau-partage build
+RUN pnpm --filter @app/seurveur/back build
+
+CMD ["pnpm", "run", "dev:back"]

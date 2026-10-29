@@ -1,0 +1,17 @@
+ARG NODE_VERSION
+FROM docker.io/node:${NODE_VERSION}
+
+RUN apt-get update -y
+
+RUN corepack enable
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY serveur/front ./serveur/front
+
+RUN pnpm install --frozen-lockfile
+
+RUN pnpm --filter pala-front build
+
+CMD ["pnpm", "run", "dev:front"]

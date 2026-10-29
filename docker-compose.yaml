@@ -16,3 +16,83 @@ services:
       timeout: 3s
       retries: 30
       start_period: 5s
+
+  ui:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-UI
+      args:
+        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+    ports:
+      - '3006:3000'
+    volumes:
+      - ./serveur/front/dist:/app/serveur/front/dist
+    networks:
+      - reseau-pala
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./serveur/front/src
+          target: /app/serveur/front/src
+
+        - action: rebuild
+          path: ./
+
+  serveur:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-BACK
+      args:
+        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+    ports:
+      - '8086:8086'
+    volumes:
+      - ./serveur/front/dist:/app/serveur/front/dist
+    networks:
+      - reseau-pala
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./noyau-partage/src
+          target: /app/noyau-partage/src
+
+        - action: sync+restart
+          path: ./serveur/back/src
+          target: /app/serveur/back/src
+
+        - action: rebuild
+          path: ./noyau-partage
+
+        - action: rebuild
+          path: ./serveur/back
+    depends_on:
+      - ui
+      - pala-db
+
+  cli:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-CLI
+      args:
+        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+    command: ['tail', '-f', '/dev/null']
+    init: true
+    networks:
+      - reseau-pala
+    develop:
+      watch:
+        - action: rebuild
+          path: ./noyau-partage
+
+        - action: rebuild
+          path: ./outillage
+    depends_on:
+      - pala-db
+
+networks:
+  reseau-pala:
+    external: true
+
+volumes:
+  dbvol:
+    driver: local
