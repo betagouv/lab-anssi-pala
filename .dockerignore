@@ -1,0 +1,9 @@
+# Toutes les dépendances Node.js
+**/node_modules
+
+# Fichiers générés
+**/dist
+
+# Git
+.git
+.gitignore
