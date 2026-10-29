@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#! /bin/bash -l
 #
 echo "LANCE le scan complet des projets du LAB ${APP_HOME}"
 
