@@ -19,6 +19,7 @@ runs:
       with:
         path: |
           node_modules
+          noyau-partage/node_modules
           serveur/back/node_modules
           serveur/front/node_modules
           outillage/node_modules

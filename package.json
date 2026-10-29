@@ -37,7 +37,8 @@
     "@lab-anssi/ui-kit": "1.64.0"
   },
   "dependencies": {
-    "dotenv": "^18.0.4"
+    "dotenv": "^18.0.4",
+    "knex": "^3.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -45,6 +46,7 @@
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
+    "knex-pglite": "^0.14.0",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
@@ -62,6 +64,10 @@
     ],
     "serveur/front/**/*.{ts,svelte}": [
       "eslint --config serveur/front/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "noyau-partage/**/*.ts": [
+      "eslint --config noyau-partage/eslint.config.js --fix",
       "prettier --write"
     ],
     "*.js": [
