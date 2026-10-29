@@ -36,9 +36,9 @@ Hors du dossier de l'outil :
    Utiliser dans `.gitmodules` une URL utilisable par les autres contributeurs, pas un
    alias SSH personnel.
 2. Créer `README.md` et, si l'outil a un environnement propre, `<outil>.env.template`. Écrire une
-   `PreparationOutil` (`../outillage/javascript/src/<outil>/application/`, testée avec des doubles)
+   `PreparationOutil` (`../outillage/src/<outil>/application/`, testée avec des doubles)
    — préparation après clone (patchs, installation…), idempotente — et l'inscrire au registre de
-   `../outillage/javascript/src/composition/bootstrap.ts`.
+   `../outillage/src/composition/bootstrap.ts`.
 3. Écrire les commandes de lancement comme CLI TypeScript (`src/<outil>/cli/`, composées dans
    `src/composition/`) et les brancher en scripts `pnpm` dans le `package.json` racine.
 4. Compléter `documentation/versions.md` et le tableau des outils du `README.md` racine.

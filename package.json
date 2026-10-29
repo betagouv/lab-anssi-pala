@@ -17,17 +17,17 @@
     "start": "node --require dotenv/config serveur/back/src/index.ts",
     "format:corrige": "prettier --write .",
     "format:verifie": "prettier --check .",
-    "pala:estimer-cout": "node outillage/javascript/src/composition/estimer-cout.ts",
-    "pala:bootstrap": "node outillage/javascript/src/composition/bootstrap.ts",
-    "pala:génère-env": "node --require dotenv/config outillage/javascript/src/composition/genere-env.ts",
-    "pala:génère-config": "node --require dotenv/config outillage/javascript/src/composition/genere-config.ts",
-    "codex:démarre-proxy": "node --require dotenv/config outillage/javascript/src/composition/demarre-proxy.ts",
-    "codex:scan-complet": "node --require dotenv/config outillage/javascript/src/composition/scan-complet.ts",
-    "codex:scan": "node --require dotenv/config outillage/javascript/src/composition/scan.ts",
-    "codex:validate": "node outillage/javascript/src/composition/validate.ts",
-    "shannon:pen-test": "node --require dotenv/config outillage/javascript/src/composition/shannon.ts",
-    "shannon:smoke-test": "node --require dotenv/config outillage/javascript/src/composition/shannon-smoke.ts",
-    "shannon:vérifie-appels-outils-llm": "node --require dotenv/config outillage/javascript/src/composition/verifie-appels-outils-llm.ts"
+    "pala:estimer-cout": "node outillage/src/composition/estimer-cout.ts",
+    "pala:bootstrap": "node outillage/src/composition/bootstrap.ts",
+    "pala:génère-env": "node --require dotenv/config outillage/src/composition/genere-env.ts",
+    "pala:génère-config": "node --require dotenv/config outillage/src/composition/genere-config.ts",
+    "codex:démarre-proxy": "node --require dotenv/config outillage/src/composition/demarre-proxy.ts",
+    "codex:scan-complet": "node --require dotenv/config outillage/src/composition/scan-complet.ts",
+    "codex:scan": "node --require dotenv/config outillage/src/composition/scan.ts",
+    "codex:validate": "node outillage/src/composition/validate.ts",
+    "shannon:pen-test": "node --require dotenv/config outillage/src/composition/shannon.ts",
+    "shannon:smoke-test": "node --require dotenv/config outillage/src/composition/shannon-smoke.ts",
+    "shannon:vérifie-appels-outils-llm": "node --require dotenv/config outillage/src/composition/verifie-appels-outils-llm.ts"
   },
   "runtimeDependencies": {
     "@lab-anssi/ui-kit": "1.64.0"

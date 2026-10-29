@@ -8,7 +8,7 @@ import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichier
 import { ShannonNode } from '../shannon/adaptateurs/ShannonNode.ts';
 import { shannon } from '../shannon/cli/shannon.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const console = new ConsoleNode();
 const systemeDeFichier = new SystemeDeFichierNode(racine);
 

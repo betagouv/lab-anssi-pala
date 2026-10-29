@@ -109,7 +109,7 @@ La commande `pnpm run codex:scan-complet --project <nom> --url <url-git>` permet
 
 ```
 outils/<outil>/        source/ (sous-module amont), configs, README (voir documentation/ajouter-un-outil.md)
-outillage/javascript/  outillage TypeScript (Node 24.22.1, vitest, architecture hexagonale)
+outillage/            outillage TypeScript (Node 24.22.1, vitest, architecture hexagonale)
 documentation/         démarche, notes API fournisseurs, versions
 cible/                 copies locales des cibles (jamais versionnées)
 ```

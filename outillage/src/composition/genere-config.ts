@@ -3,7 +3,7 @@ import { genereConfig } from '../codex-security/cli/genere-config.ts';
 import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
 import { lesDependancesPourLaGenerationConfig } from './dependances.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const console = new ConsoleNode();
 
 process.exitCode = await genereConfig(

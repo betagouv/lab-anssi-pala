@@ -7,7 +7,7 @@ import { ServeurCibleFumeeHttp } from '../shannon/adaptateurs/ServeurCibleFumeeH
 import { ShannonNode } from '../shannon/adaptateurs/ShannonNode.ts';
 import { shannonSmoke } from '../shannon/cli/shannon-smoke.ts';
 
-const racine = join(import.meta.dirname, '../../../..');
+const racine = join(import.meta.dirname, '../../..');
 const outil = join(racine, 'outils/shannon');
 
 process.exitCode = await shannonSmoke(process.argv.slice(2), {
