@@ -26,7 +26,7 @@ garde la clé du fournisseur hors de l'environnement de l'agent (voir
 Prérequis : Node.js 24.22.1 (version épinglée dans `.nvmrc`), Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
 compatible OpenAI (Albert ou Scaleway).
 
-Il existe une CLI déclinée en bash et en Node. Les commandes fournies utilisent la CLI Node
+L’outil dispose d’une CLI dont les commandes sont détaillées ci-dessous.
 
 ### Cinématique
 
@@ -104,6 +104,12 @@ Détails par outil :
 ⚠️ Renseigner le `.env` racine est indispensable pour lancer un scan complet.
 
 La commande `pnpm run codex:scan-complet --cible <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
+
+## Démarrage en local
+
+- Exécuter `pnpm install` à la racine du dépôt.
+- Exécuter `cp .env.example .env` et remplir les variables d'environnement.
+- Exécuter `./scripts/dev/start.sh`.
 
 ## Structure
 
