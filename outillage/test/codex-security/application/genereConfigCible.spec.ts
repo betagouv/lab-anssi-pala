@@ -203,11 +203,17 @@ describe('Génère Config Cible', () => {
 
     expect(entrepotMemoire.tousLesElements).toEqual([
       {
-        [UNE_CIBLE]: {
+        id: expect.any(String),
+        cible: UNE_CIBLE,
+        date: expect.any(Date),
+        informationsDeCommits: {
           premierCommit: '440e7be3397d56a67f4fbda13c1d0c0ad9a36374',
           dernierCommit: 'd852e87954688029939791687afffe34c81bc361',
           dureeHistorique: 7,
-          nombreDeFichiers: 2,
+          fichiers: [
+            'src/codex-security/application/lanceScan.ts',
+            'src/noyau/environnement.ts',
+          ],
         },
       },
     ]);
@@ -225,9 +231,12 @@ describe('Génère Config Cible', () => {
 
     expect(entrepotMemoire.tousLesElements).toEqual([
       {
-        [UNE_CIBLE]: {
+        id: expect.any(String),
+        cible: UNE_CIBLE,
+        date: expect.any(Date),
+        informationsDeCommits: {
           dureeHistorique: 7,
-          nombreDeFichiers: 0,
+          fichiers: [],
         },
       },
     ]);

@@ -1,8 +1,13 @@
+import type { UUID } from 'node:crypto';
+
 export type Scan = {
-  [key: string]: {
+  id: UUID;
+  date: Date;
+  cible: string;
+  informationsDeCommits: {
     premierCommit?: string;
     dernierCommit?: string;
     dureeHistorique: number;
-    nombreDeFichiers: number;
+    fichiers: string[];
   };
 };
