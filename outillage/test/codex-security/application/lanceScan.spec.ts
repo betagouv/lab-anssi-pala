@@ -6,7 +6,7 @@ import { HorlogeFigee } from '../../doubles/HorlogeFigee.ts';
 import { ReseauSimule } from '../../doubles/ReseauSimule.ts';
 import { AttenteInstantanee } from '../../doubles/AttenteInstantanee.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
-import { BusEvenementsPALA } from '../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
+import { BusEvenementsPALA } from '../../../src/noyau/infrastructure/busEvenementsPALA.ts';
 import type { ScanTermine } from '../../../src/codex-security/domaine/scanTermine.ts';
 import type { ScanNonEffectue } from '../../../src/codex-security/domaine/scanNonEffectue.ts';
 import {

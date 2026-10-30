@@ -11,8 +11,8 @@ import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../codex-security/domaine/fenetreDeM
 import { proxyEstLocal } from '../codex-security/domaine/proxyLocal.ts';
 import { cheminConfigCible } from '../codex-security/domaine/cheminConfig.ts';
 import { Cible } from '../environnement/domaine/Cible.ts';
-import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
+import { ConsoleNode } from '../noyau/infrastructure/consoleNode.ts';
+import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
 import { environnement } from '../noyau/environnement.ts';
 import {
   lesDependancesPourLaGenerationConfig,

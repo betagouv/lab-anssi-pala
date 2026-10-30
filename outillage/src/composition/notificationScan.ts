@@ -1,4 +1,4 @@
-import type { BusEvenementsPALA } from '../noyau/adaptateurs/node/busEvenementsPALA.ts';
+import type { BusEvenementsPALA } from '../noyau/infrastructure/busEvenementsPALA.ts';
 import type { ScanTermine } from '../codex-security/domaine/scanTermine.ts';
 import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.ts';
 import type { Constat } from '../codex-security/domaine/constat.ts';
@@ -15,12 +15,14 @@ export const abonneNotificationScan = (
   messagerie: MessagerieInstantanee,
   entrepot: EntrepotDeScanMemoire
 ): void => {
-  const recupereLesInformationsGit = (evenement: ScanTermine | ScanNonEffectue) => {
+  const recupereLesInformationsGit = async (
+    evenement: ScanTermine | ScanNonEffectue
+  ) => {
     try {
       const identifiant = evenement.cible.substring(
         evenement.cible.lastIndexOf('/') + 1
       );
-      const scan = entrepot.lis(identifiant);
+      const scan = await entrepot.lis(identifiant);
       return `- **Interval de commits :** [${scan[identifiant].premierCommit}, ${scan[identifiant].dernierCommit}]
   - **Historique git sur :** ${scan[identifiant].dureeHistorique} jours`;
     } catch (_e) {
@@ -38,7 +40,7 @@ export const abonneNotificationScan = (
     ${constat.emplacements.map((emplacement) => `- ${emplacement.chemin} (lignes ${emplacement.ligneDebut} à ${emplacement.ligneFin})`).join('\n')}
     `;
     };
-    const informationsGit = recupereLesInformationsGit(evenement);
+    const informationsGit = await recupereLesInformationsGit(evenement);
 
     const {
       hours = 0,
@@ -64,7 +66,7 @@ export const abonneNotificationScan = (
   bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', async (evenement) => {
     const cible = nomDeCible(evenement.cible);
 
-    const informationsGit = recupereLesInformationsGit(evenement);
+    const informationsGit = await recupereLesInformationsGit(evenement);
 
     const message = `### ⚠️ Scan non effectué pour ${cible}
   - **Cible :** ${cible}

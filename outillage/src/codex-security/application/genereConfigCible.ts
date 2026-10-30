@@ -6,8 +6,8 @@ import { ConfigurationCible } from '../domaine/ConfigurationCible.ts';
 import { cheminConfigCible } from '../domaine/cheminConfig.ts';
 import { join } from 'path';
 import type { Git } from '../../bootstrap/ports/Git.ts';
-import type { Entrepot } from '../../noyau/persistance/entrepots.ts';
 import type { Scan } from '../../noyau/partage/scan.ts';
+import type { Entrepot } from '../../noyau/persistance/entrepots.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;

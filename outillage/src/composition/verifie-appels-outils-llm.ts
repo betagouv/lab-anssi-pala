@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
+import { ConsoleNode } from '../noyau/infrastructure/consoleNode.ts';
+import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
 import { ApiChatFetch } from '../shannon/adaptateurs/ApiChatFetch.ts';
 import { verifieAppelsOutilsLLM } from '../shannon/cli/verifie-appels-outils-llm.ts';
 
