@@ -6,22 +6,21 @@ import { ConfigurationCible } from '../domaine/ConfigurationCible.ts';
 import { cheminConfigCible } from '../domaine/cheminConfig.ts';
 import { join } from 'path';
 import type { Git } from '../../bootstrap/ports/Git.ts';
-import type { Scan } from '../../noyau/partage/scan.ts';
-import type { Entrepot } from '../../noyau/persistance/entrepots.ts';
 import { randomUUID } from 'node:crypto';
+import type { EntrepotScan } from '../../scan/entrepoScan.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
   console: Console;
   git: Git;
-  entrepot: Entrepot<Scan>;
+  entrepot: EntrepotScan;
 };
 
 export class GenereConfigCible {
   readonly #systemeDeFichier: SystemeDeFichier;
   readonly #console: Console;
   readonly #git: Git;
-  #entrepot: Entrepot<Scan>;
+  #entrepot: EntrepotScan;
 
   constructor({ systemeDeFichier, console, git, entrepot }: Dependances) {
     this.#systemeDeFichier = systemeDeFichier;
