@@ -16,9 +16,9 @@ describe("Bus d'événements en mémoire", () => {
   it("délivre un événement publié à l'abonné de ce nom", () => {
     const bus = new BusEvenementsPALA();
     const recus: EvenementDeTest[] = [];
-    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (evenement) =>
-      recus.push(evenement)
-    );
+    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (evenement) => {
+      recus.push(evenement);
+    });
 
     bus.publie(unEvenementDeTest('bonjour'));
 
@@ -29,12 +29,12 @@ describe("Bus d'événements en mémoire", () => {
     const bus = new BusEvenementsPALA();
     const recusParLePremier: EvenementDeTest[] = [];
     const recusParLeSecond: EvenementDeTest[] = [];
-    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (e) =>
-      recusParLePremier.push(e)
-    );
-    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (e) =>
-      recusParLeSecond.push(e)
-    );
+    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (e) => {
+      recusParLePremier.push(e);
+    });
+    bus.sabonne<EvenementDeTest>('ÉVÉNEMENT_DE_TEST', (e) => {
+      recusParLeSecond.push(e);
+    });
 
     bus.publie(unEvenementDeTest('bonjour'));
 
@@ -45,7 +45,9 @@ describe("Bus d'événements en mémoire", () => {
   it("n'alerte pas les abonnés d'un autre nom d'événement", () => {
     const bus = new BusEvenementsPALA();
     const recus: Evenement[] = [];
-    bus.sabonne('UN_AUTRE_ÉVÉNEMENT', (e) => recus.push(e));
+    bus.sabonne('UN_AUTRE_ÉVÉNEMENT', (e) => {
+      recus.push(e);
+    });
 
     bus.publie(unEvenementDeTest('bonjour'));
 

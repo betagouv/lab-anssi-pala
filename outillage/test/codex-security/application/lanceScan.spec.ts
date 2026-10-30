@@ -58,9 +58,9 @@ const unDepotAuTarifScaleway = () => {
 
 const collecteLesScansTermines = (bus: BusEvenementsPALA) => {
   const evenements: ScanTermine[] = [];
-  bus.sabonne<ScanTermine>('SCAN_TERMINÉ', (evenement) =>
-    evenements.push(evenement)
-  );
+  bus.sabonne<ScanTermine>('SCAN_TERMINÉ', (evenement) => {
+    evenements.push(evenement);
+  });
   return evenements;
 };
 
@@ -552,9 +552,9 @@ describe('Lance Scan Codex', () => {
     it("n'exécute pas le scan et lève un événement quand le périmètre est vide", async () => {
       const bus = new BusEvenementsPALA();
       const scansNonEffectues: ScanNonEffectue[] = [];
-      bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', (evenement) =>
-        scansNonEffectues.push(evenement)
-      );
+      bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', (evenement) => {
+        scansNonEffectues.push(evenement);
+      });
       const scanner = new ScannerCodexSecuritySimulee();
 
       const statut = await unScanCodex({

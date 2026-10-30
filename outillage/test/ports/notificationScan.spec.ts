@@ -56,7 +56,7 @@ describe('Les abonnés à la notification du scan', () => {
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepot);
-      bus.publie(unScanTermine(scanTermine));
+      await bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages).toHaveLength(1);
     });
@@ -65,7 +65,7 @@ describe('Les abonnés à la notification du scan', () => {
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepot);
-      bus.publie(unScanTermine(scanTermine));
+      await bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages[0].contenu).toContain(
         '**Interval de commits :** [fghij, abcde]'
@@ -79,7 +79,7 @@ describe('Les abonnés à la notification du scan', () => {
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepot);
-      bus.publie(unScanTermine({ ...scanTermine, cible: 'cible-inconnue' }));
+      await bus.publie(unScanTermine({ ...scanTermine, cible: 'cible-inconnue' }));
 
       expect(messagerieDeTest.messages[0].contenu).not.toContain(
         '**Interval de commits :** [fghij, abcde]'
@@ -90,12 +90,12 @@ describe('Les abonnés à la notification du scan', () => {
     });
   });
 
-  describe('En ce qui concerne le scan non effectué ', () => {
+  describe('En ce qui concerne le scan non effectué ', async () => {
     it('envoie le message de constat avec les hashs de commit et le nombre de jours', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepot);
-      bus.publie(unScanNonEffectue({ cible: 'projet' }));
+      await bus.publie(unScanNonEffectue({ cible: 'projet' }));
 
       expect(messagerieDeTest.messages[0].contenu).toContain(
         '**Interval de commits :** [fghij, abcde]'

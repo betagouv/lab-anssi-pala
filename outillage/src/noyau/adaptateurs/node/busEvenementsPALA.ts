@@ -3,10 +3,9 @@ import type { Abonne, BusEvenements, Evenement } from '../../ports/BusEvenements
 export class BusEvenementsPALA implements BusEvenements {
   readonly #abonnesParNom = new Map<string, Abonne<Evenement>[]>();
 
-  publie(evenement: Evenement): void {
-    for (const abonne of this.#abonnesParNom.get(evenement.nom) ?? []) {
-      abonne(evenement);
-    }
+  async publie(evenement: Evenement): Promise<void> {
+    const abonnes = this.#abonnesParNom.get(evenement.nom) ?? [];
+    await Promise.all(abonnes.map((abonne) => abonne(evenement)));
   }
 
   sabonne<E extends Evenement>(nom: E['nom'], abonne: Abonne<E>): void {
