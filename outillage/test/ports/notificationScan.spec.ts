@@ -93,6 +93,15 @@ describe('Les abonnés à la notification du scan', () => {
         '**Historique git sur :** 777 jours'
       );
     });
+
+    it('persiste le rapport dans le scan', async () => {
+      const messagerieDeTest = new MessagerieDeTest();
+
+      abonneNotificationScan(bus, messagerieDeTest, entrepot);
+      await bus.publie(unScanTermine({ ...scanTermine, rapport: 'le rapport' }));
+
+      expect(entrepot.tousLesElements[0].rapport).toBe('le rapport');
+    });
   });
 
   describe('En ce qui concerne le scan non effectué ', async () => {

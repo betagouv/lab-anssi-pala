@@ -5,33 +5,42 @@ import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
 import type { EntrepotScan } from '../scan/entrepoScan.ts';
+import type { Scan } from '../noyau/partage/scan.ts';
 
-const nomDeCible = (cible: string) =>
-  cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
+const nomDeCible = (cible: string) => cible.substring(cible.lastIndexOf('/') + 1);
+
+const nomDeCibleEnMajuscule = (cible: string) => nomDeCible(cible).toUpperCase();
 
 export const abonneNotificationScan = (
   bus: BusEvenementsPALA,
   messagerie: MessagerieInstantanee,
   entrepot: EntrepotScan
 ): void => {
-  const recupereLesInformationsGit = async (
+  const estEvenementScanTermine = (
     evenement: ScanTermine | ScanNonEffectue
-  ) => {
+  ): evenement is ScanTermine => {
+    return evenement.nom === 'SCAN_TERMINÉ';
+  };
+
+  const recupereLeScan = async (evenement: ScanTermine | ScanNonEffectue) => {
     try {
-      const nomCible = evenement.cible.substring(
-        evenement.cible.lastIndexOf('/') + 1
-      );
-      const scan = await entrepot.dernierScanPourLaCible(nomCible);
-      const informationsDeCommits = scan.informationsDeCommits;
-      return `- **Interval de commits :** [${informationsDeCommits.premierCommit}, ${informationsDeCommits.dernierCommit}]
-  - **Historique git sur :** ${informationsDeCommits.dureeHistorique} jours`;
+      return await entrepot.dernierScanPourLaCible(nomDeCible(evenement.cible));
     } catch (_e) {
-      return '';
+      return undefined;
     }
   };
 
+  const recupereLesInformationsGit = async (scan: Scan | undefined) => {
+    if (scan) {
+      const informationsDeCommits = scan.informationsDeCommits;
+      return `- **Interval de commits :** [${informationsDeCommits.premierCommit}, ${informationsDeCommits.dernierCommit}]
+  - **Historique git sur :** ${informationsDeCommits.dureeHistorique} jours`;
+    }
+    return '';
+  };
+
   bus.sabonne<ScanTermine>('SCAN_TERMINÉ', async (evenement) => {
-    const cible = nomDeCible(evenement.cible);
+    const cible = nomDeCibleEnMajuscule(evenement.cible);
 
     const constat = (constat: Constat) => {
       return `##### ${constat.titre} (${constat.cwe.join(' ')})
@@ -40,7 +49,12 @@ export const abonneNotificationScan = (
     ${constat.emplacements.map((emplacement) => `- ${emplacement.chemin} (lignes ${emplacement.ligneDebut} à ${emplacement.ligneFin})`).join('\n')}
     `;
     };
-    const informationsGit = await recupereLesInformationsGit(evenement);
+    const scan = await recupereLeScan(evenement);
+    if (scan && estEvenementScanTermine(evenement)) {
+      scan.rapport = evenement.rapport;
+      await entrepot.persiste(scan);
+    }
+    const informationsGit = await recupereLesInformationsGit(scan);
 
     const {
       hours = 0,
@@ -64,9 +78,10 @@ export const abonneNotificationScan = (
   });
 
   bus.sabonne<ScanNonEffectue>('SCAN_NON_EFFECTUÉ', async (evenement) => {
-    const cible = nomDeCible(evenement.cible);
+    const cible = nomDeCibleEnMajuscule(evenement.cible);
 
-    const informationsGit = await recupereLesInformationsGit(evenement);
+    const scan = await recupereLeScan(evenement);
+    const informationsGit = await recupereLesInformationsGit(scan);
 
     const message = `### ⚠️ Scan non effectué pour ${cible}
   - **Cible :** ${cible}
