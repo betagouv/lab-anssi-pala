@@ -3,6 +3,27 @@
 PALA est une suite d'**outils d'audit de sécurité pilotés par des agents LLM**, sur une
 cible fournie par l'utilisateur, avec des **modèles souverains** (Albert — DINUM, Scaleway).
 
+Le but d’un tel outil est de disposer des mêmes leviers que des personnes mal intentionnées en les tournant à notre avantage :
+
+- utiliser des LLM de génération et d’assistance de code
+- utiliser des agents spécialisés dans la sécurité
+- effectuer une analyse alliant la découverte, la preuve et la correction
+- tout cela sur des bases de code qui évoluent quotidiennement
+
+**L’outil est pensé en 2 parties distinctes :**
+
+- une première partie faisant de l’analyse statique agentique avec l’outil Codex. Cette partie d’analyse statique est
+  tout à fait automatisable et exécutable en une seule commande (voir [Scan complet](https://github.com/betagouv/lab-anssi-pala#effectuer-un-scan-complet)). Le détail du scan est donné également [ici](https://github.com/betagouv/lab-anssi-pala/blob/main/outils/codex-security/README.md#utilisation)
+- une seconde partie exécutant du pentest agentique avec l’outil Shannon. Cette partie d’exécution intrusive n’est aujourd’hui pas automatisée car elle demande à mettre en place des scénari qui dépendent des résultats de l’analyse précédente.
+
+La stratégie mise en place avec PALA est d’exécuter des scans de manière automatisée à intervalles réguliers.
+
+Cela afin de :
+
+- limiter le nombre de fichiers à analyser (contexte trop grand pour un LLM, performances dégradées, coût élevé)
+- obtenir une boucle de retour la plus rapide possible
+- informer les équipes de potentielles vulnérabilités
+
 Le dépôt ne contient aucun résultat d'audit : il fournit l'outillage, les configurations d'exemple et
 la méthode. Les cibles, les identifiants et les sorties de scan ne sont jamais versionnés.
 
