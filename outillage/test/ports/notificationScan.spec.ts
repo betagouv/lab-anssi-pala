@@ -10,7 +10,7 @@ import type {
   MessagerieInstantanee,
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
 import { unScanNonEffectue } from '../../src/codex-security/domaine/scanNonEffectue.ts';
-import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import { EntrepotDeScanMemoire } from '../noyau/infrastructutre/entrepots/memoire/entrepotScanMemoire.ts';
 import { randomUUID } from 'node:crypto';
 
 class MessagerieDeTest implements MessagerieInstantanee {

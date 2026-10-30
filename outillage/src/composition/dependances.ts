@@ -19,7 +19,8 @@ import { ReseauFetch } from '../noyau/infrastructure/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
 import { abonneNotificationScan } from './notificationScan.ts';
 import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
-import { EntrepotDeScanMemoire } from '../../test/noyau/persistance/entrepots.ts';
+import { EntrepotDeScanPostgres } from '../noyau/infrastructure/entrepots/postgres/entrepotDeScanPostgres.ts';
+import { knexPALA } from '../../../noyau-partage/src/knex/knexfile.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -28,7 +29,7 @@ export type ContexteDeComposition = {
 
 const outilCodexSecurity = (racine: string) => join(racine, 'outils/codex-security');
 
-const entrepot = new EntrepotDeScanMemoire();
+const entrepot = new EntrepotDeScanPostgres(knexPALA);
 
 export const lesDependancesPourLaPreparationEnvironnement = (
   { racine, console }: ContexteDeComposition,

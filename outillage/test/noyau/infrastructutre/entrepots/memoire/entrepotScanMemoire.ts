@@ -1,14 +1,15 @@
-import type { Scan } from '../../../src/noyau/partage/scan.ts';
-import type { Entrepot } from '../../../src/noyau/persistance/entrepots.ts';
-import type { EntrepotScan } from '../../../src/scan/entrepoScan.ts';
+import type { Scan } from '../../../../../src/noyau/partage/scan.ts';
+import type { Entrepot } from '../../../../../../noyau-partage/src/entrepots/entrepots.ts';
+import type { EntrepotScan } from '../../../../../src/scan/entrepoScan.ts';
 
 class EntrepotMemoire<T> implements Entrepot<T> {
   tousLesElements: T[] = [];
 
-  persiste(element: T): void {
+  async persiste(element: T): Promise<void> {
     this.tousLesElements.push(element);
   }
-  lis(identifiant: string): T {
+
+  async lis(identifiant: string): Promise<T> {
     const elementsTrouves = this.tousLesElements.filter(
       (element) => identifiant in (element as object)
     );
