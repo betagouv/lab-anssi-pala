@@ -1,7 +1,7 @@
 # PALA — Pentest agentique, Lab ANSSI
 
-PALA est une suite d'**outils d'audit de sécurité pilotés par des agents LLM**, sur une
-cible fournie par l'utilisateur, avec des **modèles souverains** (Albert — DINUM, Scaleway).
+**PALA** est une **expérimentation du Lab ANSSI** mettant à disposition des **outils d'audit de sécurité pilotés par des agents LLM**, sur une
+cible fournie par l'utilisateur.
 
 Le but d’un tel outil est de disposer des mêmes leviers que des personnes mal intentionnées en les tournant à notre avantage :
 
@@ -45,7 +45,7 @@ garde la clé du fournisseur hors de l'environnement de l'agent (voir
 ## Démarrage
 
 Prérequis : Node.js 24.22.1 (version épinglée dans `.nvmrc`), Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
-compatible OpenAI (Albert ou Scaleway).
+compatible OpenAI.
 
 L’outil dispose d’une CLI dont les commandes sont détaillées ci-dessous.
 
@@ -75,10 +75,13 @@ pnpm run pala:bootstrap --project <nom> --url <url git>
 pnpm run pala:génère-env
 ```
 
-La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.env` racine :
+La configuration du fournisseur se fait par les variables `FOURNISSEUR_*` du `.env` racine (une configuration est embarquée pour Albert) :
 
-- [Albert](documentation/albert-api.md)
-- [Scaleway](documentation/scaleway-ai-api.md)
+```text
+FOURNISSEUR_NOM=albert,
+FOURNISSEUR_BASE_URL=<url Albert>,
+FOURNISSEUR_API_KEY=<clé Albert>
+```
 
 #### Génération de la configuration
 
