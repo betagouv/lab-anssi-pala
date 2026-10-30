@@ -139,4 +139,26 @@ describe('L’entrepôt de Scan postgres', () => {
       },
     });
   });
+
+  it('persiste le rapport', async () => {
+    const id = randomUUID();
+    const unScan = {
+      id,
+      date: new Date('2026-10-09T14:34:00'),
+      cible: 'ma-cible',
+      informationsDeCommits: {
+        premierCommit: 'abcdef',
+        dernierCommit: 'ghijkl',
+        dureeHistorique: 7,
+        fichiers: ['1', '2', '3'],
+      },
+      rapport: 'un rapport',
+    };
+    await entrepot.persiste(unScan);
+
+    const resultat = await trx.select().from('scans').where('id', id).first();
+
+    expect(resultat.rapport).instanceOf(Buffer);
+    expect(resultat.rapport.toString('utf-8')).toBe('un rapport');
+  });
 });
