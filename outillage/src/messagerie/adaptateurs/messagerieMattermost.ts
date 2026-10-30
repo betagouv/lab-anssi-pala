@@ -4,7 +4,7 @@ import type {
 } from '../domaine/messagerieInstantanee.ts';
 import type { ApiHTTP } from '../../noyau/ports/apiHTTP.ts';
 import { environnement } from '../../noyau/environnement.ts';
-import { ApiHTTPFetch } from '../../noyau/adaptateurs/node/apiHTTPFetch.ts';
+import { ApiHTTPFetch } from '../../noyau/infrastructure/apiHTTPFetch.ts';
 
 export class MessagerieMattermost implements MessagerieInstantanee {
   #apiHTTP: ApiHTTP;

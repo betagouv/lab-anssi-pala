@@ -1,4 +1,4 @@
-import type { Reseau } from '../../ports/Reseau.ts';
+import type { Reseau } from '../ports/Reseau.ts';
 
 // Équivalent de `curl -s -o /dev/null -m <délai>` : répond si la connexion aboutit dans le délai.
 export class ReseauFetch implements Reseau {

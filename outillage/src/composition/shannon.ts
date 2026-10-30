@@ -1,10 +1,10 @@
 // Racine de composition : lance un pentest Shannon depuis la racine du dépôt.
 import { join } from 'node:path';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
-import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
-import { HorlogeSysteme } from '../noyau/adaptateurs/node/HorlogeSysteme.ts';
-import { ReseauFetch } from '../noyau/adaptateurs/node/ReseauFetch.ts';
-import { SystemeDeFichierNode } from '../noyau/adaptateurs/node/SystemeDeFichierNode.ts';
+import { ConsoleNode } from '../noyau/infrastructure/consoleNode.ts';
+import { HorlogeSysteme } from '../noyau/infrastructure/HorlogeSysteme.ts';
+import { ReseauFetch } from '../noyau/infrastructure/ReseauFetch.ts';
+import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
 import { ShannonNode } from '../shannon/adaptateurs/ShannonNode.ts';
 import { shannon } from '../shannon/cli/shannon.ts';
 

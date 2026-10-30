@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import {
   executeCommande,
   lanceCommande,
-} from '../../noyau/adaptateurs/node/processus.ts';
+} from '../../noyau/infrastructure/processus.ts';
 import type {
   ScannerCodexSecurity,
   DemandeDeScan,

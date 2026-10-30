@@ -1,4 +1,4 @@
-import type { ApiHTTP } from '../../ports/apiHTTP.ts';
+import type { ApiHTTP } from '../ports/apiHTTP.ts';
 
 export class ApiHTTPFetch implements ApiHTTP {
   poste(url: string, corps: object): Promise<Response> {

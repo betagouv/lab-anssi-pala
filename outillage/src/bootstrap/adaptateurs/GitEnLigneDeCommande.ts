@@ -1,4 +1,4 @@
-import { executeCommande } from '../../noyau/adaptateurs/node/processus.ts';
+import { executeCommande } from '../../noyau/infrastructure/processus.ts';
 import type { CibleBootstrap } from '../domaine/CibleBootstrap.ts';
 import type { Git, HashDeCommit, Modifications } from '../ports/Git.ts';
 import { execFileSync } from 'node:child_process';

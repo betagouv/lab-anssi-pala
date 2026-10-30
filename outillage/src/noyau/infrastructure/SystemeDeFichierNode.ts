@@ -6,7 +6,7 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { resolve } from 'node:path';
-import type { SystemeDeFichier } from '../../ports/SystemeDeFichier.ts';
+import type { SystemeDeFichier } from '../ports/SystemeDeFichier.ts';
 
 export class SystemeDeFichierNode implements SystemeDeFichier {
   readonly #base: string;

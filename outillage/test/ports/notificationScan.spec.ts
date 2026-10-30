@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BusEvenementsPALA } from '../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
+import { BusEvenementsPALA } from '../../src/noyau/infrastructure/busEvenementsPALA.ts';
 import {
   type ScanTermine,
   unScanTermine,

@@ -1,6 +1,6 @@
 import { PassThrough } from 'node:stream';
 import { describe, expect, it } from 'vitest';
-import { ConsoleNode } from '../../../../src/noyau/adaptateurs/node/consoleNode.ts';
+import { ConsoleNode } from '../../../src/noyau/infrastructure/consoleNode.ts';
 
 const tubeFerme = () => Object.assign(new Error('write EPIPE'), { code: 'EPIPE' });
 

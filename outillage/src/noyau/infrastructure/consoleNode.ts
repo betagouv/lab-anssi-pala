@@ -1,5 +1,5 @@
 import type { Writable } from 'node:stream';
-import { type Console, type Couleur, couleurs } from '../../ports/Console.ts';
+import { type Console, type Couleur, couleurs } from '../ports/Console.ts';
 
 const RESET = '\x1b[0m';
 

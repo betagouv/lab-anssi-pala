@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { BusEvenementsPALA } from '../../../../src/noyau/adaptateurs/node/busEvenementsPALA.ts';
-import type { Evenement } from '../../../../src/noyau/ports/BusEvenements.ts';
+import { BusEvenementsPALA } from '../../../src/noyau/infrastructure/busEvenementsPALA.ts';
+import type { Evenement } from '../../../src/noyau/ports/BusEvenements.ts';
 
 type EvenementDeTest = Evenement & {
   readonly nom: 'ÉVÉNEMENT_DE_TEST';

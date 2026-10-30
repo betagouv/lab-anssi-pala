@@ -1,4 +1,4 @@
-import type { Abonne, BusEvenements, Evenement } from '../../ports/BusEvenements.ts';
+import type { Abonne, BusEvenements, Evenement } from '../ports/BusEvenements.ts';
 
 export class BusEvenementsPALA implements BusEvenements {
   readonly #abonnesParNom = new Map<string, Abonne<Evenement>[]>();

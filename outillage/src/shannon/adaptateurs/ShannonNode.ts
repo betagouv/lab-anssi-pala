@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { lanceCommande } from '../../noyau/adaptateurs/node/processus.ts';
+import { lanceCommande } from '../../noyau/infrastructure/processus.ts';
 import type { DemandeDeLancement, Shannon } from '../ports/Shannon.ts';
 
 // CLI Shannon lancée depuis ses sources (outils/shannon/source) directement avec node, suivie jusqu'au bout.

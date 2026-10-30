@@ -1,7 +1,7 @@
 // Racine de composition : branche le bootstrap sur le système réel, depuis la racine du dépôt.
 import { join } from 'node:path';
 import { bootstrap } from '../bootstrap/cli.ts';
-import { ConsoleNode } from '../noyau/adaptateurs/node/consoleNode.ts';
+import { ConsoleNode } from '../noyau/infrastructure/consoleNode.ts';
 import { lesDependancesPourLaPreparationEnvironnement } from './dependances.ts';
 
 const racine = join(import.meta.dirname, '../../..');
