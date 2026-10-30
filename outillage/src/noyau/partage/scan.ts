@@ -10,4 +10,5 @@ export type Scan = {
     dureeHistorique: number;
     fichiers: string[];
   };
+  rapport?: string;
 };
