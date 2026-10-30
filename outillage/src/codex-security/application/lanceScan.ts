@@ -68,7 +68,7 @@ export class LanceScan {
         `Aucun fichier à scanner (périmètre vide) : scan non effectué pour ${cible}.`,
         'ORANGE'
       );
-      this.#busDEvenements.publie(unScanNonEffectue({ cible }));
+      await this.#busDEvenements.publie(unScanNonEffectue({ cible }));
       return 0;
     }
 
@@ -86,7 +86,7 @@ export class LanceScan {
       environnement: { ...environnementCodex, PATH: environnement.path },
     });
     const cout = this.#estimeLeCout(configScan, sortie, releveDeTokens);
-    this.#busDEvenements.publie(
+    await this.#busDEvenements.publie(
       unScanTermine({
         cible,
         resultat: statut === 0 ? 'Succès' : 'Échec',
