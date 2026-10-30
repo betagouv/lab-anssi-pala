@@ -47,6 +47,7 @@ export class EntrepotDeScanPostgres
           dernier_commit: scan.informationsDeCommits.dernierCommit,
           duree_historique: scan.informationsDeCommits.dureeHistorique,
           fichiers: { liste: scan.informationsDeCommits.fichiers },
+          ...(scan.rapport && { rapport: Buffer.from(scan.rapport) }),
         };
       },
       entite: () => {
