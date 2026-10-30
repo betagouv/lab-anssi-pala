@@ -86,6 +86,7 @@ export class LanceScan {
       environnement: { ...environnementCodex, PATH: environnement.path },
     });
     const cout = this.#estimeLeCout(configScan, sortie, releveDeTokens);
+    const rapport = this.#lisLeRapport(sortie);
     await this.#busDEvenements.publie(
       unScanTermine({
         cible,
@@ -95,6 +96,7 @@ export class LanceScan {
         informationsDeCommits,
         nombreDeFichiers: configScan.perimetre.nombreDeChemins(),
         dureeEnMs: this.#laDuree(sortie),
+        rapport,
       })
     );
     return statut;
@@ -111,6 +113,13 @@ export class LanceScan {
       );
       return [];
     }
+  }
+
+  #lisLeRapport(sortie: DossierDeSortie): string {
+    const rapport = join(sortie.chemin, 'report.md');
+    return this.#systemeDeFichier.existe(rapport)
+      ? this.#systemeDeFichier.lit(rapport)
+      : '';
   }
 
   #laDuree(sortie: DossierDeSortie): number | undefined {

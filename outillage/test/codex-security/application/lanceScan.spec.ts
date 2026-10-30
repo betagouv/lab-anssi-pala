@@ -316,6 +316,7 @@ describe('Lance Scan Codex', () => {
           type: 'estimé',
           montantEnEuros: ((100_000 + 10_000) * 1.8) / 1e6 + (10_500 * 5.5) / 1e6,
         },
+        rapport: '',
         constats: [],
       },
     ]);
@@ -410,6 +411,24 @@ describe('Lance Scan Codex', () => {
     });
 
     expect(scansTermines[0].dureeEnMs).toBe(90_000);
+  });
+
+  it('publie le rapport généré par le scan', async () => {
+    const bus = new BusEvenementsPALA();
+    const scansTermines = collecteLesScansTermines(bus);
+    const systemeDeFichier = unDepotDeFichiersPret();
+    systemeDeFichier.fichiers.set(
+      '/depot/resultats/brut/codex-security/scan-20260930-140509/report.md',
+      'le rapport'
+    );
+
+    await unScanCodex({ systemeDeFichier, busDEvenements: bus }).execute({
+      options: [],
+      cible: CIBLE,
+      config: CONFIG_PAR_DEFAUT,
+    });
+
+    expect(scansTermines[0].rapport).toBe('le rapport');
   });
 
   it('signale un manifeste de sortie illisible sans empêcher la publication ni renseigner la durée', async () => {
@@ -516,6 +535,7 @@ describe('Lance Scan Codex', () => {
         resultat: 'Succès',
         cout: { type: 'indisponible' },
         constats: [],
+        rapport: '',
       },
     ]);
   });

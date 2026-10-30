@@ -54,6 +54,7 @@ describe('Les abonnés à la notification du scan', () => {
           emplacements: [],
         },
       ],
+      rapport: 'le rapport',
     };
 
     it('envoie le message de constat', async () => {
