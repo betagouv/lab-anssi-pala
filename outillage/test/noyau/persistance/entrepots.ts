@@ -1,5 +1,6 @@
 import type { Scan } from '../../../src/noyau/partage/scan.ts';
 import type { Entrepot } from '../../../src/noyau/persistance/entrepots.ts';
+import type { EntrepotScan } from '../../../src/scan/entrepoScan.ts';
 
 class EntrepotMemoire<T> implements Entrepot<T> {
   tousLesElements: T[] = [];
@@ -19,4 +20,10 @@ class EntrepotMemoire<T> implements Entrepot<T> {
 
 export class EntrepotDeScanMemoire
   extends EntrepotMemoire<Scan>
-  implements Entrepot<Scan> {}
+  implements EntrepotScan
+{
+  async dernierScanPourLaCible(nomCible: string): Promise<Scan> {
+    const scans = this.tousLesElements.filter((s) => nomCible === s.cible);
+    return scans.length > 1 ? scans[scans.length - 1] : scans[0];
+  }
+}

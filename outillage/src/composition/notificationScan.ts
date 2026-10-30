@@ -4,8 +4,7 @@ import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.
 import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
-
-import { EntrepotDeScanMemoire } from '../../test/noyau/persistance/entrepots.ts';
+import type { EntrepotScan } from '../scan/entrepoScan.ts';
 
 const nomDeCible = (cible: string) =>
   cible.substring(cible.lastIndexOf('/') + 1).toUpperCase();
@@ -13,18 +12,19 @@ const nomDeCible = (cible: string) =>
 export const abonneNotificationScan = (
   bus: BusEvenementsPALA,
   messagerie: MessagerieInstantanee,
-  entrepot: EntrepotDeScanMemoire
+  entrepot: EntrepotScan
 ): void => {
   const recupereLesInformationsGit = async (
     evenement: ScanTermine | ScanNonEffectue
   ) => {
     try {
-      const identifiant = evenement.cible.substring(
+      const nomCible = evenement.cible.substring(
         evenement.cible.lastIndexOf('/') + 1
       );
-      const scan = await entrepot.lis(identifiant);
-      return `- **Interval de commits :** [${scan[identifiant].premierCommit}, ${scan[identifiant].dernierCommit}]
-  - **Historique git sur :** ${scan[identifiant].dureeHistorique} jours`;
+      const scan = await entrepot.dernierScanPourLaCible(nomCible);
+      const informationsDeCommits = scan.informationsDeCommits;
+      return `- **Interval de commits :** [${informationsDeCommits.premierCommit}, ${informationsDeCommits.dernierCommit}]
+  - **Historique git sur :** ${informationsDeCommits.dureeHistorique} jours`;
     } catch (_e) {
       return '';
     }

@@ -8,6 +8,7 @@ import { join } from 'path';
 import type { Git } from '../../bootstrap/ports/Git.ts';
 import type { Scan } from '../../noyau/partage/scan.ts';
 import type { Entrepot } from '../../noyau/persistance/entrepots.ts';
+import { randomUUID } from 'node:crypto';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -59,7 +60,8 @@ export class GenereConfigCible {
     const nombreDeFichiersModifies = fichiersModifies.length;
 
     this.#entrepot.persiste({
-      [nomCible]: {
+      id: randomUUID(),
+      informationsDeCommits: {
         ...(modifications.premierCommit && {
           premierCommit: modifications.premierCommit.long,
         }),
@@ -67,8 +69,10 @@ export class GenereConfigCible {
           dernierCommit: modifications.dernierCommit.long,
         }),
         dureeHistorique: nombreDeJours,
-        nombreDeFichiers: nombreDeFichiersModifies,
+        fichiers: fichiersModifies,
       },
+      cible: nomCible,
+      date: new Date(),
     });
 
     this.#console.aLaLigne(`Généré: ${cheminConfig}`, 'VERT');

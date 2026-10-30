@@ -11,6 +11,7 @@ import type {
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
 import { unScanNonEffectue } from '../../src/codex-security/domaine/scanNonEffectue.ts';
 import { EntrepotDeScanMemoire } from '../noyau/persistance/entrepots.ts';
+import { randomUUID } from 'node:crypto';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
@@ -26,11 +27,14 @@ describe('Les abonnés à la notification du scan', () => {
     bus = new BusEvenementsPALA();
     entrepot = new EntrepotDeScanMemoire();
     entrepot.persiste({
-      projet: {
+      id: randomUUID(),
+      cible: 'projet',
+      date: new Date(),
+      informationsDeCommits: {
         dernierCommit: 'abcde',
         premierCommit: 'fghij',
         dureeHistorique: 777,
-        nombreDeFichiers: 42,
+        fichiers: ['1', '2'],
       },
     });
   });
