@@ -26,6 +26,7 @@
     "pala:bootstrap": "node outillage/src/composition/bootstrap.ts",
     "pala:génère-env": "node --require dotenv/config outillage/src/composition/genere-env.ts",
     "pala:génère-config": "node --require dotenv/config outillage/src/composition/genere-config.ts",
+    "codex:génère-config-proxy": "node --require dotenv/config outillage/src/composition/genere-config-proxy.ts",
     "codex:démarre-proxy": "node --require dotenv/config outillage/src/composition/demarre-proxy.ts",
     "codex:scan-complet": "node --require dotenv/config outillage/src/composition/scan-complet.ts",
     "codex:scan": "node --require dotenv/config outillage/src/composition/scan.ts",
