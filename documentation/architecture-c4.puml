@@ -1,0 +1,151 @@
+' Architecture de PALA selon le modèle C4 (https://c4model.com/)
+' Transposition des diagrammes mermaid du README.md racine.
+' Niveaux 1 à 3 : Contexte, Conteneurs, Composants.
+'
+' Rendu : PlantUML avec la bibliothèque standard C4-PlantUML.
+'   plantuml documentation/architecture-c4.puml
+' (génère un PNG/SVG par bloc @startuml)
+
+@startuml c4-niveau-1-contexte
+!include <C4/C4_Context>
+!include <logos/git>
+!include <logos/nodejs>
+!include <logos/openai-icon>
+!include <logos/mattermost>
+
+LAYOUT_WITH_LEGEND()
+title Pentest Agentique Lab ANSSI — PALA
+
+Enterprise_Boundary(b0, "") {
+    Person(auditeur, "Auditeur sécurité", "Opère PALA sur une ou des cible·s")
+    Person(equipe, "Équipe de dev de la cible", "Reçoit les comptes rendus")
+
+    System(pala, "PALA", "Suite d'audit de sécurité pilotée par des agents LLM", $sprite="nodejs")
+
+    System_Ext(git, "Dépôt Git de la cible", "Code source à auditer", $sprite="git")
+}
+
+Enterprise_Boundary(b1, "Fournisseurs") {
+    System_Ext(llm, "Fournisseur LLM", "OpenAI Chat Completion", $sprite="openai-icon")
+    System_Ext(mattermost, "Mattermost", "Messagerie d'équipe (webhook)", $sprite="mattermost")
+}
+
+Rel_D(auditeur, pala, "Lance scans & pentests, consulte les résultats")
+Rel_D(pala, git, "Clone / met à jour le code", "git")
+Rel(pala, llm, "Requêtes d'inférence des agents", "HTTPS")
+Rel(pala, mattermost, "Publie le compte rendu de scan", "Webhook")
+Rel(equipe, mattermost, "Consulte les comptes rendus")
+@enduml
+
+@startuml c4-niveau-2-conteneurs
+!include <C4/C4_Container>
+!include <logos/git>
+!include <logos/nodejs>
+!include <logos/openai-icon>
+!include <logos/mattermost>
+!include <logos/svelte-icon>
+!include <logos/postgresql>
+!include <logos/docker>
+
+LAYOUT_WITH_LEGEND()
+title Pentes Agentique Lab ANSSI — PALA
+
+Person(auditeur, "Auditeur sécurité", "Opère la CLI")
+    System_Boundary(fournisseurs, "Fournisseurs") {
+    System_Ext(llm, "Fournisseur LLM souverain", "Albert / Scaleway — Chat Completions", $sprite="openai-icon")
+    System_Ext(git, "Dépôt Git de la cible", "Code source", $sprite="git")
+    System_Ext(mattermost, "Mattermost", "Webhook d'équipe", $sprite="mattermost")
+}
+
+System_Boundary(pala, "PALA") {
+    Container(cli, "CLI d'audit", "Node 24 / TypeScript, archi hexagonale", "Orchestre bootstrap, génération de config, scans et pentests", $sprite="nodejs")
+    Container(front, "SPA", "Svelte 5 + Design System de l'État", "Interface de consultation", $sprite="svelte-icon")
+    Container(back, "Serveur web", "Express", "Sert la SPA (CSP, rate-limit)", $sprite="nodejs")
+    Container(proxy, "Proxy LiteLLM", "Conteneur Docker", "Traduit l'API Responses vers Chat Completions, garde la clé du fournisseur", $sprite="docker")
+    Container(codex, "Codex Security", "Sous-module (OpenAI)", "Analyse statique agentique", $sprite="nodejs")
+    Container(shannon, "Shannon", "Sous-module (Keygraph)", "Pentest dynamique agentique", $sprite="nodejs")
+    ContainerDb(bdd, "PostgreSQL", "Base de données", "Enregistre les scans", $sprite="postgresql")
+}
+
+Rel(auditeur, cli, "Commandes pnpm")
+Rel(auditeur, front, "Consulte", "HTTPS")
+Rel(front, back, "Chargée depuis", "HTTPS")
+Rel(cli, codex, "Lance l'analyse statique")
+Rel(cli, shannon, "Lance le pentest")
+Rel(cli, proxy, "Configure & démarre")
+Rel(cli, bdd, "Enregistre les scans", "SQL")
+Rel_D(cli, git, "Clone / pull", "git")
+Rel_D(cli, mattermost, "Publie le compte rendu", "Webhook")
+Rel(codex, proxy, "Appels d'inférence", "API Responses")
+Rel(proxy, llm, "Appels d'inférence", "Chat Completions")
+Rel(shannon, llm, "Appels d'inférence", "Chat Completions")
+@enduml
+
+@startuml c4-niveau-3-composants
+!include <C4/C4_Component>
+!include <logos/git>
+!include <logos/nodejs>
+!include <logos/openai-icon>
+!include <logos/mattermost>
+!include <logos/svelte-icon>
+!include <logos/postgresql>
+!include <logos/docker>
+
+LAYOUT_WITH_LEGEND()
+title CLI
+
+Person(auditeur, "Auditeur sécurité", "Commandes pnpm")
+
+System_Boundary(outils, "Outils") {
+    System_Boundary(systemCodex, "Codex") {
+        Container_Ext(codex, "Codex Security", "Sous-module", $sprite="git")
+        Container_Ext(proxy, "Proxy LiteLLM", "Docker", $sprite="docker")
+    }
+    Container_Ext(shannon, "Shannon", "Sous-module", $sprite="git")
+}
+
+ContainerDb_Ext(bdd, "PostgreSQL", "Base de données", $sprite="postgresql")
+
+System_Boundary(fournisseurs, "Fournisseurs") {
+    System_Ext(git, "Dépôt Git de la cible", "Code source", $sprite="git")
+    System_Ext(mattermost, "Mattermost", "Webhook", $sprite="mattermost")
+    System_Ext(llm, "Fournisseur LLM", "Chat Completions", $sprite="openai-icon")
+}
+
+Container_Boundary(cli, "CLI d'audit (pala-outillage)") {
+    Component(scanComplet, "Scan complet", "Module", "Orchestre l'enchaînement des étapes", $sprite="nodejs")
+    Component(bootstrap, "Bootstrap", "Module", "Prépare les sous-modules et clone la cible", $sprite="nodejs")
+    Component(env, "Environnement", "Module", "Génère le .env d'exécution", $sprite="nodejs")
+    Component(moduleCodex, "Codex Security", "Module", "Génère les configs, démarre le proxy, lance le scan et la validation", $sprite="nodejs")
+    Component(moduleShannon, "Shannon", "Module", "Pentest, test de fumée, vérif. des appels d'outils", $sprite="nodejs")
+    Component(cout, "Coût", "Module", "Estime le coût en tokens", $sprite="nodejs")
+    Component(messagerie, "Messagerie", "Module", "Compte rendu Mattermost", $sprite="nodejs")
+    Component(noyau, "Noyau", "Ports & infrastructure", "Système de fichiers, réseau, processus, bus d'événements, console, entrepôt Postgres", $sprite="nodejs")
+
+    Rel(scanComplet, bootstrap, "Bootsrap l’environnement")
+    Rel(scanComplet, env, "Génère l’environnement cible")
+    Rel(scanComplet, moduleCodex, "Exécute le scan")
+}
+
+
+Rel(auditeur, scanComplet, "codex:scan-complet")
+Rel(auditeur, moduleCodex, "codex:scan / démarre-proxy / génère-config")
+Rel(auditeur, moduleShannon, "shannon:pen-test")
+Rel(auditeur, cout, "pala:estimer-cout")
+
+
+
+Rel(bootstrap, git, "Clone / pull", "git")
+Rel_D(moduleCodex, codex, "Exécute le scan")
+Rel_D(moduleCodex, proxy, "Configure & démarre")
+Rel(moduleCodex, messagerie, "Compte rendu")
+Rel_D(moduleShannon, shannon, "Exécute le pentest")
+Rel(moduleShannon, llm, "Vérifie les appels d'inférence")
+Rel(messagerie, mattermost, "Webhook")
+Rel(noyau, bdd, "Enregistre les scans", "SQL")
+Rel(moduleCodex, noyau, "fs / réseau / processus / bus")
+Rel(moduleShannon, noyau, "fs / réseau / processus")
+
+Lay_D(cli, outils)
+Lay_D(cli, fournisseurs)
+@enduml
