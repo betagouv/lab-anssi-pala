@@ -10,7 +10,6 @@ import { GitEnLigneDeCommande } from '../bootstrap/adaptateurs/GitEnLigneDeComma
 import { PrepareCodexSecurity } from '../codex-security/application/prepareCodexSecurity.ts';
 import { PrepareShannon } from '../shannon/application/prepareShannon.ts';
 import { DepotShannonGit } from '../shannon/adaptateurs/DepotShannonGit.ts';
-import { ConteneurProxyDockerLocal } from '../codex-security/adaptateurs/ConteneurProxyDockerLocal.ts';
 import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
 import { AttenteTemporisee } from '../noyau/infrastructure/AttenteTemporisee.ts';
@@ -22,6 +21,7 @@ import { abonneNotificationScan } from './notificationScan.ts';
 import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
 import { EntrepotDeScanPostgres } from '../noyau/infrastructure/entrepots/postgres/entrepotDeScanPostgres.ts';
 import { knexPALA } from '../../../noyau-partage/src/knex/knexfile.ts';
+import { adaptateurProxy } from '../codex-security/adaptateurs/adaptateurProxy.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -85,7 +85,7 @@ export const lesDependancesPourLeDemarrageDuProxy = ({
   racine,
   console,
 }: ContexteDeComposition): DependancesDemarrageProxy => ({
-  conteneur: new ConteneurProxyDockerLocal(outilCodexSecurity(racine)),
+  conteneur: adaptateurProxy(outilCodexSecurity(racine)),
   reseau: new ReseauFetch(2000),
   attente: new AttenteTemporisee(),
   console,
