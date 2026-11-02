@@ -30,6 +30,9 @@ outils/shannon/configs/*.yaml
 outils/codex-security/codex-home/
 outils/codex-security/state/
 
+# Config du proxy LiteLLM générée (model_list depuis le .env) ; config.yaml reste versionné
+outils/codex-security/litellm/config-genere.yaml
+
 # Configs Codex Security : ne versionner que les *.template.yaml et le defaut
 outils/codex-security/configs/*.yaml
 !outils/codex-security/configs/albert-minimal.yaml
