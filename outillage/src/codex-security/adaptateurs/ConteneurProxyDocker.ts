@@ -39,7 +39,7 @@ export class ConteneurProxyDocker implements ConteneurProxy {
         `${hostname}:${portExpose}:${portExpose}`,
         image,
         '--config',
-        '/app/proxy-config/config.yaml',
+        '/app/proxy-config/config-genere.yaml',
         '--port',
         portExpose,
       ],
