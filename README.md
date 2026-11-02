@@ -3,12 +3,12 @@
 PALA est une suite d'**outils d'audit de sécurité pilotés par des agents LLM**, sur une
 cible fournie par l'utilisateur, avec des **modèles souverains** (Albert — DINUM, Scaleway).
 
-Le but d’un tel outil est de disposer des mêmes leviers que des personnes mal intentionnées en les tournant à notre avantage :
+Le but d’un tel outil est de mettre à disposition des leviers d’aide à la sécurisation de ses applications :
 
-- utiliser des LLM de génération et d’assistance de code
-- utiliser des agents spécialisés dans la sécurité
-- effectuer une analyse alliant la découverte, la preuve et la correction
-- tout cela sur des bases de code qui évoluent quotidiennement
+- en utilisant des LLM de génération et d’assistance de code
+- en utilisant des agents spécialisés dans la sécurité
+- en effectuant une analyse alliant la découverte, la preuve et la correction
+- tout cela sur des bases de code évoluant quotidiennement
 
 **L’outil est pensé en 2 parties distinctes :**
 
