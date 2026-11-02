@@ -5,6 +5,7 @@ import { PrepareEnvironnement } from '../bootstrap/application/prepareEnvironnem
 import { CibleBootstrap } from '../bootstrap/domaine/CibleBootstrap.ts';
 import { GenereEnvironnement } from '../environnement/application/genereEnvironnement.ts';
 import { GenereConfigCible } from '../codex-security/application/genereConfigCible.ts';
+import { GenereConfigurationProxy } from '../codex-security/application/genereConfigurationProxy.ts';
 import { DemarreProxy } from '../codex-security/application/demarreProxy.ts';
 import { LanceScan } from '../codex-security/application/lanceScan.ts';
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../codex-security/domaine/fenetreDeModification.ts';
@@ -16,6 +17,7 @@ import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNo
 import { environnement } from '../noyau/environnement.ts';
 import {
   lesDependancesPourLaGenerationConfig,
+  lesDependancesPourLaGenerationConfigProxy,
   lesDependancesPourLaGenerationEnvironnement,
   lesDependancesPourLaPreparationEnvironnement,
   lesDependancesPourLeDemarrageDuProxy,
@@ -35,6 +37,11 @@ const etapes: EtapesScanComplet = {
   genereEnv: () =>
     new GenereEnvironnement(
       lesDependancesPourLaGenerationEnvironnement(contexte)
+    ).execute(),
+
+  genereConfigProxy: () =>
+    void new GenereConfigurationProxy(
+      lesDependancesPourLaGenerationConfigProxy(contexte)
     ).execute(),
 
   genereConfig: (nomCible, jours) =>

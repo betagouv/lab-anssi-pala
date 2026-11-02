@@ -4,6 +4,7 @@ import type { CibleScan } from '../domaine/cibles.ts';
 export interface EtapesScanComplet {
   bootstrap(cible: CibleScan): void | Promise<void>;
   genereEnv(): void | Promise<void>;
+  genereConfigProxy(): void | Promise<void>;
   genereConfig(nomCible: string, jours?: number): void | Promise<void>;
   demarreProxy(): void | Promise<void>;
   scan(nomCible: string): Promise<number>;
@@ -33,6 +34,7 @@ export class LanceScanComplet {
     proxyLocal: boolean;
   }): Promise<number> {
     await this.#etapes.genereEnv();
+    await this.#etapes.genereConfigProxy();
     if (proxyLocal) {
       await this.#etapes.demarreProxy();
     } else {

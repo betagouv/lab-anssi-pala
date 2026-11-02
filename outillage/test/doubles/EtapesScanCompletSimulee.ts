@@ -1,7 +1,13 @@
 import type { EtapesScanComplet } from '../../src/scan-complet/application/lanceScanComplet.ts';
 import type { CibleScan } from '../../src/scan-complet/domaine/cibles.ts';
 
-type Etape = 'bootstrap' | 'genereEnv' | 'genereConfig' | 'demarreProxy' | 'scan';
+type Etape =
+  | 'bootstrap'
+  | 'genereEnv'
+  | 'genereConfigProxy'
+  | 'genereConfig'
+  | 'demarreProxy'
+  | 'scan';
 
 export class EtapesScanCompletSimulee implements EtapesScanComplet {
   readonly journal: Etape[] = [];
@@ -29,6 +35,10 @@ export class EtapesScanCompletSimulee implements EtapesScanComplet {
 
   genereEnv(): void {
     this.#enregistre('genereEnv');
+  }
+
+  genereConfigProxy(): void {
+    this.#enregistre('genereConfigProxy');
   }
 
   genereConfig(nomCible: string, jours?: number): void {

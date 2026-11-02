@@ -20,6 +20,7 @@ describe('Lance le scan complet', () => {
 
     expect(etapes.journal).toEqual([
       'genereEnv',
+      'genereConfigProxy',
       'demarreProxy',
       'bootstrap',
       'genereConfig',
@@ -30,6 +31,23 @@ describe('Lance le scan complet', () => {
     ]);
     expect(etapes.ciblesScannees).toEqual(['a', 'b']);
     expect(code).toBe(0);
+  });
+
+  it('génère la config du proxy une fois, avant de démarrer le proxy', async () => {
+    const etapes = new EtapesScanCompletSimulee();
+
+    await new LanceScanComplet({
+      etapes,
+      console: new ConsoleEnMemoire(),
+    }).execute({ cibles: [uneCible, autreCible], proxyLocal: true });
+
+    expect(etapes.journal.filter((e) => e === 'genereConfigProxy')).toHaveLength(1);
+    expect(etapes.journal.indexOf('genereConfigProxy')).toBeLessThan(
+      etapes.journal.indexOf('demarreProxy')
+    );
+    expect(etapes.journal.indexOf('genereConfigProxy')).toBeLessThan(
+      etapes.journal.indexOf('bootstrap')
+    );
   });
 
   it('ne génère l’environnement et ne démarre le proxy qu’une seule fois', async () => {
