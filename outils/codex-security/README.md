@@ -12,9 +12,16 @@ Les chemins ci-dessous sont relatifs à la racine du dépôt.
 1. **Codex ne parle que l'API Responses** d'OpenAI (`wire_api = "chat"` est refusé).
 2. **Les fournisseurs souverains n'exposent que Chat Completions** (`/v1/responses` → 404 chez
    Albert ; côté Scaleway, Responses n'est pas servi pour tous les modèles).
-3. D'où un **proxy LiteLLM local** (`litellm/config.yaml`) qui expose `/v1/responses` et le
+3. D'où un **proxy LiteLLM local** qui expose `/v1/responses` et le
    traduit en Chat Completions (`use_chat_completions_api: true`). La clé du fournisseur reste
-   dans le proxy, hors de l'environnement de Codex.
+   dans le proxy, hors de l'environnement de Codex. Le proxy **local** lit `litellm/config-genere.yaml`,
+   dont le **`model_list` est généré depuis le `.env` racine** par `pnpm codex:génère-config-proxy`
+   (à lancer **avant** `démarre-proxy`) ; `litellm/config.yaml` reste la config de référence
+   versionnée (bloc `litellm_settings` repris tel quel). Les variables `FOURNISSEUR_MODELE`
+   (id exact du fournisseur, namespace inclus), `FOURNISSEUR_COUT_ENTREE_PAR_TOKEN` et
+   `FOURNISSEUR_COUT_SORTIE_PAR_TOKEN` pilotent l'entrée générée (optionnels :
+   `FOURNISSEUR_MAX_TOKENS`, `FOURNISSEUR_TEMPERATURE`, `FOURNISSEUR_TOP_P`,
+   `FOURNISSEUR_PRESENCE_PENALTY`, `FOURNISSEUR_TOOL_CHOICE`).
 4. Le proxy peut appliquer un **hook** (`litellm/json_schema_to_object.py`) : certains modèles se
    dégradent sous décodage contraint par schéma JSON ; le hook remplace alors `json_schema` par
    `json_object` et passe le schéma en consigne. Il impose aussi les paramètres d'échantillonnage
@@ -42,7 +49,8 @@ télémétrie désactivée.
 ```
 source/                           sous-module : dépôt amont (jamais modifié)
 package.json, package-lock.json   CLI npm figée ; node_modules/ non versionné
-litellm/config.yaml               proxy Responses -> Chat Completions
+litellm/config.yaml               proxy Responses -> Chat Completions (config de référence, versionnée)
+litellm/config-genere.yaml        config GÉNÉRÉE (model_list depuis le .env) ; non versionnée ; lue par le proxy local
 litellm/json_schema_to_object.py  hook du proxy (format de sortie, paramètres)
 configs/config-defaut.yaml        config par défaut (dépôt entier)
 configs/config-cible.template.yaml  template d'un scan ciblé (scope.paths à renseigner)
@@ -69,7 +77,8 @@ pnpm run codex:scan --help
 
 Pour lancer le scan
 ```bash
-pnpm run codex:démarre-proxy
+pnpm run codex:génère-config-proxy   # génère litellm/config-genere.yaml depuis le .env (model_list)
+pnpm run codex:démarre-proxy         # le proxy local lit config-genere.yaml
 pnpm codex:scan --cible <CHEMIN CIBLE> --config <CHEMIN CONFIG>
 ```
 
