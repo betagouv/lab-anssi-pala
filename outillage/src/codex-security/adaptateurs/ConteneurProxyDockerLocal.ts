@@ -7,7 +7,7 @@ import type { ConfigurationProxy, ConteneurProxy } from '../ports/ConteneurProxy
 
 const NOM = 'codex-security-litellm';
 
-export class ConteneurProxyDocker implements ConteneurProxy {
+export class ConteneurProxyDockerLocal implements ConteneurProxy {
   readonly #outil: string;
 
   constructor(outil: string) {

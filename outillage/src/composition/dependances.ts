@@ -10,7 +10,7 @@ import { GitEnLigneDeCommande } from '../bootstrap/adaptateurs/GitEnLigneDeComma
 import { PrepareCodexSecurity } from '../codex-security/application/prepareCodexSecurity.ts';
 import { PrepareShannon } from '../shannon/application/prepareShannon.ts';
 import { DepotShannonGit } from '../shannon/adaptateurs/DepotShannonGit.ts';
-import { ConteneurProxyDocker } from '../codex-security/adaptateurs/ConteneurProxyDocker.ts';
+import { ConteneurProxyDockerLocal } from '../codex-security/adaptateurs/ConteneurProxyDockerLocal.ts';
 import { ScannerCodexSecurityNpm } from '../codex-security/adaptateurs/ScannerCodexSecurityNpm.ts';
 import { EstimationDuCout } from '../cout/application/estimationDuCout.ts';
 import { AttenteTemporisee } from '../noyau/infrastructure/AttenteTemporisee.ts';
@@ -85,7 +85,7 @@ export const lesDependancesPourLeDemarrageDuProxy = ({
   racine,
   console,
 }: ContexteDeComposition): DependancesDemarrageProxy => ({
-  conteneur: new ConteneurProxyDocker(outilCodexSecurity(racine)),
+  conteneur: new ConteneurProxyDockerLocal(outilCodexSecurity(racine)),
   reseau: new ReseauFetch(2000),
   attente: new AttenteTemporisee(),
   console,
