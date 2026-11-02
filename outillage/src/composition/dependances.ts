@@ -2,6 +2,7 @@ import { join } from 'node:path';
 import type { Console } from '../noyau/ports/Console.ts';
 import type { Dependances as DependancesPreparationEnvironnement } from '../bootstrap/application/prepareEnvironnement.ts';
 import type { Dependances as DependancesGenerationConfig } from '../codex-security/application/genereConfigCible.ts';
+import type { Dependances as DependancesGenerationConfigProxy } from '../codex-security/application/genereConfigurationProxy.ts';
 import type { Dependances as DependancesGenerationEnvironnement } from '../environnement/application/genereEnvironnement.ts';
 import type { Dependances as DependancesDemarrageProxy } from '../codex-security/application/demarreProxy.ts';
 import type { Dependances as DependancesScan } from '../codex-security/application/lanceScan.ts';
@@ -62,6 +63,14 @@ export const lesDependancesPourLaGenerationConfig = ({
   console,
   git: new GitEnLigneDeCommande(racine),
   entrepot: entrepot,
+});
+
+export const lesDependancesPourLaGenerationConfigProxy = ({
+  racine,
+  console,
+}: ContexteDeComposition): DependancesGenerationConfigProxy => ({
+  systemeDeFichier: new SystemeDeFichierNode(racine),
+  console,
 });
 
 export const lesDependancesPourLaGenerationEnvironnement = ({
