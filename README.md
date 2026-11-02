@@ -64,7 +64,8 @@ L’outil dispose d’une CLI dont les commandes sont détaillées ci-dessous.
     commit id: "Démarre proxy LiteLLM"
     checkout main
     merge develop
-    commit id: "Lancement d’un scan"
+    commit id: "Lancement d’un scan Codex"
+    commit id: "Lancement d’un pentest Shannon"
 ```
 
 #### Préparation / bootstrap d’une cible
