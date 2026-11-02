@@ -42,6 +42,10 @@ Security, qui ne parle que l'API _Responses_, un **proxy LiteLLM local** fait la
 garde la clé du fournisseur hors de l'environnement de l'agent (voir
 [documentation Codex](outils/codex-security/README.md) de PALA).
 
+## Architecture
+
+Un modèle C4 détaille l’architecture [ici](documentation/architecture.md)
+
 ## Démarrage
 
 Prérequis : Node.js 24.22.1 (version épinglée dans `.nvmrc`), Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
