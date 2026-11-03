@@ -24,6 +24,7 @@ export type EnvironnementProxy = {
   jeton: string;
   image: string;
   urlBaseDeDonnees?: string;
+  app?: string;
 };
 
 export type EnvironnementFournisseur = {
@@ -54,6 +55,9 @@ const variablesCodexSecurity: EnvironnementCodexSecurity = {
     image: process.env.CODEX_LITE_LLM_IMAGE || IMAGE_LITE_LLM_PAR_DEFAUT,
     ...(process.env.LITELLM_DATABASE_URL && {
       urlBaseDeDonnees: process.env.LITELLM_DATABASE_URL,
+    }),
+    ...(process.env.CODEX_LITE_LLM_APP && {
+      app: process.env.CODEX_LITE_LLM_APP,
     }),
   }),
 };
