@@ -1,15 +1,15 @@
 import { Command } from 'commander';
 import { executeCommande } from '../../noyau/ligne-de-commande.ts';
 import { DemarreProxy, type Dependances } from '../application/demarreProxy.ts';
+import { environnement } from '../../noyau/environnement.ts';
 
 export const demarreProxy = async (
   argv: string[],
   dependances: Dependances
 ): Promise<number> => {
+  const url = environnement.urlLiteLLMConfiguree();
   const programme = new Command('démarre-proxy')
-    .description(
-      'Lance (ou relance) le proxy LiteLLM sur 127.0.0.1:${PORT_LITE_LLM:-4000}.'
-    )
+    .description(`Lance (ou relance) le proxy LiteLLM sur ${url}.`)
     .addHelpText(
       'after',
       `
