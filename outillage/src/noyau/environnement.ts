@@ -1,5 +1,5 @@
 import type { SystemeDeFichier } from './ports/SystemeDeFichier.ts';
-import type { ParametresConfigurationProxyLiteLLM } from '../codex-security/domaine/ConfigurationProxyLiteLLM.ts';
+import type { EnvironnementProxyLiteLLM } from '../codex-security/domaine/ConfigurationProxyLiteLLM.ts';
 import {
   CHEMIN_FICHIER_ENV_RACINE,
   CHEMIN_FICHIER_ENV_SHANNON,
@@ -40,7 +40,7 @@ type Environnement = {
   pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
   fournisseur: () => EnvironnementFournisseur;
-  modeleProxy: () => ParametresConfigurationProxyLiteLLM;
+  pourProxyLiteLLM: () => EnvironnementProxyLiteLLM;
   urlLiteLLMConfiguree: () => string;
   verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier): void;
 };
@@ -97,27 +97,30 @@ export const environnement: Environnement = {
     nom: process.env.FOURNISSEUR_NOM || '',
     url: process.env.FOURNISSEUR_BASE_URL || '',
   }),
-  modeleProxy: (): ParametresConfigurationProxyLiteLLM => {
+  pourProxyLiteLLM: (): EnvironnementProxyLiteLLM => {
     const nombreOptionnel = (nom: string) =>
       process.env[nom] !== undefined ? Number(process.env[nom]) : undefined;
     return {
-      modele: process.env.FOURNISSEUR_MODELE || '',
-      coutEntreeParToken: Number(process.env.FOURNISSEUR_COUT_ENTREE_PAR_TOKEN),
-      coutSortieParToken: Number(process.env.FOURNISSEUR_COUT_SORTIE_PAR_TOKEN),
-      ...(nombreOptionnel('FOURNISSEUR_MAX_TOKENS') !== undefined && {
-        maxTokens: nombreOptionnel('FOURNISSEUR_MAX_TOKENS'),
-      }),
-      ...(nombreOptionnel('FOURNISSEUR_TEMPERATURE') !== undefined && {
-        temperature: nombreOptionnel('FOURNISSEUR_TEMPERATURE'),
-      }),
-      ...(nombreOptionnel('FOURNISSEUR_TOP_P') !== undefined && {
-        topP: nombreOptionnel('FOURNISSEUR_TOP_P'),
-      }),
-      ...(nombreOptionnel('FOURNISSEUR_PRESENCE_PENALTY') !== undefined && {
-        presencePenalty: nombreOptionnel('FOURNISSEUR_PRESENCE_PENALTY'),
-      }),
-      ...(process.env.FOURNISSEUR_TOOL_CHOICE !== undefined && {
-        toolChoice: process.env.FOURNISSEUR_TOOL_CHOICE,
+      cheminFichierDeConfiguration: '',
+      configuration: () => ({
+        modele: process.env.FOURNISSEUR_MODELE || '',
+        coutEntreeParToken: Number(process.env.FOURNISSEUR_COUT_ENTREE_PAR_TOKEN),
+        coutSortieParToken: Number(process.env.FOURNISSEUR_COUT_SORTIE_PAR_TOKEN),
+        ...(nombreOptionnel('FOURNISSEUR_MAX_TOKENS') !== undefined && {
+          maxTokens: nombreOptionnel('FOURNISSEUR_MAX_TOKENS'),
+        }),
+        ...(nombreOptionnel('FOURNISSEUR_TEMPERATURE') !== undefined && {
+          temperature: nombreOptionnel('FOURNISSEUR_TEMPERATURE'),
+        }),
+        ...(nombreOptionnel('FOURNISSEUR_TOP_P') !== undefined && {
+          topP: nombreOptionnel('FOURNISSEUR_TOP_P'),
+        }),
+        ...(nombreOptionnel('FOURNISSEUR_PRESENCE_PENALTY') !== undefined && {
+          presencePenalty: nombreOptionnel('FOURNISSEUR_PRESENCE_PENALTY'),
+        }),
+        ...(process.env.FOURNISSEUR_TOOL_CHOICE !== undefined && {
+          toolChoice: process.env.FOURNISSEUR_TOOL_CHOICE,
+        }),
       }),
     };
   },

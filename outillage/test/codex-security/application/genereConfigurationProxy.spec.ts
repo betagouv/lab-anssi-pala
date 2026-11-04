@@ -12,19 +12,22 @@ import { environnement } from '../../../src/noyau/environnement.ts';
 const ENV_RACINE =
   'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=deepseek-v4-flash-0731\nLITELLM_BASE_URL=http://127.0.0.1:4000\nLITELLM_API_KEY=sk-local\n';
 
-const modeleProxyInitial = environnement.modeleProxy;
+const modeleProxyInitial = environnement.pourProxyLiteLLM;
 
 afterEach(() => {
-  environnement.modeleProxy = modeleProxyInitial;
+  environnement.pourProxyLiteLLM = modeleProxyInitial;
 });
 
 const modeleConfigure = (
-  parametres: Partial<ReturnType<typeof environnement.modeleProxy>> = {}
+  parametres: Partial<ReturnType<typeof environnement.pourProxyLiteLLM>> = {}
 ) => {
-  environnement.modeleProxy = () => ({
-    modele: 'deepseek-v4-flash-0731',
-    coutEntreeParToken: 0.0000004,
-    coutSortieParToken: 0.0000008,
+  environnement.pourProxyLiteLLM = () => ({
+    cheminFichierDeConfiguration: 'un/chemin',
+    configuration: () => ({
+      modele: 'deepseek-v4-flash-0731',
+      coutEntreeParToken: 0.0000004,
+      coutSortieParToken: 0.0000008,
+    }),
     ...parametres,
   });
 };
@@ -54,7 +57,13 @@ describe('Génère Configuration Proxy', () => {
 
   it('refuse de générer si un coût par token est absent (NaN)', () => {
     const systemeDeFichier = systemeConfigure();
-    modeleConfigure({ coutEntreeParToken: Number.NaN });
+    modeleConfigure({
+      configuration: () => ({
+        coutEntreeParToken: Number.NaN,
+        coutSortieParToken: Number.NaN,
+        modele: 'Un modèle',
+      }),
+    });
 
     expect(() => uneGeneration({ systemeDeFichier }).execute()).toThrow(
       /FOURNISSEUR_COUT_ENTREE_PAR_TOKEN/
