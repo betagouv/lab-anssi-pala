@@ -2,7 +2,6 @@ import type { Console } from '../../noyau/ports/Console.ts';
 import type { SystemeDeFichier } from '../../noyau/ports/SystemeDeFichier.ts';
 import { environnement } from '../../noyau/environnement.ts';
 import { ConfigurationProxyLiteLLM } from '../domaine/ConfigurationProxyLiteLLM.ts';
-import { CHEMIN_CONFIG_PROXY_GENERE } from '../domaine/cheminConfig.ts';
 
 export type Dependances = {
   systemeDeFichier: SystemeDeFichier;
@@ -18,8 +17,7 @@ export class GenereConfigurationProxy {
     this.#console = console;
   }
 
-  execute(): string {
-    environnement.verifiePresenceVariablesRacine(this.#systemeDeFichier);
+  execute(): void {
     const parametres = environnement.pourProxyLiteLLM();
     this.#verifieCout(
       'FOURNISSEUR_COUT_ENTREE_PAR_TOKEN',
@@ -31,11 +29,13 @@ export class GenereConfigurationProxy {
     );
     const config = new ConfigurationProxyLiteLLM(parametres);
     this.#systemeDeFichier.ecritFichier(
-      CHEMIN_CONFIG_PROXY_GENERE,
+      environnement.pourProxyLiteLLM().cheminFichierDeConfiguration,
       config.versYaml()
     );
-    this.#console.aLaLigne(`Généré: ${CHEMIN_CONFIG_PROXY_GENERE}`, 'VERT');
-    return CHEMIN_CONFIG_PROXY_GENERE;
+    this.#console.aLaLigne(
+      `Généré: ${environnement.pourProxyLiteLLM().cheminFichierDeConfiguration}`,
+      'VERT'
+    );
   }
 
   #verifieCout(nom: string, valeur: number): void {

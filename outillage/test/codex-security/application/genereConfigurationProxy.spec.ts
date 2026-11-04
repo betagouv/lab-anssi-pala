@@ -6,11 +6,7 @@ import {
   type Dependances,
   GenereConfigurationProxy,
 } from '../../../src/codex-security/application/genereConfigurationProxy.ts';
-import { CHEMIN_CONFIG_PROXY_GENERE } from '../../../src/codex-security/domaine/cheminConfig.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
-
-const ENV_RACINE =
-  'FOURNISSEUR_NOM=albert\nFOURNISSEUR_API_KEY=cle\nFOURNISSEUR_BASE_URL=https://fournisseur.example/v1\nFOURNISSEUR_MODELE=deepseek-v4-flash-0731\nLITELLM_BASE_URL=http://127.0.0.1:4000\nLITELLM_API_KEY=sk-local\n';
 
 const modeleProxyInitial = environnement.pourProxyLiteLLM;
 
@@ -18,11 +14,14 @@ afterEach(() => {
   environnement.pourProxyLiteLLM = modeleProxyInitial;
 });
 
+const CHEMIN_CONFIG_PROXY_GENERE =
+  'outils/codex-security/litellm/config-genere.yaml';
+
 const modeleConfigure = (
   parametres: Partial<ReturnType<typeof environnement.pourProxyLiteLLM>> = {}
 ) => {
   environnement.pourProxyLiteLLM = () => ({
-    cheminFichierDeConfiguration: 'un/chemin',
+    cheminFichierDeConfiguration: CHEMIN_CONFIG_PROXY_GENERE,
     configuration: () => ({
       modele: 'deepseek-v4-flash-0731',
       coutEntreeParToken: 0.0000004,
@@ -32,7 +31,10 @@ const modeleConfigure = (
   });
 };
 
-const systemeConfigure = () => new SystemeDeFichierEnMemoire({ '.env': ENV_RACINE });
+const systemeConfigure = () =>
+  new SystemeDeFichierEnMemoire({
+    [CHEMIN_CONFIG_PROXY_GENERE]: '',
+  });
 
 const uneGeneration = (doubles: Partial<Dependances> = {}) =>
   new GenereConfigurationProxy({
@@ -43,7 +45,7 @@ const uneGeneration = (doubles: Partial<Dependances> = {}) =>
 
 describe('Génère Configuration Proxy', () => {
   it('écrit le config.yaml généré, avec le modèle de l’environnement', () => {
-    const systemeDeFichier = systemeConfigure();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire();
     modeleConfigure();
 
     uneGeneration({ systemeDeFichier }).execute();
@@ -56,7 +58,7 @@ describe('Génère Configuration Proxy', () => {
   });
 
   it('refuse de générer si un coût par token est absent (NaN)', () => {
-    const systemeDeFichier = systemeConfigure();
+    const systemeDeFichier = new SystemeDeFichierEnMemoire();
     modeleConfigure({
       configuration: () => ({
         coutEntreeParToken: Number.NaN,
@@ -71,13 +73,12 @@ describe('Génère Configuration Proxy', () => {
     expect(systemeDeFichier.existe(CHEMIN_CONFIG_PROXY_GENERE)).toBe(false);
   });
 
-  it('annonce le fichier généré et renvoie son chemin', () => {
+  it('annonce le fichier généré', () => {
     const console = new ConsoleEnMemoire();
     modeleConfigure();
 
-    const chemin = uneGeneration({ console }).execute();
+    uneGeneration({ console }).execute();
 
-    expect(chemin).toBe(CHEMIN_CONFIG_PROXY_GENERE);
     expect(console.lignes.map((l) => l.message)).toContain(
       `Généré: ${CHEMIN_CONFIG_PROXY_GENERE}`
     );
@@ -85,7 +86,6 @@ describe('Génère Configuration Proxy', () => {
 
   it('écrase tout fichier généré préexistant', () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
-      '.env': ENV_RACINE,
       [CHEMIN_CONFIG_PROXY_GENERE]: 'ancien: contenu\n',
     });
     modeleConfigure();
