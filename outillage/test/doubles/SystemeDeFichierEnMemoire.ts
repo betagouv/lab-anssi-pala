@@ -6,6 +6,7 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   readonly fichiersPrives = new Set<string>();
   readonly dossiersPrives = new Set<string>();
   readonly cheminsLu = new Set<string>();
+  #erreurALEcriture?: Error;
 
   constructor(fichiers: Record<string, string> = {}) {
     this.fichiers = new Map(Object.entries(fichiers));
@@ -35,6 +36,7 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
   }
 
   ecritFichier(chemin: string, contenu: string): void {
+    if (this.#erreurALEcriture) throw this.#erreurALEcriture;
     this.fichiers.set(chemin, contenu);
   }
 
@@ -45,5 +47,9 @@ export class SystemeDeFichierEnMemoire implements SystemeDeFichier {
 
   aLu(chemin: string) {
     return this.cheminsLu.has(chemin);
+  }
+
+  leveUneErreurALEcriture(error: Error) {
+    this.#erreurALEcriture = error;
   }
 }

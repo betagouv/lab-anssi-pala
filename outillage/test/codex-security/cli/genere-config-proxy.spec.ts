@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { ConsoleEnMemoire } from '../../doubles/ConsoleEnMemoire.ts';
 import { SystemeDeFichierEnMemoire } from '../../doubles/SystemeDeFichierEnMemoire.ts';
 import { genereConfigProxy } from '../../../src/codex-security/cli/genere-config-proxy.ts';
-import { CHEMIN_CONFIG_PROXY_GENERE } from '../../../src/codex-security/domaine/cheminConfig.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 
 const ENV_RACINE =
@@ -36,20 +35,21 @@ describe('génère-config-proxy (ligne de commande)', () => {
     });
 
     expect(code).toBe(0);
-    expect(systemeDeFichier.existe(CHEMIN_CONFIG_PROXY_GENERE)).toBe(true);
+    expect(systemeDeFichier.existe('un/chemin/config.yaml')).toBe(true);
   });
 
   it('signale l’erreur et sort en code 1 quand la génération échoue', async () => {
     const console = new ConsoleEnMemoire();
+    modeleConfigure();
 
+    const systemeDeFichier = new SystemeDeFichierEnMemoire();
+    systemeDeFichier.leveUneErreurALEcriture(new Error('Erreur survenue'));
     const code = await genereConfigProxy([], {
-      systemeDeFichier: new SystemeDeFichierEnMemoire(),
+      systemeDeFichier,
       console,
     });
 
     expect(code).toBe(1);
-    expect(console.erreurs.map((l) => l.message)).toEqual([
-      'Erreur: fichier .env introuvable à la racine du dépôt (depuis .env.template)',
-    ]);
+    expect(console.erreurs.map((l) => l.message)).toEqual(['Erreur survenue']);
   });
 });
