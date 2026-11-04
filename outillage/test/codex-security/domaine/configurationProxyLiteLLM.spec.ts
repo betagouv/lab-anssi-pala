@@ -1,17 +1,40 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
-import { ConfigurationProxyLiteLLM } from '../../../src/codex-security/domaine/ConfigurationProxyLiteLLM.ts';
+import {
+  ConfigurationProxyLiteLLM,
+  type EnvironnementProxyLiteLLM,
+} from '../../../src/codex-security/domaine/ConfigurationProxyLiteLLM.ts';
+import { environnement } from '../../../src/noyau/environnement.ts';
 
 const yamlParse = (config: ConfigurationProxyLiteLLM) => parse(config.versYaml());
+
+const unEnvironnemenProxyLiteLLM = (
+  double: Partial<ReturnType<typeof environnement.pourProxyLiteLLM>> = {}
+): EnvironnementProxyLiteLLM => ({
+  cheminFichierDeConfiguration: '/chemin/config.yaml',
+  configuration: () => ({
+    modele: 'deepseek-v4-flash-0731',
+    coutEntreeParToken: 0.0000004,
+    coutSortieParToken: 0.0000008,
+    ...(double?.configuration && { ...double.configuration() }),
+  }),
+  ...(double?.cheminFichierDeConfiguration && {
+    cheminFichierDeConfiguration: double.cheminFichierDeConfiguration,
+  }),
+});
 
 describe('Configuration Proxy LiteLLM', () => {
   it('rend un model_list d’une seule entrée, nommée par le modèle donné', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0.0000004,
-        coutSortieParToken: 0.0000008,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'deepseek-v4-flash-0731',
+            coutEntreeParToken: 0.0000004,
+            coutSortieParToken: 0.0000008,
+          }),
+        })
+      )
     );
 
     expect(lu.model_list).toHaveLength(1);
@@ -20,11 +43,15 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('préfixe le modèle amont par hosted_vllm/ (envoyé tel quel au fournisseur)', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'openai/gpt-oss-120b',
-        coutEntreeParToken: 0,
-        coutSortieParToken: 0,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'openai/gpt-oss-120b',
+            coutEntreeParToken: 0,
+            coutSortieParToken: 0,
+          }),
+        })
+      )
     );
 
     expect(lu.model_list[0].litellm_params.model).toBe(
@@ -34,11 +61,15 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('renseigne les constantes du proxy : api_base/api_key via os.environ, chat completions, timeout', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0,
-        coutSortieParToken: 0,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'openai/gpt-oss-120b',
+            coutEntreeParToken: 0,
+            coutSortieParToken: 0,
+          }),
+        })
+      )
     );
 
     const params = lu.model_list[0].litellm_params;
@@ -50,11 +81,15 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('porte les coûts par token du fournisseur (pour le budget)', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0.0000004,
-        coutSortieParToken: 0.0000008,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'deepseek-v4-flash-0731',
+            coutEntreeParToken: 0.0000004,
+            coutSortieParToken: 0.0000008,
+          }),
+        })
+      )
     );
 
     const params = lu.model_list[0].litellm_params;
@@ -64,11 +99,15 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('conserve litellm_settings tel quel (callback, budget)', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0,
-        coutSortieParToken: 0,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'deepseek-v4-flash-0731',
+            coutEntreeParToken: 0,
+            coutSortieParToken: 0,
+          }),
+        })
+      )
     );
 
     expect(lu.litellm_settings).toEqual({
@@ -80,16 +119,20 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('émet les paramètres d’échantillonnage et tool_choice quand ils sont fournis', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0,
-        coutSortieParToken: 0,
-        maxTokens: 16384,
-        temperature: 1,
-        topP: 1,
-        presencePenalty: 0,
-        toolChoice: 'auto',
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'deepseek-v4-flash-0731',
+            coutEntreeParToken: 0,
+            coutSortieParToken: 0,
+            maxTokens: 16384,
+            temperature: 1,
+            topP: 1,
+            presencePenalty: 0,
+            toolChoice: 'auto',
+          }),
+        })
+      )
     );
 
     const params = lu.model_list[0].litellm_params;
@@ -102,11 +145,15 @@ describe('Configuration Proxy LiteLLM', () => {
 
   it('omet les clés optionnelles absentes', () => {
     const lu = yamlParse(
-      new ConfigurationProxyLiteLLM({
-        modele: 'deepseek-v4-flash-0731',
-        coutEntreeParToken: 0,
-        coutSortieParToken: 0,
-      })
+      new ConfigurationProxyLiteLLM(
+        unEnvironnemenProxyLiteLLM({
+          configuration: () => ({
+            modele: 'deepseek-v4-flash-0731',
+            coutEntreeParToken: 0,
+            coutSortieParToken: 0,
+          }),
+        })
+      )
     );
 
     const params = lu.model_list[0].litellm_params;
@@ -118,11 +165,15 @@ describe('Configuration Proxy LiteLLM', () => {
   });
 
   it('porte un en-tête annonçant un fichier généré', () => {
-    const yaml = new ConfigurationProxyLiteLLM({
-      modele: 'deepseek-v4-flash-0731',
-      coutEntreeParToken: 0,
-      coutSortieParToken: 0,
-    }).versYaml();
+    const yaml = new ConfigurationProxyLiteLLM(
+      unEnvironnemenProxyLiteLLM({
+        configuration: () => ({
+          modele: 'deepseek-v4-flash-0731',
+          coutEntreeParToken: 0,
+          coutSortieParToken: 0,
+        }),
+      })
+    ).versYaml();
 
     expect(yaml).toMatch(/généré/i);
     expect(yaml).toMatch(/ne pas éditer/i);

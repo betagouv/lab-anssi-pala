@@ -5,7 +5,7 @@ const EN_TETE =
   ' Le model_list est dérivé du .env racine (FOURNISSEUR_*) ; litellm_settings est conservé tel quel.\n' +
   ' Fichier non versionné (config-genere.yaml) ; la config de référence reste litellm/config.yaml.';
 
-export type ParametresConfigurationProxyLiteLLM = {
+export type ConfigurationLiteLLM = {
   modele: string;
   coutEntreeParToken: number;
   coutSortieParToken: number;
@@ -15,29 +15,33 @@ export type ParametresConfigurationProxyLiteLLM = {
   presencePenalty?: number;
   toolChoice?: string;
 };
+export type EnvironnementProxyLiteLLM = {
+  cheminFichierDeConfiguration: string;
+  configuration: () => ConfigurationLiteLLM;
+};
 
 export class ConfigurationProxyLiteLLM {
-  readonly #parametres: ParametresConfigurationProxyLiteLLM;
+  readonly #parametres: EnvironnementProxyLiteLLM;
 
-  constructor(parametres: ParametresConfigurationProxyLiteLLM) {
+  constructor(parametres: EnvironnementProxyLiteLLM) {
     this.#parametres = parametres;
   }
 
   get #modele(): string {
-    return this.#parametres.modele;
+    return this.#parametres.configuration().modele;
   }
 
   get #coutEntreeParToken(): number {
-    return this.#parametres.coutEntreeParToken;
+    return this.#parametres.configuration().coutEntreeParToken;
   }
 
   get #coutSortieParToken(): number {
-    return this.#parametres.coutSortieParToken;
+    return this.#parametres.configuration().coutSortieParToken;
   }
 
   #parametresOptionnels(): Record<string, number | string> {
     const { maxTokens, temperature, topP, presencePenalty, toolChoice } =
-      this.#parametres;
+      this.#parametres.configuration();
     return {
       ...(maxTokens !== undefined && { max_tokens: maxTokens }),
       ...(temperature !== undefined && { temperature }),

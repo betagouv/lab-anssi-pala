@@ -20,14 +20,14 @@ export class GenereConfigurationProxy {
 
   execute(): string {
     environnement.verifiePresenceVariablesRacine(this.#systemeDeFichier);
-    const parametres = environnement.modeleProxy();
+    const parametres = environnement.pourProxyLiteLLM();
     this.#verifieCout(
       'FOURNISSEUR_COUT_ENTREE_PAR_TOKEN',
-      parametres.coutEntreeParToken
+      parametres.configuration().coutEntreeParToken
     );
     this.#verifieCout(
       'FOURNISSEUR_COUT_SORTIE_PAR_TOKEN',
-      parametres.coutSortieParToken
+      parametres.configuration().coutSortieParToken
     );
     const config = new ConfigurationProxyLiteLLM(parametres);
     this.#systemeDeFichier.ecritFichier(
