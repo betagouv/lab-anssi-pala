@@ -17,7 +17,7 @@ export class GenereConfigurationProxy {
     this.#console = console;
   }
 
-  execute(): void {
+  async execute(): Promise<void> {
     const parametres = environnement.pourProxyLiteLLM();
     this.#verifieCout(
       'FOURNISSEUR_COUT_ENTREE_PAR_TOKEN',

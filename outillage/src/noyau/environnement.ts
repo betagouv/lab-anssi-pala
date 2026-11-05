@@ -101,7 +101,17 @@ export const environnement: Environnement = {
     const nombreOptionnel = (nom: string) =>
       process.env[nom] !== undefined ? Number(process.env[nom]) : undefined;
     return {
-      cheminFichierDeConfiguration: '',
+      cellar: () => ({
+        credentials: {
+          accessKeyId: process.env.CELLAR_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.CELLAR_SECRET_ACCESS_KEY || '',
+        },
+        nomDuBucket: process.env.CELLAR_NOM_DU_BUCKET || '',
+        region: process.env.CELLAR_REGION || '',
+        url: process.env.CELLAR_URL || '',
+      }),
+      cheminFichierDeConfiguration:
+        process.env.LITELLM_CHEMIN_FICHIER_CONFIGURATION || '',
       configuration: () => ({
         modele: process.env.FOURNISSEUR_MODELE || '',
         coutEntreeParToken: Number(process.env.FOURNISSEUR_COUT_ENTREE_PAR_TOKEN),

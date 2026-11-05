@@ -15,9 +15,21 @@ export type ConfigurationLiteLLM = {
   presencePenalty?: number;
   toolChoice?: string;
 };
+
+type ConfigurationCellar = {
+  url: string;
+  region: string;
+  credentials: {
+    accessKeyId: string;
+    secretAccessKey: string;
+  };
+  nomDuBucket: string;
+};
+
 export type EnvironnementProxyLiteLLM = {
   cheminFichierDeConfiguration: string;
   configuration: () => ConfigurationLiteLLM;
+  cellar: () => ConfigurationCellar;
 };
 
 export class ConfigurationProxyLiteLLM {

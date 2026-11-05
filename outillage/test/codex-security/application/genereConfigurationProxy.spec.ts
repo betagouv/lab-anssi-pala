@@ -21,6 +21,12 @@ const modeleConfigure = (
   parametres: Partial<ReturnType<typeof environnement.pourProxyLiteLLM>> = {}
 ) => {
   environnement.pourProxyLiteLLM = () => ({
+    cellar: () => ({
+      credentials: { accessKeyId: 'access-key', secretAccessKey: 'secret-key' },
+      nomDuBucket: 'nom-du-bucket',
+      region: 'region',
+      url: 'url',
+    }),
     cheminFichierDeConfiguration: CHEMIN_CONFIG_PROXY_GENERE,
     configuration: () => ({
       modele: 'deepseek-v4-flash-0731',
@@ -44,11 +50,11 @@ const uneGeneration = (doubles: Partial<Dependances> = {}) =>
   });
 
 describe('Génère Configuration Proxy', () => {
-  it('écrit le config.yaml généré, avec le modèle de l’environnement', () => {
+  it('écrit le config.yaml généré, avec le modèle de l’environnement', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
     modeleConfigure();
 
-    uneGeneration({ systemeDeFichier }).execute();
+    await uneGeneration({ systemeDeFichier }).execute();
 
     const lu = parse(systemeDeFichier.lit(CHEMIN_CONFIG_PROXY_GENERE));
     expect(lu.model_list[0].model_name).toBe('deepseek-v4-flash-0731');
@@ -57,7 +63,7 @@ describe('Génère Configuration Proxy', () => {
     );
   });
 
-  it('refuse de générer si un coût par token est absent (NaN)', () => {
+  it('refuse de générer si un coût par token est absent (NaN)', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire();
     modeleConfigure({
       configuration: () => ({
@@ -67,30 +73,30 @@ describe('Génère Configuration Proxy', () => {
       }),
     });
 
-    expect(() => uneGeneration({ systemeDeFichier }).execute()).toThrow(
+    await expect(uneGeneration({ systemeDeFichier }).execute()).rejects.toThrow(
       /FOURNISSEUR_COUT_ENTREE_PAR_TOKEN/
     );
     expect(systemeDeFichier.existe(CHEMIN_CONFIG_PROXY_GENERE)).toBe(false);
   });
 
-  it('annonce le fichier généré', () => {
+  it('annonce le fichier généré', async () => {
     const console = new ConsoleEnMemoire();
     modeleConfigure();
 
-    uneGeneration({ console }).execute();
+    await uneGeneration({ console }).execute();
 
     expect(console.lignes.map((l) => l.message)).toContain(
       `Généré: ${CHEMIN_CONFIG_PROXY_GENERE}`
     );
   });
 
-  it('écrase tout fichier généré préexistant', () => {
+  it('écrase tout fichier généré préexistant', async () => {
     const systemeDeFichier = new SystemeDeFichierEnMemoire({
       [CHEMIN_CONFIG_PROXY_GENERE]: 'ancien: contenu\n',
     });
     modeleConfigure();
 
-    uneGeneration({ systemeDeFichier }).execute();
+    await uneGeneration({ systemeDeFichier }).execute();
 
     expect(systemeDeFichier.lit(CHEMIN_CONFIG_PROXY_GENERE)).not.toContain('ancien');
   });

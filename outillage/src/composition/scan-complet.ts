@@ -40,7 +40,7 @@ const etapes: EtapesScanComplet = {
     ).execute(),
 
   genereConfigProxy: () =>
-    void new GenereConfigurationProxy(
+    new GenereConfigurationProxy(
       lesDependancesPourLaGenerationConfigProxy(contexte)
     ).execute(),
 
