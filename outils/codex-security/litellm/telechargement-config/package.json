@@ -1,0 +1,19 @@
+{
+  "name": "litellm-telechargement-config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Télécharge la configuration du proxy LiteLLM depuis un bucket Cellar (S3) au démarrage du conteneur.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "litellm-telecharge-config": "./telecharge-config.mjs"
+  },
+  "scripts": {
+    "telecharge": "node telecharge-config.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1155.0"
+  }
+}
