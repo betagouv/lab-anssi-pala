@@ -7,3 +7,18 @@
 # Git
 .git
 .gitignore
+
+# Secrets (ne jamais les envoyer dans le contexte de build)
+.env
+.env.*
+!.env.example
+
+# Artefacts runtime Codex Security (volumineux, inutiles au build)
+cible/
+resultats/
+outils/codex-security/state/
+outils/codex-security/codex-home/
+
+# Outils / éditeurs
+.idea/
+.claude/
