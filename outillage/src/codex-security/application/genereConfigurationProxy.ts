@@ -28,7 +28,7 @@ export class GenereConfigurationProxy {
       parametres.configuration().coutSortieParToken
     );
     const config = new ConfigurationProxyLiteLLM(parametres);
-    this.#systemeDeFichier.ecritFichier(
+    await this.#systemeDeFichier.ecritFichier(
       environnement.pourProxyLiteLLM().cheminFichierDeConfiguration,
       config.versYaml()
     );
