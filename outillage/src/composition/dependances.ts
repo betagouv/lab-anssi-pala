@@ -85,7 +85,7 @@ export const lesDependancesPourLeDemarrageDuProxy = ({
   racine,
   console,
 }: ContexteDeComposition): DependancesDemarrageProxy => ({
-  conteneur: adaptateurProxy(outilCodexSecurity(racine)),
+  conteneur: adaptateurProxy(outilCodexSecurity(racine)).conteneur(),
   reseau: new ReseauFetch(2000),
   attente: new AttenteTemporisee(),
   console,
