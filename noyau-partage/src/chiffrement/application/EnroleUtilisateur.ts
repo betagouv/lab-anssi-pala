@@ -1,9 +1,12 @@
 import type { IdentiteCryptographique } from '../domaine/identiteCryptographique.ts';
-import { VERSION_PRF, infoProtectionClePrivee } from '../domaine/profilHpke.ts';
 import type { DerivationDeCle } from '../ports/DerivationDeCle.ts';
 import type { PaireDeClesAsymetriques } from '../ports/PaireDeClesAsymetriques.ts';
 import type { ProtectionDeCle } from '../ports/ProtectionDeCle.ts';
 import type { SecretPrf } from '../ports/SecretPrf.ts';
+import {
+  infoProtectionClePrivee,
+  VERSION_PRF,
+} from '../domaine/profilEncapsulationChiffrementUtilisateur.ts';
 
 export type Dependances = {
   secretPrf: SecretPrf;
