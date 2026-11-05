@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "24.19.0",
+    "@types/node": "24.19.2",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
@@ -54,7 +54,7 @@
     "prettier": "^3.9.9",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
-    "vitest": "5.0.2"
+    "vitest": "5.0.5"
   },
   "lint-staged": {
     "serveur/back/**/*.ts": [
