@@ -11,6 +11,12 @@ const yamlParse = (config: ConfigurationProxyLiteLLM) => parse(config.versYaml()
 const unEnvironnemenProxyLiteLLM = (
   double: Partial<ReturnType<typeof environnement.pourProxyLiteLLM>> = {}
 ): EnvironnementProxyLiteLLM => ({
+  cellar: () => ({
+    credentials: { accessKeyId: 'access-key', secretAccessKey: 'secret-key' },
+    nomDuBucket: 'nom-du-bucket',
+    region: 'region',
+    url: 'url',
+  }),
   cheminFichierDeConfiguration: '/chemin/config.yaml',
   configuration: () => ({
     modele: 'deepseek-v4-flash-0731',

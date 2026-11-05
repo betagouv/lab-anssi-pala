@@ -15,6 +15,12 @@ afterEach(() => {
 
 const modeleConfigure = () => {
   environnement.pourProxyLiteLLM = () => ({
+    cellar: () => ({
+      credentials: { accessKeyId: 'access-key', secretAccessKey: 'secret-key' },
+      nomDuBucket: 'nom-du-bucket',
+      region: 'region',
+      url: 'url',
+    }),
     cheminFichierDeConfiguration: 'un/chemin/config.yaml',
     configuration: () => ({
       modele: 'deepseek-v4-flash-0731',
