@@ -69,7 +69,7 @@ export const lesDependancesPourLaGenerationConfigProxy = ({
   racine,
   console,
 }: ContexteDeComposition): DependancesGenerationConfigProxy => ({
-  systemeDeFichier: new SystemeDeFichierNode(racine),
+  systemeDeFichier: adaptateurProxy(racine).systemeDeFichier(),
   console,
 });
 
