@@ -22,6 +22,7 @@ import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermo
 import { EntrepotDeScanPostgres } from '../noyau/infrastructure/entrepots/postgres/entrepotDeScanPostgres.ts';
 import { knexPALA } from '../../../noyau-partage/src/knex/knexfile.ts';
 import { adaptateurProxy } from '../codex-security/adaptateurs/adaptateurProxy.ts';
+import { fabriqueChiffrementDuRapport } from '../chiffrement-rapport/adaptateurs/fabriqueChiffrementDuRapport.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -97,7 +98,12 @@ export const lesDependancesPourLeScan = ({
 }: ContexteDeComposition): DependancesScan => {
   const repertoireAppel = process.env.INIT_CWD || process.cwd();
   const busDEvenements = new BusEvenementsPALA();
-  abonneNotificationScan(busDEvenements, fabriqueMessagerie(), entrepot);
+  abonneNotificationScan(
+    busDEvenements,
+    fabriqueMessagerie(),
+    entrepot,
+    fabriqueChiffrementDuRapport()
+  );
   return {
     racine,
     scanner: new ScannerCodexSecurityNpm(

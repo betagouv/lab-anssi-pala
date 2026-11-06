@@ -36,6 +36,7 @@ export type EnvironnementFournisseur = {
 
 type Environnement = {
   mattermost: () => { urlWebhook: string };
+  chiffrementDuRapport: () => { destinataires: string };
   path: string;
   pourShannon: (systemeDeFichier: SystemeDeFichier) => EnvironnementShannon;
   pourCodexSecurity: () => EnvironnementCodexSecurity;
@@ -136,6 +137,9 @@ export const environnement: Environnement = {
   },
   mattermost: (): { urlWebhook: string } => ({
     urlWebhook: process.env.MATTERMOST_URL || '',
+  }),
+  chiffrementDuRapport: (): { destinataires: string } => ({
+    destinataires: process.env.RAPPORT_DESTINATAIRES || '',
   }),
   urlLiteLLMConfiguree: (): string =>
     process.env.LITELLM_BASE_URL?.replace(/\/+$/, '') || '',
