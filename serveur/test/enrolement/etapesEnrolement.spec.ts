@@ -110,6 +110,7 @@ describe('Les étapes d‘enrolement', () => {
 
       expect(resultat).toEqual({ keyId: 'cle-1' });
       expect(await entrepot.lis('cle-1')).toEqual({
+        id: expect.any(String),
         nom: 'alice',
         appareil: { identifiant: 'appareil-1', clePublique: 'pub-1', compteur: 1 },
         enveloppe: uneEnveloppe(),
