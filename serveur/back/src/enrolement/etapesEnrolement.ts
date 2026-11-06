@@ -2,6 +2,7 @@ import type { ContexteEnrolement } from './contexteEnrolement.ts';
 import type { Appareil } from './appareil.ts';
 import type { EntrepotUtilisateurs } from '../utilisateurs/entrepotUtilisateurs.ts';
 import type { Enveloppe } from './enveloppe.ts';
+import { randomUUID } from 'node:crypto';
 
 export type PrepareAuthentification = (contexte: {
   identifiantAppareil: string;
@@ -156,6 +157,7 @@ export class FinaliseEnrolement {
     });
 
     await this.#entrepot.persiste({
+      id: randomUUID(),
       nom: contexte.nom,
       appareil: { ...contexte.appareil, compteur },
       enveloppe,
