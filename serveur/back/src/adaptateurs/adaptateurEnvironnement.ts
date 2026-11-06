@@ -1,4 +1,4 @@
-import type { Environnement } from '../infra/environnement.ts';
+import type { Environnement, ParametresEnrolement } from '../infra/environnement.ts';
 
 const trustProxy = () => {
   if (process.env.NB_REQUETES_TRUST_PROXY === undefined) {
@@ -17,6 +17,13 @@ const trustProxy = () => {
   return trustProxyEnNombre;
 };
 
+const enrolement = (): ParametresEnrolement => ({
+  nomDuService: process.env.ENROLEMENT_SERVICE ?? 'PALA',
+  domaine: process.env.ENROLEMENT_DOMAINE ?? '',
+  origine: process.env.ENROLEMENT_ORIGINE ?? '',
+});
+
 export const adaptateurEnvironnement: Environnement = {
   trustProxy,
+  enrolement,
 };
