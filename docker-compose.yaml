@@ -50,6 +50,7 @@ services:
       - '8086:8086'
     volumes:
       - ./serveur/front/dist:/app/serveur/front/dist
+      - ./serveur/back/src:/app/serveur/back/src
     networks:
       - reseau-pala
     develop:

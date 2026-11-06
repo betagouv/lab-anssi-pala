@@ -9,8 +9,8 @@
 .gitignore
 
 # Secrets (ne jamais les envoyer dans le contexte de build)
-.env
-.env.*
+#.env
+#.env.*
 !.env.example
 
 # Artefacts runtime Codex Security (volumineux, inutiles au build)
