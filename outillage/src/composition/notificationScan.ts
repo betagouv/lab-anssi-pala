@@ -6,6 +6,7 @@ import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
 import type { EntrepotScan } from '../scan/entrepoScan.ts';
 import type { Scan } from '../noyau/partage/scan.ts';
+import type { ChiffrementDuRapport } from '../chiffrement-rapport/ports/ChiffrementDuRapport.ts';
 
 const nomDeCible = (cible: string) => cible.substring(cible.lastIndexOf('/') + 1);
 
@@ -14,7 +15,8 @@ const nomDeCibleEnMajuscule = (cible: string) => nomDeCible(cible).toUpperCase()
 export const abonneNotificationScan = (
   bus: BusEvenementsPALA,
   messagerie: MessagerieInstantanee,
-  entrepot: EntrepotScan
+  entrepot: EntrepotScan,
+  chiffrement: ChiffrementDuRapport
 ): void => {
   const estEvenementScanTermine = (
     evenement: ScanTermine | ScanNonEffectue
@@ -51,7 +53,7 @@ export const abonneNotificationScan = (
     };
     const scan = await recupereLeScan(evenement);
     if (scan && estEvenementScanTermine(evenement)) {
-      scan.rapport = evenement.rapport;
+      scan.rapport = await chiffrement.chiffre(scan.id, evenement.rapport);
       await entrepot.persiste(scan);
     }
     const informationsGit = await recupereLesInformationsGit(scan);
