@@ -15,14 +15,14 @@ import type {
   VerifieFinalisationEnregistrement,
 } from '../enrolement/etapesEnrolement.ts';
 
-export type OperationsWebAuthn = {
+type OperationsWebAuthn = {
   prepareEnregistrement: PrepareEnregistrement;
   verifieEnregistrement: VerifieFinalisationEnregistrement;
   prepareAuthentification: PrepareAuthentification;
   verifieAuthentification: VerifieAuthentification;
 };
 
-export const creeOperationsWebAuthn = (
+const creeOperationsWebAuthn = (
   parametres: ParametresEnrolement
 ): OperationsWebAuthn => {
   const prepareEnregistrement: PrepareEnregistrement = async ({
@@ -114,4 +114,8 @@ export const creeOperationsWebAuthn = (
     prepareAuthentification,
     verifieAuthentification,
   };
+};
+
+export const operationsWebAuthn = {
+  cree: (parametres: ParametresEnrolement) => creeOperationsWebAuthn(parametres),
 };

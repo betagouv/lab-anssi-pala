@@ -1,5 +1,6 @@
 import rateLimit, { type RateLimitRequestHandler } from 'express-rate-limit';
 import { type Request, type Response } from 'express';
+import { adaptateurEnvironnement } from './adaptateurEnvironnement.ts';
 
 export interface AdaptateurProtection {
   protectionLimiteTrafic: () => RateLimitRequestHandler;
@@ -23,27 +24,19 @@ const parametresCommuns = (typeRequete: string) => ({
 
 const adaptateurProtection: AdaptateurProtection = {
   protectionLimiteTrafic: () => {
-    const maxParFenetreParIp = process.env.NB_REQUETES_MAX_PAR_MINUTE
-      ? parseInt(process.env.NB_REQUETES_MAX_PAR_MINUTE)
-      : 0;
     const routesNonLimitees = ['/statique/', '/favicon.ico'];
-
     return rateLimit({
       ...parametresCommuns('Navigation'),
-      limit: maxParFenetreParIp,
+      limit: adaptateurEnvironnement.rateLimit().nombreRequetesParMinute,
       skip: (requete) => routesNonLimitees.some((r) => requete.path.startsWith(r)),
     });
   },
 
   protectionLimiteTraficEndpointSensible: () => {
-    const maxParFenetreParIp = process.env
-      .NB_REQUETES_MAX_PAR_MINUTE_ENDPOINT_SENSIBLE
-      ? parseInt(process.env.NB_REQUETES_MAX_PAR_MINUTE_ENDPOINT_SENSIBLE)
-      : 0;
-
     return rateLimit({
       ...parametresCommuns('API'),
-      limit: maxParFenetreParIp,
+      limit:
+        adaptateurEnvironnement.rateLimit().nombreRequetesParMinuteSurPointSensible,
     });
   },
 };
