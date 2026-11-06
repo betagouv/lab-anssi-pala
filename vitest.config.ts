@@ -6,6 +6,10 @@ export default defineConfig({
       BASE_DONNEES_URL:
         process.env.BASE_DONNEES_URL || 'postgres://postgres@localhost:5432/pala',
     },
-    include: ['outillage/test/**/*.spec.ts', 'serveur/test/**/*.spec.ts'],
+    include: [
+      'outillage/test/**/*.spec.ts',
+      'serveur/test/**/*.spec.ts',
+      'noyau-partage/test/**/*.spec.ts',
+    ],
   },
 });
