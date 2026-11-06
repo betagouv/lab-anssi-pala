@@ -6,6 +6,7 @@ import type {
 import type { EncapsulationCleDeChiffrement } from '../../../src/chiffrement/ports/EncapsulationCleDeChiffrement.ts';
 import type { PaireDeClesAsymetriques } from '../../../src/chiffrement/ports/PaireDeClesAsymetriques.ts';
 import type { Destinataire } from '../../../src/chiffrement/domaine/documentPartage.ts';
+import type { ServiceDeChiffrement } from '../../../src/chiffrement/application/serviceDeChiffrement.ts';
 
 export const uneCleCryptographiqueDeTest = (): CryptoKey => ({
   algorithm: { name: 'dummy' },
@@ -159,3 +160,22 @@ export class PaireDeClesDeTest implements PaireDeClesAsymetriques {
     return uneCleCryptographiqueDeTest();
   }
 }
+
+export class ServiceDeChiffrementDeTest implements ServiceDeChiffrement {
+  readonly contenusRecus: {
+    identifiantDocument: string;
+    contenu: string;
+    destinataires: Destinataire[];
+  }[] = [];
+
+  async chiffre(
+    identifiantDocument: string,
+    contenu: string,
+    destinataires: Destinataire[]
+  ): Promise<string> {
+    this.contenusRecus.push({ identifiantDocument, contenu, destinataires });
+    return `rapport chiffré du scan ${identifiantDocument}`;
+  }
+}
+
+export const unServiceDeChiffrementDeTest = () => new ServiceDeChiffrementDeTest();
