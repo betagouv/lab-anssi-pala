@@ -9,7 +9,7 @@ import {
 import { EntrepotUtilisateursEnMemoire } from '../../src/adaptateurs/entrepotUtilisateursEnMemoire.ts';
 import type { Enveloppe } from '../../src/enrolement/enveloppe.ts';
 
-describe('Les étapes d‘enrolement', () => {
+describe('Les étapes d‘enrôlement', () => {
   describe("Démarre l'authentification (dérivation du secret)", () => {
     const contexteEnregistre = (): ContexteEnrolement => ({
       nom: 'alice',
@@ -110,6 +110,7 @@ describe('Les étapes d‘enrolement', () => {
 
       expect(resultat).toEqual({ keyId: 'cle-1' });
       expect(await entrepot.lis('cle-1')).toEqual({
+        id: expect.any(String),
         nom: 'alice',
         appareil: { identifiant: 'appareil-1', clePublique: 'pub-1', compteur: 1 },
         enveloppe: uneEnveloppe(),
