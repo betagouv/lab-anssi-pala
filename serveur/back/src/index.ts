@@ -1,12 +1,15 @@
 import { creeServeur } from './serveur.ts';
 import { middleware } from './http/middleware.ts';
 import { adaptateurProtection } from './adaptateurs/adaptateurProtection.ts';
-import { adaptateurEnvironnement } from './adaptateurs/adaptateurEnvironnement.ts';
+import { EntrepotUtilisateursEnMemoire } from './adaptateurs/entrepotUtilisateursEnMemoire.ts';
+import { LocalisateurServicesEnrolement } from './enrolement/localisateurServicesEnrolement.ts';
+
+const entrepot = new EntrepotUtilisateursEnMemoire();
 
 const leServeur = creeServeur({
   middleware: middleware(),
   adaptateurProtection: adaptateurProtection,
-  adaptateurEnvironnement: adaptateurEnvironnement,
+  localisateurServicesEnrolement: new LocalisateurServicesEnrolement(entrepot),
 });
 
 const port = process.env.PORT || 8086;

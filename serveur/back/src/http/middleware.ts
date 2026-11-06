@@ -12,6 +12,7 @@ const CSP_BIBLIOTHEQUES = {
 export interface Middleware {
   interdisLaMiseEnCache: RequestHandler;
   positionneHeaders: RequestHandler;
+  verifieCeremonieEnrolement: RequestHandler;
 }
 
 export const middleware = (): Middleware => {
@@ -70,8 +71,16 @@ export const middleware = (): Middleware => {
     suite();
   };
 
+  const verifieCeremonieEnrolement: RequestHandler = (requete, _reponse, suite) => {
+    if (!requete.session.enrolement) {
+      throw new Error("Aucune cérémonie d'enrôlement en cours.");
+    }
+    suite();
+  };
+
   return {
     positionneHeaders,
     interdisLaMiseEnCache,
+    verifieCeremonieEnrolement,
   };
 };
