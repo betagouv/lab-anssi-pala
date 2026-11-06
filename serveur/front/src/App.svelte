@@ -3,7 +3,9 @@
   const codexUrl = 'https://github.com/openai/codex-security';
   const shannonUrl = 'https://github.com/KeygraphHQ/shannon';
 
-  const toolLinks = JSON.stringify([{ label: 'GitHub', url: depotUrl, markup: 'a' }]);
+  const toolLinks = JSON.stringify([
+    { label: 'GitHub', url: depotUrl, markup: 'a' },
+  ]);
 
   const bottomLinks = JSON.stringify([
     { label: 'Mentions légales', href: '#', markup: 'a' },
@@ -84,7 +86,12 @@
     sans-image="true"
   >
     <div slot="buttonsgroup" class="hero-btns">
-      <dsfr-button label="Démarrer" kind="inverted-primary" markup="a" href="#demarrage"></dsfr-button>
+      <dsfr-button
+        label="Démarrer"
+        kind="inverted-primary"
+        markup="a"
+        href="#demarrage"
+      ></dsfr-button>
       <dsfr-button
         label="Découvrir les outils"
         kind="inverted-secondary"
@@ -100,8 +107,8 @@
       <span class="barre-accent" aria-hidden="true"></span>
       <h2 class="titre-section">Deux agents, enchaînés</h2>
       <p class="intro">
-        Codex Security d'abord — analyse statique, large et bon marché. Puis Shannon —
-        validation dynamique, ponctuelle, sur les points qui méritent une preuve.
+        Codex Security d'abord — analyse statique, large et bon marché. Puis Shannon
+        — validation dynamique, ponctuelle, sur les points qui méritent une preuve.
       </p>
       <div class="grille grille-2">
         <dsfr-card
@@ -116,9 +123,24 @@
           has-tag="true"
         >
           <div slot="tagsgroup">
-            <dsfr-badge label="Lit le code" type="status" status="success" has-no-icon="true"></dsfr-badge>
-            <dsfr-badge label="Hors ligne" type="status" status="success" has-no-icon="true"></dsfr-badge>
-            <dsfr-badge label="Proxy LiteLLM" type="status" status="info" has-no-icon="true"></dsfr-badge>
+            <dsfr-badge
+              label="Lit le code"
+              type="status"
+              status="success"
+              has-no-icon="true"
+            ></dsfr-badge>
+            <dsfr-badge
+              label="Hors ligne"
+              type="status"
+              status="success"
+              has-no-icon="true"
+            ></dsfr-badge>
+            <dsfr-badge
+              label="Proxy LiteLLM"
+              type="status"
+              status="info"
+              has-no-icon="true"
+            ></dsfr-badge>
           </div>
         </dsfr-card>
 
@@ -134,9 +156,24 @@
           has-tag="true"
         >
           <div slot="tagsgroup">
-            <dsfr-badge label="Instance vivante" type="status" status="info" has-no-icon="true"></dsfr-badge>
-            <dsfr-badge label="Toujours jetable" type="status" status="warning" has-no-icon="true"></dsfr-badge>
-            <dsfr-badge label="Par intention" type="status" status="info" has-no-icon="true"></dsfr-badge>
+            <dsfr-badge
+              label="Instance vivante"
+              type="status"
+              status="info"
+              has-no-icon="true"
+            ></dsfr-badge>
+            <dsfr-badge
+              label="Toujours jetable"
+              type="status"
+              status="warning"
+              has-no-icon="true"
+            ></dsfr-badge>
+            <dsfr-badge
+              label="Par intention"
+              type="status"
+              status="info"
+              has-no-icon="true"
+            ></dsfr-badge>
           </div>
         </dsfr-card>
       </div>
@@ -185,14 +222,21 @@
         <div class="bloc-demarrage__txt">
           <h2>Un scan complet en une commande</h2>
           <p>
-            Après avoir renseigné le .env racine, une seule commande enchaîne bootstrap,
-            configuration, analyse statique et validation.
+            Après avoir renseigné le .env racine, une seule commande enchaîne
+            bootstrap, configuration, analyse statique et validation.
           </p>
         </div>
         <div class="bloc-demarrage__cmd">
-          <pre class="commande"><code>$ pnpm run scan-complet \
-    --project api --url &lt;url-git&gt;</code></pre>
-          <a class="btn-blanc" href={depotUrl} target="_blank" rel="noopener noreferrer">
+          <pre class="commande"><code
+              >$ pnpm run scan-complet \
+    --project api --url &lt;url-git&gt;</code
+            ></pre>
+          <a
+            class="btn-blanc"
+            href={depotUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Lire le README
           </a>
         </div>

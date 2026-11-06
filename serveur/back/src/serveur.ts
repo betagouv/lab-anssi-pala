@@ -2,14 +2,20 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as http from 'http';
 import express, { type Request, type Response } from 'express';
+import session from 'express-session';
 import { type AdaptateurProtection } from './adaptateurs/adaptateurProtection.ts';
 import type { Middleware } from './http/middleware.ts';
 import type { Environnement } from './infra/environnement.ts';
+import {
+  creeRouteEnrolement,
+  type ServicesEnrolement,
+} from './http/routeEnrolement.ts';
 
 export type ConfigurationServeur = {
   adaptateurProtection: AdaptateurProtection;
   adaptateurEnvironnement: Environnement;
   middleware: Middleware;
+  servicesEnrolement: ServicesEnrolement;
 };
 
 const CDN_LAB_ANSSI_UI_KIT =
@@ -36,8 +42,27 @@ const balisesUiKit = () => {
   );
 };
 
+const sessionEnrolement = () =>
+  session({
+    name: 'pala.enrolement',
+    secret: process.env.SESSION_SECRET ?? 'pala-enrolement-dev-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 5 * 60 * 1000,
+    },
+  });
+
 const creeApp = (config: ConfigurationServeur) => {
-  const { adaptateurProtection, middleware, adaptateurEnvironnement } = config;
+  const {
+    adaptateurProtection,
+    middleware,
+    adaptateurEnvironnement,
+    servicesEnrolement,
+  } = config;
   const app = express();
 
   app.use(adaptateurProtection.protectionLimiteTrafic());
@@ -54,6 +79,17 @@ const creeApp = (config: ConfigurationServeur) => {
 
   app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
 
+  app.get('/enrolement', (_: Request, reponse: Response) =>
+    envoieIndexAvecNonce(reponse, 'enrolement/index.html')
+  );
+
+  app.use(
+    '/enrolement',
+    sessionEnrolement(),
+    express.json({ limit: '64kb' }),
+    creeRouteEnrolement(servicesEnrolement)
+  );
+
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);
 
   app.get('{*path}', (_: Request, reponse: Response) =>
@@ -63,13 +99,20 @@ const creeApp = (config: ConfigurationServeur) => {
   return app;
 };
 
-const lisLeFichierIndex = () => {
-  const cheminIndex = path.join(process.cwd(), 'serveur/front/dist/index.html');
+const lisLeFichierIndex = (cheminRelatifIndex: string) => {
+  const cheminIndex = path.join(
+    process.cwd(),
+    'serveur/front/dist',
+    cheminRelatifIndex
+  );
   return fs.readFileSync(cheminIndex, 'utf8');
 };
 
-const envoieIndexAvecNonce = (reponse: Response) => {
-  const indexAvecLeNonce = lisLeFichierIndex()
+const envoieIndexAvecNonce = (
+  reponse: Response,
+  cheminRelatifIndex = 'index.html'
+) => {
+  const indexAvecLeNonce = lisLeFichierIndex(cheminRelatifIndex)
     .replace('</head>', `${balisesUiKit()}</head>`)
     .replaceAll('%%NONCE%%', reponse.locals['nonce']);
 
