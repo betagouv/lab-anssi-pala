@@ -5,11 +5,11 @@ import {
   infoEnveloppe,
 } from '../domaine/profilEncapsulationChiffrementUtilisateur.ts';
 import type { ChiffrementSymetrique } from '../ports/ChiffrementSymetrique.ts';
-import type { EncapsulationHpke } from '../adaptateurs/encapsulationHpke.ts';
+import type { EncapsulationCleDeChiffrement } from '../ports/EncapsulationCleDeChiffrement.ts';
 
 export type Dependances = {
   chiffrement: ChiffrementSymetrique;
-  hpke: EncapsulationHpke;
+  hpke: EncapsulationCleDeChiffrement;
 };
 
 export type CommandeDechiffrement = {
@@ -21,7 +21,7 @@ export type CommandeDechiffrement = {
 
 export class DechiffreDocument {
   readonly #chiffrement: ChiffrementSymetrique;
-  readonly #hpke: EncapsulationHpke;
+  readonly #hpke: EncapsulationCleDeChiffrement;
 
   constructor(dependances: Dependances) {
     this.#chiffrement = dependances.chiffrement;
