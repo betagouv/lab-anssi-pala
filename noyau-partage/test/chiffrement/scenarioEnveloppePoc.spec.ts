@@ -1,24 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { EnroleUtilisateur } from '../../src/chiffrement/application/EnroleUtilisateur.ts';
 import { DeverrouilleClePrivee } from '../../src/chiffrement/application/DeverrouilleClePrivee.ts';
-import { ChiffreDocument } from '../../src/chiffrement/application/ChiffreDocument.ts';
 import { DechiffreDocument } from '../../src/chiffrement/application/DechiffreDocument.ts';
-import { ProtectionDeCleAesGcm } from '../../src/chiffrement/adaptateurs/protectionDeCleAesGcm.ts';
-import { SecretPrfSimule } from './doubles/SecretPrfSimule.ts';
 import type { IdentiteCryptographique } from '../../src/chiffrement/domaine/identiteCryptographique.ts';
-import { ChiffrementAesGcmWeb } from '../../src/chiffrement/adaptateurs/chiffrementAesGcmWeb.ts';
-import { DerivationDeCleHkdf } from '../../src/chiffrement/adaptateurs/derivationDeCleHkdf.ts';
-import { PaireDeClesX25519Hpke } from '../../src/chiffrement/adaptateurs/paireDeClesX25519Hpke.ts';
-import { EncapsulationHpke } from '../../src/chiffrement/adaptateurs/encapsulationHpke.ts';
-
-const briquesDeChiffrement = () => ({
-  secretPrf: new SecretPrfSimule(),
-  derivation: new DerivationDeCleHkdf(),
-  paire: new PaireDeClesX25519Hpke(),
-  protection: new ProtectionDeCleAesGcm(),
-  chiffrement: new ChiffrementAesGcmWeb(),
-  hpke: new EncapsulationHpke(),
-});
+import { ServiceDeChiffrementParEnveloppe } from '../../src/chiffrement/application/serviceDeChiffrementParEnveloppe.ts';
+import {
+  lesOutilsPourChiffrer,
+  lesOutilsPourDechiffrer,
+  lesOutilsPourDeverouillerUneClePrivee,
+  lesOutilsPourEnrolerUnUtilisateur,
+} from './outilsDeChiffrement.ts';
+import { documentPartageDepuisJson } from '../../../outillage/src/chiffrement-rapport/adaptateurs/documentPartageJson.ts';
 
 const CONTENU = 'Rapport de scan — constats confidentiels.';
 const DOCUMENT_ID = 'doc-poc-001';
@@ -30,29 +22,29 @@ const destinataire = (identite: IdentiteCryptographique) => ({
 
 describe('Scénario POC : chiffrement par enveloppe multi-destinataires', () => {
   it('Alice déchiffre le document que l’administrateur a chiffré pour elle et Bob', async () => {
-    const lesBriques = briquesDeChiffrement();
+    const outilsPourEnroler = lesOutilsPourEnrolerUnUtilisateur();
     const credentialAlice = new TextEncoder().encode('yubikey-alice');
     const credentialBob = new TextEncoder().encode('yubikey-bob');
 
-    const alice = await new EnroleUtilisateur(lesBriques).execute({
+    const alice = await new EnroleUtilisateur(outilsPourEnroler).execute({
       credentialId: credentialAlice,
     });
-    const bob = await new EnroleUtilisateur(lesBriques).execute({
+    const bob = await new EnroleUtilisateur(outilsPourEnroler).execute({
       credentialId: credentialBob,
     });
-
-    const partage = await new ChiffreDocument(lesBriques).execute({
-      documentId: DOCUMENT_ID,
-      contenu: new TextEncoder().encode(CONTENU),
-      destinataires: [destinataire(alice), destinataire(bob)],
-    });
-
-    const clePriveeAlice = await new DeverrouilleClePrivee(lesBriques).execute({
+    const resultat = await new ServiceDeChiffrementParEnveloppe(
+      lesOutilsPourChiffrer()
+    ).chiffre(DOCUMENT_ID, CONTENU, [destinataire(alice), destinataire(bob)]);
+    const partage = documentPartageDepuisJson(resultat);
+    const clePriveeAlice = await new DeverrouilleClePrivee(
+      lesOutilsPourDeverouillerUneClePrivee()
+    ).execute({
       identite: alice,
       credentialId: credentialAlice,
     });
+
     const enveloppeAlice = partage.enveloppes.find((e) => e.keyId === alice.keyId)!;
-    const contenu = await new DechiffreDocument(lesBriques).execute({
+    const contenu = await new DechiffreDocument(lesOutilsPourDechiffrer()).execute({
       documentId: partage.documentId,
       document: partage.document,
       enveloppe: enveloppeAlice,
@@ -63,28 +55,30 @@ describe('Scénario POC : chiffrement par enveloppe multi-destinataires', () => 
   });
 
   it('Alice ne peut pas ouvrir l’enveloppe destinée à Bob', async () => {
-    const d = briquesDeChiffrement();
+    const outilsPourEnroler = lesOutilsPourEnrolerUnUtilisateur();
     const credentialAlice = new TextEncoder().encode('yubikey-alice');
     const credentialBob = new TextEncoder().encode('yubikey-bob');
-    const alice = await new EnroleUtilisateur(d).execute({
+    const alice = await new EnroleUtilisateur(outilsPourEnroler).execute({
       credentialId: credentialAlice,
     });
-    const bob = await new EnroleUtilisateur(d).execute({
+    const bob = await new EnroleUtilisateur(outilsPourEnroler).execute({
       credentialId: credentialBob,
     });
-    const partage = await new ChiffreDocument(d).execute({
-      documentId: DOCUMENT_ID,
-      contenu: new TextEncoder().encode(CONTENU),
-      destinataires: [destinataire(alice), destinataire(bob)],
-    });
-    const clePriveeAlice = await new DeverrouilleClePrivee(d).execute({
+    const resultat = await new ServiceDeChiffrementParEnveloppe(
+      lesOutilsPourChiffrer()
+    ).chiffre(DOCUMENT_ID, CONTENU, [destinataire(alice), destinataire(bob)]);
+
+    const clePriveeAlice = await new DeverrouilleClePrivee(
+      lesOutilsPourDeverouillerUneClePrivee()
+    ).execute({
       identite: alice,
       credentialId: credentialAlice,
     });
+    const partage = documentPartageDepuisJson(resultat);
     const enveloppeBob = partage.enveloppes.find((e) => e.keyId === bob.keyId)!;
 
     await expect(
-      new DechiffreDocument(d).execute({
+      new DechiffreDocument(lesOutilsPourDechiffrer()).execute({
         documentId: partage.documentId,
         document: partage.document,
         enveloppe: enveloppeBob,
@@ -94,25 +88,27 @@ describe('Scénario POC : chiffrement par enveloppe multi-destinataires', () => 
   });
 
   it('refuse un document dont le contenu chiffré a été altéré', async () => {
-    const d = briquesDeChiffrement();
     const credentialAlice = new TextEncoder().encode('yubikey-alice');
-    const alice = await new EnroleUtilisateur(d).execute({
+    const alice = await new EnroleUtilisateur(
+      lesOutilsPourEnrolerUnUtilisateur()
+    ).execute({
       credentialId: credentialAlice,
     });
-    const partage = await new ChiffreDocument(d).execute({
-      documentId: DOCUMENT_ID,
-      contenu: new TextEncoder().encode(CONTENU),
-      destinataires: [destinataire(alice)],
-    });
-    const clePriveeAlice = await new DeverrouilleClePrivee(d).execute({
+    const resultat = await new ServiceDeChiffrementParEnveloppe(
+      lesOutilsPourChiffrer()
+    ).chiffre(DOCUMENT_ID, CONTENU, [destinataire(alice)]);
+    const clePriveeAlice = await new DeverrouilleClePrivee(
+      lesOutilsPourDeverouillerUneClePrivee()
+    ).execute({
       identite: alice,
       credentialId: credentialAlice,
     });
 
+    const partage = documentPartageDepuisJson(resultat);
     partage.document.ciphertext[0] ^= 0xff;
 
     await expect(
-      new DechiffreDocument(d).execute({
+      new DechiffreDocument(lesOutilsPourDechiffrer()).execute({
         documentId: partage.documentId,
         document: partage.document,
         enveloppe: partage.enveloppes[0]!,
