@@ -4,6 +4,6 @@
   "description": "CLI Codex Security publiée sur npm, version figée (le sous-module source/ sert de référence de documentation et de code)",
   "type": "module",
   "dependencies": {
-    "@openai/codex-security": "0.1.30"
+    "@openai/codex-security": "0.8.2"
   }
 }
