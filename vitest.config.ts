@@ -9,6 +9,7 @@ export default defineConfig({
     include: [
       'outillage/test/**/*.spec.ts',
       'serveur/back/test/**/*.spec.ts',
+      'serveur/front/test/**/*.spec.ts',
       'noyau-partage/test/**/*.spec.ts',
     ],
   },
