@@ -7,6 +7,7 @@ import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInst
 import type { EntrepotScan } from '../scan/entrepoScan.ts';
 import type { Scan } from '../noyau/partage/scan.ts';
 import type { ServiceDeChiffrement } from '../../../noyau-partage/src/chiffrement/application/serviceDeChiffrement.ts';
+import type { Destinataire } from '../../../noyau-partage/src/chiffrement/domaine/documentPartage.ts';
 
 const nomDeCible = (cible: string) => cible.substring(cible.lastIndexOf('/') + 1);
 
@@ -53,7 +54,15 @@ export const abonneNotificationScan = (
     };
     const scan = await recupereLeScan(evenement);
     if (scan && estEvenementScanTermine(evenement)) {
-      scan.rapport = await serviceDeChiffrement.chiffre(scan.id, evenement.rapport, []);
+      const destinataires: Destinataire[] = [];
+      scan.rapport =
+        destinataires.length > 0
+          ? await serviceDeChiffrement.chiffre(
+              scan.id,
+              evenement.rapport,
+              destinataires
+            )
+          : evenement.rapport;
       await entrepot.persiste(scan);
     }
     const informationsGit = await recupereLesInformationsGit(scan);
