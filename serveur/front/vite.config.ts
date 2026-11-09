@@ -44,6 +44,12 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     modulePreload: { polyfill: false },
+    rollupOptions: {
+      input: {
+        principal: path.resolve(process.cwd(), 'index.html'),
+        enrolement: path.resolve(process.cwd(), 'enrolement/index.html'),
+      },
+    },
   },
   resolve: {
     alias: {
@@ -52,6 +58,9 @@ export default defineConfig({
   },
   server: {
     port: 3001,
-    strictPort: true,
+    allowedHosts: ['serveur'],
+    cors: {
+      origin: `http://localhost:8086`,
+    },
   },
 });

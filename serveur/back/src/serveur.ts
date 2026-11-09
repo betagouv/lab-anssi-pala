@@ -5,6 +5,7 @@ import express, { type Request, type Response } from 'express';
 import { type AdaptateurProtection } from './adaptateurs/adaptateurProtection.ts';
 import type { Middleware } from './http/middleware.ts';
 import type { Environnement } from './infra/environnement.ts';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 export type ConfigurationServeur = {
   adaptateurProtection: AdaptateurProtection;
@@ -52,9 +53,24 @@ const creeApp = (config: ConfigurationServeur) => {
     express.static(path.join(process.cwd(), 'serveur/front/dist'))
   );
 
-  app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
-
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);
+
+  if (process.env.NODE_ENV === 'development') {
+    app.use(
+      '/',
+      createProxyMiddleware({
+        target: 'http://serveur:3001',
+        changeOrigin: true,
+        ws: true,
+        pathRewrite: (chemin) => {
+          if (chemin === '/') return `/statique/`;
+          return `/statique/${chemin.split('/').slice(1).join('/')}`;
+        },
+      })
+    );
+  }
+
+  app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
 
   app.get('{*path}', (_: Request, reponse: Response) =>
     envoieIndexAvecNonce(reponse)

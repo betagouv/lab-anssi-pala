@@ -10,11 +10,13 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY noyau-partage ./noyau-partage
 COPY serveur/back ./serveur/back
+COPY serveur/front ./serveur/front
 COPY .env .env
 
 RUN pnpm install --frozen-lockfile
 
 RUN pnpm --filter @app/noyau-partage build
 RUN pnpm --filter @app/seurveur/back build
+RUN pnpm --filter @app/seurveur/front build
 
-CMD ["sh", "-c", "pnpm run migration-bdd && pnpm run dev:back"]
+CMD ["sh", "-c", "pnpm run migration-bdd && pnpm run dev"]

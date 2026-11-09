@@ -17,27 +17,6 @@ services:
       retries: 30
       start_period: 5s
 
-  ui:
-    build:
-      context: .
-      dockerfile: ./Dockerfile-UI
-      args:
-        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
-    ports:
-      - '3006:3000'
-    volumes:
-      - ./serveur/front/dist:/app/serveur/front/dist
-    networks:
-      - reseau-pala
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./serveur/front/src
-          target: /app/serveur/front/src
-
-        - action: rebuild
-          path: ./
-
   serveur:
     build:
       context: .
@@ -46,30 +25,19 @@ services:
         NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
     env_file:
       - .env
+    environment:
+      - NODE_ENV=development
+      - NB_REQUETES_MAX_PAR_MINUTE=1000
     ports:
       - '8086:8086'
     volumes:
-      - ./serveur/front/dist:/app/serveur/front/dist
+      - ./serveur/front/src:/app/serveur/front/src
+      - ./serveur/front/assets:/app/serveur/front/assets
+      - ./serveur/back/src:/app/serveur/back/src
+      - ./noyau-partage/src:/app/noyau-partage/src
     networks:
       - reseau-pala
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./noyau-partage/src
-          target: /app/noyau-partage/src
-
-        - action: sync+restart
-          path: ./serveur/back/src
-          target: /app/serveur/back/src
-
-        - action: rebuild
-          path: ./noyau-partage
-
-        - action: rebuild
-          path: ./serveur/back
     depends_on:
-      ui:
-        condition: service_started
       pala-db:
         condition: service_healthy
 

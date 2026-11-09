@@ -31,16 +31,19 @@ export const middleware = (): Middleware => {
     const styleSrcElemCsp = `style-src-elem 'self' 'nonce-${nonce}' ${uiKit}`;
     const scriptCsp = `script-src 'self' 'nonce-${nonce}' ${uiKit}`;
 
-    const toutesCsp = [
-      defaultCsp,
-      connectCsp,
-      imgCsp,
-      fontCsp,
-      mediaCsp,
-      styleCsp,
-      styleSrcElemCsp,
-      scriptCsp,
-    ].filter((csp) => csp !== '');
+    const toutesCsp =
+      process.env.NODE_ENV === 'development'
+        ? []
+        : [
+            defaultCsp,
+            connectCsp,
+            imgCsp,
+            fontCsp,
+            mediaCsp,
+            styleCsp,
+            styleSrcElemCsp,
+            scriptCsp,
+          ].filter((csp) => csp !== '');
 
     const DEUX_ANS = '63072000';
 
