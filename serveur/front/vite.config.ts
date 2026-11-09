@@ -47,6 +47,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         principal: path.resolve(process.cwd(), 'index.html'),
+        enrolement: path.resolve(process.cwd(), 'enrolement/index.html'),
       },
     },
   },

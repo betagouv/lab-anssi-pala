@@ -73,6 +73,13 @@ const creeApp = (config: ConfigurationServeur) => {
 
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);
 
+  app.use(
+    '/enrolement',
+    sessionEnrolement(),
+    express.json({ limit: '64kb' }),
+    creeRouteEnrolement(localisateurServicesEnrolement.localise(), middleware)
+  );
+
   if (process.env.NODE_ENV === 'development') {
     app.use(
       '/',
@@ -90,18 +97,10 @@ const creeApp = (config: ConfigurationServeur) => {
       })
     );
   }
-
   app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
 
   app.get('/enrolement', (_: Request, reponse: Response) =>
     envoieIndexAvecNonce(reponse, 'enrolement/index.html')
-  );
-
-  app.use(
-    '/enrolement',
-    sessionEnrolement(),
-    express.json({ limit: '64kb' }),
-    creeRouteEnrolement(localisateurServicesEnrolement.localise(), middleware)
   );
 
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);

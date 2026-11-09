@@ -13,5 +13,5 @@
     "noEmit": true,
     "strict": true
   },
-  "include": ["src/**/*.ts", "src/**/*.svelte", "vite.config.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts", "src/**/*.svelte", "vite.config.ts"]
 }
