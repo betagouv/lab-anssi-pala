@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cloner le dépôt Git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Utiliser la version Node.js du .nvmrc
         uses: actions/setup-node@v4
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cloner le dépôt Git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Préparer l'environnement
         uses: ./.github/actions/preparer-environnement
       - name: Détecter les erreurs et harmoniser le style
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cloner le dépôt Git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Préparer l'environnement
         uses: ./.github/actions/preparer-environnement
       - name: Contrôler la mise en forme avec Prettier
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cloner le dépôt Git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Préparer l'environnement
         uses: ./.github/actions/preparer-environnement
       - name: Contrôler le TypeScript
@@ -100,7 +100,7 @@ jobs:
 
     steps:
       - name: Cloner le dépôt Git
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Préparer l'environnement
         uses: ./.github/actions/preparer-environnement
       - name: prépare les tests de persistance
