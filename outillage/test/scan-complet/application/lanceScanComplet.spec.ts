@@ -6,9 +6,6 @@ import { LanceScanComplet } from '../../../src/scan-complet/application/lanceSca
 const uneCible = { nom: 'a', url: 'https://github.com/org/a.git' };
 const autreCible = { nom: 'b', url: 'https://github.com/org/b.git' };
 
-const MESSAGE_PROXY_DISTANT =
-  'Proxy distant configuré — démarrage du conteneur local ignoré.';
-
 describe('Lance le scan complet', () => {
   it('prépare l’environnement global une fois, puis enchaîne chaque cible (proxy local)', async () => {
     const etapes = new EtapesScanCompletSimulee();
@@ -16,7 +13,7 @@ describe('Lance le scan complet', () => {
     const code = await new LanceScanComplet({
       etapes,
       console: new ConsoleEnMemoire(),
-    }).execute({ cibles: [uneCible, autreCible], proxyLocal: true });
+    }).execute({ cibles: [uneCible, autreCible] });
 
     expect(etapes.journal).toEqual([
       'genereEnv',
@@ -39,7 +36,7 @@ describe('Lance le scan complet', () => {
     await new LanceScanComplet({
       etapes,
       console: new ConsoleEnMemoire(),
-    }).execute({ cibles: [uneCible, autreCible], proxyLocal: true });
+    }).execute({ cibles: [uneCible, autreCible] });
 
     expect(etapes.journal.filter((e) => e === 'genereConfigProxy')).toHaveLength(1);
     expect(etapes.journal.indexOf('genereConfigProxy')).toBeLessThan(
@@ -56,25 +53,10 @@ describe('Lance le scan complet', () => {
     await new LanceScanComplet({
       etapes,
       console: new ConsoleEnMemoire(),
-    }).execute({ cibles: [uneCible, autreCible], proxyLocal: true });
+    }).execute({ cibles: [uneCible, autreCible] });
 
     expect(etapes.journal.filter((e) => e === 'genereEnv')).toHaveLength(1);
     expect(etapes.journal.filter((e) => e === 'demarreProxy')).toHaveLength(1);
-  });
-
-  it('avec un proxy distant, ne démarre pas le conteneur local et le signale une fois', async () => {
-    const etapes = new EtapesScanCompletSimulee();
-    const console = new ConsoleEnMemoire();
-
-    await new LanceScanComplet({ etapes, console }).execute({
-      cibles: [uneCible, autreCible],
-      proxyLocal: false,
-    });
-
-    expect(etapes.journal).not.toContain('demarreProxy');
-    expect(
-      console.lignes.map((l) => l.message).filter((m) => m === MESSAGE_PROXY_DISTANT)
-    ).toHaveLength(1);
   });
 
   it('poursuit les cibles suivantes même si un scan échoue, et renvoie le nombre d’échecs', async () => {
@@ -89,7 +71,6 @@ describe('Lance le scan complet', () => {
         autreCible,
         { nom: 'c', url: 'https://github.com/org/c.git' },
       ],
-      proxyLocal: true,
     });
 
     expect(etapes.ciblesScannees).toEqual(['a', 'b', 'c']);
@@ -104,7 +85,7 @@ describe('Lance le scan complet', () => {
     const code = await new LanceScanComplet({
       etapes,
       console: new ConsoleEnMemoire(),
-    }).execute({ cibles: [uneCible, autreCible], proxyLocal: true });
+    }).execute({ cibles: [uneCible, autreCible] });
 
     expect(etapes.ciblesScannees).toEqual(['b']);
     expect(code).toBe(1);
@@ -116,7 +97,7 @@ describe('Lance le scan complet', () => {
     await new LanceScanComplet({
       etapes,
       console: new ConsoleEnMemoire(),
-    }).execute({ cibles: [uneCible, autreCible], jours: 7, proxyLocal: true });
+    }).execute({ cibles: [uneCible, autreCible], jours: 7 });
 
     expect(etapes.configsDemandees).toEqual([
       { nomCible: 'a', jours: 7 },
