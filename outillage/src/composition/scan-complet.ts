@@ -9,12 +9,10 @@ import { GenereConfigurationProxy } from '../codex-security/application/genereCo
 import { DemarreProxy } from '../codex-security/application/demarreProxy.ts';
 import { LanceScan } from '../codex-security/application/lanceScan.ts';
 import { NOMBRE_DE_JOURS_PAR_DEFAUT } from '../codex-security/domaine/fenetreDeModification.ts';
-import { proxyEstLocal } from '../codex-security/domaine/proxyLocal.ts';
 import { cheminConfigCible } from '../codex-security/domaine/cheminConfig.ts';
 import { Cible } from '../environnement/domaine/Cible.ts';
 import { ConsoleNode } from '../noyau/infrastructure/consoleNode.ts';
 import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
-import { environnement } from '../noyau/environnement.ts';
 import {
   lesDependancesPourLaGenerationConfig,
   lesDependancesPourLaGenerationConfigProxy,
@@ -64,5 +62,4 @@ process.exitCode = await scanComplet(process.argv.slice(2), {
   etapes,
   console,
   systemeDeFichier: new SystemeDeFichierNode(racine),
-  proxyLocal: proxyEstLocal(environnement.urlLiteLLMConfiguree()),
 });

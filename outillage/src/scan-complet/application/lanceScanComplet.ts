@@ -27,22 +27,13 @@ export class LanceScanComplet {
   async execute({
     cibles,
     jours,
-    proxyLocal,
   }: {
     cibles: CibleScan[];
     jours?: number;
-    proxyLocal: boolean;
   }): Promise<number> {
     await this.#etapes.genereEnv();
     await this.#etapes.genereConfigProxy();
-    if (proxyLocal) {
-      await this.#etapes.demarreProxy();
-    } else {
-      this.#console.aLaLigne(
-        'Proxy distant configuré — démarrage du conteneur local ignoré.',
-        'ORANGE'
-      );
-    }
+    await this.#etapes.demarreProxy();
 
     return await this.#scanToutesLesCibles(cibles, jours);
   }

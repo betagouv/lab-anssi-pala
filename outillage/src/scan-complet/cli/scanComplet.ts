@@ -12,7 +12,6 @@ import {
 } from '../domaine/cibles.ts';
 
 export type DependancesCli = Dependances & {
-  proxyLocal: boolean;
   systemeDeFichier: SystemeDeFichier;
 };
 
@@ -79,7 +78,6 @@ export const scanComplet = async (
     return new LanceScanComplet(dependances).execute({
       cibles,
       jours: jours === undefined ? undefined : Number(jours),
-      proxyLocal: dependances.proxyLocal,
     });
   });
 };

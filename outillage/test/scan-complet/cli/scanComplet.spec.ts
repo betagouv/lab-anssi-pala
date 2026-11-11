@@ -11,7 +11,6 @@ const lesDependances = (doubles: Partial<DependancesCli> = {}): DependancesCli =
   etapes: new EtapesScanCompletSimulee(),
   console: new ConsoleEnMemoire(),
   systemeDeFichier: new SystemeDeFichierEnMemoire(),
-  proxyLocal: true,
   ...doubles,
 });
 
@@ -86,16 +85,5 @@ describe('scan-complet (ligne de commande)', () => {
     expect(console.erreurs.map((l) => l.message)[0]).toBe(
       'Fichier de cibles illisible : JSON invalide.'
     );
-  });
-
-  it('transmet la localité du proxy au cas d’usage (proxy distant : pas de conteneur local)', async () => {
-    const etapes = new EtapesScanCompletSimulee();
-
-    await scanComplet(
-      ['--cible', 'https://github.com/org/a.git'],
-      lesDependances({ etapes, proxyLocal: false })
-    );
-
-    expect(etapes.journal).not.toContain('demarreProxy');
   });
 });
