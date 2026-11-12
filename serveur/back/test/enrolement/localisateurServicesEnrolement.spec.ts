@@ -5,10 +5,10 @@ import {
   DemarreEnregistrement,
   FinaliseEnregistrement,
   FinaliseEnrolement,
-} from '../../src/enrolement/etapesEnrolement';
+} from '../../src/enrolement/etapesEnrolement.ts';
 import { EntrepotUtilisateursEnMemoire } from '../../src/adaptateurs/entrepotUtilisateursEnMemoire.ts';
 import { operationsWebAuthn } from '../../src/adaptateurs/adaptateurWebAuthn.ts';
-import { adaptateurEnvironnement } from '../../src/adaptateurs/adaptateurEnvironnement';
+import { adaptateurEnvironnement } from '../../src/adaptateurs/adaptateurEnvironnement.ts';
 
 describe('Le localisateur de services d‘enrôlement', () => {
   beforeEach(() => {

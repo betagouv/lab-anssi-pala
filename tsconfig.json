@@ -15,6 +15,7 @@
     "outillage/**/*.ts",
     "vitest.config.ts",
     "serveur/back/src/**/*.ts",
+    "serveur/back/test/**/*.ts",
     "noyau-partage/**/*.ts"
   ]
 }

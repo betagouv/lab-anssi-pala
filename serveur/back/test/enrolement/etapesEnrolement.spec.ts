@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ContexteEnrolement } from '../../src/enrolement/contexteEnrolement.ts';
+import type { ContexteEnrolement } from '../../src/enrolement/contexteEnrolement.ts';
 import {
   DemarreAuthentification,
   DemarreEnregistrement,

@@ -1,10 +1,10 @@
-import { creeServeur } from '../src/serveur';
+import { creeServeur } from '../src/serveur.ts';
 import supertest from 'supertest';
-import { adaptateurProtection } from '../src/adaptateurs/adaptateurProtection';
-import { LocalisateurServicesEnrolement } from '../src/enrolement/localisateurServicesEnrolement';
-import { Express, NextFunction, Request, Response } from 'express';
-import { adaptateurEnvironnement } from '../src/adaptateurs/adaptateurEnvironnement';
-import { lesServicesDEnrolement } from './servicesDeTest';
+import { adaptateurProtection } from '../src/adaptateurs/adaptateurProtection.ts';
+import { LocalisateurServicesEnrolement } from '../src/enrolement/localisateurServicesEnrolement.ts';
+import type { Express, NextFunction, Request, Response } from 'express';
+import { adaptateurEnvironnement } from '../src/adaptateurs/adaptateurEnvironnement.ts';
+import { lesServicesDEnrolement } from './servicesDeTest.ts';
 
 const middleware = () => {
   return {

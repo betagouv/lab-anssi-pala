@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { testeurPALA } from '../testeurPALA.ts';
-import { adaptateurEnvironnement } from '../../src/adaptateurs/adaptateurEnvironnement';
-import { lesServicesDEnrolement } from '../servicesDeTest';
+import { adaptateurEnvironnement } from '../../src/adaptateurs/adaptateurEnvironnement.ts';
+import { lesServicesDEnrolement } from '../servicesDeTest.ts';
 
 describe("Routes d'enrôlement", () => {
   const testeur = testeurPALA();
