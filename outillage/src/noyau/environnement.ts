@@ -34,6 +34,10 @@ export type EnvironnementFournisseur = {
   url: string;
 };
 
+type EnvironnementBaseDeDonnees = {
+  active: () => boolean;
+};
+
 type Environnement = {
   mattermost: () => { urlWebhook: string };
   path: string;
@@ -43,6 +47,7 @@ type Environnement = {
   pourProxyLiteLLM: () => EnvironnementProxyLiteLLM;
   urlLiteLLMConfiguree: () => string;
   verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier): void;
+  baseDeDonnees: () => EnvironnementBaseDeDonnees;
 };
 
 const IMAGE_LITE_LLM_PAR_DEFAUT =
@@ -91,6 +96,9 @@ const variablesRacine = (
 
 export const environnement: Environnement = {
   path: process.env.PATH!,
+  baseDeDonnees: (): EnvironnementBaseDeDonnees => ({
+    active: () => process.env.BASE_DE_DONNEES_TYPE === 'postgres',
+  }),
   fournisseur: (): EnvironnementFournisseur => ({
     apiKey: process.env.FOURNISSEUR_API_KEY || '',
     modele: process.env.FOURNISSEUR_MODELE || '',
