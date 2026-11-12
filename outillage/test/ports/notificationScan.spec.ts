@@ -10,13 +10,17 @@ import type {
   MessagerieInstantanee,
 } from '../../src/messagerie/domaine/messagerieInstantanee.ts';
 import { unScanNonEffectue } from '../../src/codex-security/domaine/scanNonEffectue.ts';
-import { EntrepotDeScanMemoire } from '../noyau/infrastructutre/entrepots/memoire/entrepotScanMemoire.ts';
+import {
+  EntrepotDeScanMemoire,
+  EntrepotDestinataireMemoire,
+} from '../noyau/infrastructutre/entrepots/memoire/entrepotsMemoire.ts';
 import { randomUUID, type UUID } from 'node:crypto';
 import {
   ServiceDeChiffrementDeTest,
   unServiceDeChiffrementDeTest,
 } from '../../../noyau-partage/test/chiffrement/doubles/chiffrementDeTest.ts';
 import { type Entrepots } from '../../src/noyau/entrepots.js';
+import { type EntrepotDestinataire } from '../../src/scan/entrepotDestinataire.js';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
@@ -29,12 +33,15 @@ describe('Les abonnés à la notification du scan', () => {
   let bus: BusEvenementsPALA;
   let entrepots: Entrepots;
   let entrepotScan: EntrepotDeScanMemoire;
+  let entrepotDestinataire: EntrepotDestinataire;
   let serviceDeChiffrement: ServiceDeChiffrementDeTest;
   let identifiantDuScan: UUID;
+
   beforeEach(() => {
     bus = new BusEvenementsPALA();
     entrepotScan = new EntrepotDeScanMemoire();
-    entrepots = { scan: entrepotScan };
+    entrepotDestinataire = new EntrepotDestinataireMemoire();
+    entrepots = { scan: entrepotScan, destinataire: entrepotDestinataire };
     serviceDeChiffrement = unServiceDeChiffrementDeTest();
     identifiantDuScan = randomUUID();
     entrepotScan.persiste({
@@ -105,18 +112,36 @@ describe('Les abonnés à la notification du scan', () => {
       );
     });
 
-    it.skip('persiste le rapport chiffré dans le scan', async () => {
+    it('persiste le rapport chiffré dans le scan', async () => {
+      await entrepotDestinataire.persiste({
+        clePublique: new Uint8Array([10, 20]),
+        keyId: 'destinataire-1',
+      });
+      await entrepotDestinataire.persiste({
+        clePublique: new Uint8Array([20, 21]),
+        keyId: 'destinataire-2',
+      });
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(entrepotScan.tousLesElements[0].rapport).toBe(
-        `rapport chiffré du scan ${identifiantDuScan}`
+        `rapport chiffré du scan ${identifiantDuScan} pour 2 destinataires`
       );
     });
 
-    it.skip('chiffre le rapport du scan trouvé pour la cible', async () => {
+    it('chiffre le rapport du scan trouvé pour la cible', async () => {
+      const premierDestinataire = {
+        clePublique: new Uint8Array([10, 20]),
+        keyId: 'destinataire-1',
+      };
+      await entrepotDestinataire.persiste(premierDestinataire);
+      const secondDestinataire = {
+        clePublique: new Uint8Array([20, 21]),
+        keyId: 'destinataire-2',
+      };
+      await entrepotDestinataire.persiste(secondDestinataire);
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
@@ -126,7 +151,7 @@ describe('Les abonnés à la notification du scan', () => {
         {
           identifiantDocument: identifiantDuScan,
           contenu: 'contenu sensible du rapport',
-          destinataires: [{}],
+          destinataires: [premierDestinataire, secondDestinataire],
         },
       ]);
     });
@@ -137,10 +162,17 @@ describe('Les abonnés à la notification du scan', () => {
       abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
+      expect(entrepotScan.tousLesElements.filter((s) => !!s.rapport)).toHaveLength(
+        0
+      );
       expect(serviceDeChiffrement.contenusRecus).toEqual([]);
     });
 
-    it.skip('ne persiste jamais le rapport en clair', async () => {
+    it('ne persiste jamais le rapport en clair', async () => {
+      await entrepotDestinataire.persiste({
+        clePublique: new Uint8Array([10, 20]),
+        keyId: 'destinataire-1',
+      });
       const messagerieDeTest = new MessagerieDeTest();
 
       abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);

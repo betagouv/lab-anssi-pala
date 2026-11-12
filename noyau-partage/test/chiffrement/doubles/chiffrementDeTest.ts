@@ -174,7 +174,7 @@ export class ServiceDeChiffrementDeTest implements ServiceDeChiffrement {
     destinataires: Destinataire[]
   ): Promise<string> {
     this.contenusRecus.push({ identifiantDocument, contenu, destinataires });
-    return `rapport chiffré du scan ${identifiantDocument}`;
+    return `rapport chiffré du scan ${identifiantDocument} pour ${destinataires.length} destinataires`;
   }
 }
 
