@@ -10,7 +10,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && pnpm --filter pala-front check",
     "dev": "./node_modules/.bin/concurrently -n 'SERVEUR,FRONT SVELTE' -c 'blue.bold,magenta.underline' 'npm run dev:back' 'npm run dev:front'",
     "dev:back": "node --watch --require dotenv/config --import tsx serveur/back/src/index.ts",
     "dev:front": "pnpm --filter pala-front dev",
