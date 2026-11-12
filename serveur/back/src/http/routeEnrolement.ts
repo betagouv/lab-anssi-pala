@@ -55,6 +55,7 @@ export const creeRouteEnrolement = (
     const routeur = Router();
     routeur.post(
       '/enregistrement/finalisation',
+      middlewares.verifieCeremonieEnrolement,
       async (requete: Request, reponse: Response) => {
         const { identifiant, contexte } = await finaliseEnregistrement.finalise({
           reponse: requete.body?.reponse,
@@ -67,6 +68,7 @@ export const creeRouteEnrolement = (
 
     routeur.post(
       '/authentification/demarrage',
+      middlewares.verifieCeremonieEnrolement,
       async (requete: Request, reponse: Response) => {
         const { options, contexte } = await demarreAuthentification.demarre({
           contexte: recupereContexte(requete),
@@ -76,23 +78,23 @@ export const creeRouteEnrolement = (
       }
     );
 
-    routeur.post('/finalisation', async (requete: Request, reponse: Response) => {
-      const resultat = await finaliseEnrolement.finalise({
-        reponseAuthentification: requete.body?.reponseAuthentification,
-        enveloppe: requete.body?.enveloppe,
-        contexte: recupereContexte(requete),
-      });
-      delete requete.session.enrolement;
-      reponse.status(201).json(resultat);
-    });
+    routeur.post(
+      '/finalisation',
+      middlewares.verifieCeremonieEnrolement,
+      async (requete: Request, reponse: Response) => {
+        const resultat = await finaliseEnrolement.finalise({
+          reponseAuthentification: requete.body?.reponseAuthentification,
+          enveloppe: requete.body?.enveloppe,
+          contexte: recupereContexte(requete),
+        });
+        delete requete.session.enrolement;
+        reponse.status(201).json(resultat);
+      }
+    );
     return routeur;
   };
 
-  routeur.use(
-    '/',
-    middlewares.verifieCeremonieEnrolement,
-    creeRouteEnrolementPourCeremonieEnCours()
-  );
+  routeur.use(creeRouteEnrolementPourCeremonieEnCours());
 
   routeur.use(intercepteErreurs);
 
