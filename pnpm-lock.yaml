@@ -161,8 +161,8 @@ importers:
         version: 5.57.3(@typescript-eslint/types@8.72.1)
     devDependencies:
       '@lab-anssi/ui-kit':
-        specifier: 1.64.0
-        version: 1.64.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))
+        specifier: 2.1.0
+        version: 2.1.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
         version: 6.2.4(svelte@5.57.3(@typescript-eslint/types@8.72.1))(vite@7.3.7(@types/node@24.19.2)(tsx@4.23.15)(yaml@2.9.1))
@@ -674,11 +674,11 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lab-anssi/ui-kit@1.64.0':
-    resolution: {integrity: sha512-vE0rVI1I64uQqpgSohwo0FOGzPBg1iWw/S/pcsaBYGogXccUsULBwvOn41cMFl5IlBkW8uRMlz2Osli2xDHX2g==}
-    engines: {node: '>=24.21.0'}
+  '@lab-anssi/ui-kit@2.1.0':
+    resolution: {integrity: sha512-hTHoJNhbECf4/MynD617Lq9oBSYcXBqPU3K1vfJP6Us8V1kGzfMj8Kynv8G8Pr+2cY8aNgYjH2C0zd/Eu8yjWA==}
+    engines: {node: '>=24.22.2'}
     peerDependencies:
-      svelte: ^5.57.0
+      svelte: ^5.57.3
 
   '@levischuck/tiny-cbor@0.2.11':
     resolution: {integrity: sha512-llBRm4dT4Z89aRsm6u2oEZ8tfwL/2l6BwpZ7JcyieouniDECM5AqNgr/y08zalEIvW3RSK4upYyybDcmjXqAow==}
@@ -3670,7 +3670,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lab-anssi/ui-kit@1.64.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))':
+  '@lab-anssi/ui-kit@2.1.0(svelte@5.57.3(@typescript-eslint/types@8.72.1))':
     dependencies:
       svelte: 5.57.3(@typescript-eslint/types@8.72.1)
 
