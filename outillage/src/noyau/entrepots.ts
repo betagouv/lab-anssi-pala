@@ -7,6 +7,7 @@ import {
   EntrepotDestinataireMemoire,
 } from '../../test/noyau/infrastructutre/entrepots/memoire/entrepotsMemoire.ts';
 import type { EntrepotDestinataire } from '../scan/entrepotDestinataire.ts';
+import { EntrepotDestinatairePostgres } from './infrastructure/entrepots/postgres/entrepotDestinatairePostgres.ts';
 
 export type Entrepots = {
   scan: EntrepotScan;
@@ -16,7 +17,7 @@ export const fabriqueEntrepots = (): Entrepots => {
   if (environnement.baseDeDonnees().active())
     return {
       scan: new EntrepotDeScanPostgres(knexPALA),
-      destinataire: new EntrepotDestinataireMemoire(),
+      destinataire: new EntrepotDestinatairePostgres(knexPALA),
     };
   return {
     scan: new EntrepotDeScanMemoire(),
