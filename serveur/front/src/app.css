@@ -6,6 +6,46 @@ body {
 
 body {
   font-family: 'Marianne', arial, sans-serif;
-  background: #ffffff;
-  color: #161616;
+  background: var(--background-default-grey);
+  color: var(--text-default-grey);
+}
+
+/* Les web components sont inline par défaut. */
+dsfr-container {
+  display: block;
+}
+
+/* Mise en page commune aux pages : le kit ne fournit que les composants et les variables DSFR. */
+.section {
+  padding: 64px 0;
+}
+.section--alt {
+  background: var(--background-alt-grey);
+  border-top: 1px solid var(--border-default-grey);
+  border-bottom: 1px solid var(--border-default-grey);
+}
+
+.barre-accent {
+  display: block;
+  width: 40px;
+  height: 4px;
+  background: var(--background-action-high-blue-france);
+  margin-bottom: 16px;
+}
+.titre-section {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-title-grey);
+}
+.intro {
+  margin: 0 0 32px;
+  font-size: 17px;
+  color: var(--text-default-grey);
+  max-width: 640px;
+}
+
+.grille {
+  display: grid;
+  gap: 24px;
 }
