@@ -48,6 +48,7 @@ export default defineConfig({
       input: {
         principal: path.resolve(process.cwd(), 'index.html'),
         enrolement: path.resolve(process.cwd(), 'enrolement/index.html'),
+        rapport: path.resolve(process.cwd(), 'rapport/index.html'),
       },
     },
   },

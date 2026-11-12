@@ -100,6 +100,7 @@ const creeApp = (config: ConfigurationServeur) => {
           if (chemin.startsWith('/statique')) return chemin;
           if (chemin === '/enrolement' || chemin === '/enrolement/')
             return '/statique/enrolement/';
+          if (chemin.startsWith('/rapports/')) return '/statique/rapport/';
           if (chemin === '/') return '/statique/';
           return `/statique${chemin}`;
         },
@@ -110,6 +111,10 @@ const creeApp = (config: ConfigurationServeur) => {
 
   app.get('/enrolement', (_: Request, reponse: Response) =>
     envoieIndexAvecNonce(reponse, 'enrolement/index.html')
+  );
+
+  app.get('/rapports/:id', (_: Request, reponse: Response) =>
+    envoieIndexAvecNonce(reponse, 'rapport/index.html')
   );
 
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);
