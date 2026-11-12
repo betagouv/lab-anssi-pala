@@ -1,5 +1,9 @@
 import { EntrepotPosgres } from '../../../../../../noyau-partage/src/entrepots/postgres/entrepotPosgres.ts';
 import type { Destinataire } from '../../../../../../noyau-partage/src/chiffrement/domaine/documentPartage.js';
+import {
+  enBase64,
+  octetsDepuisBase64,
+} from '../../../../../../noyau-partage/src/chiffrement/adaptateurs/base64.ts';
 import type { EntrepotDestinataire } from '../../../../scan/entrepotDestinataire.ts';
 import type { Knex } from 'knex';
 
@@ -32,15 +36,13 @@ export class EntrepotDestinatairePostgres
         const destinataire = resultat as Destinataire;
         return {
           key_id: destinataire.keyId,
-          cle_publique: Buffer.from(destinataire.clePublique).toString('base64'),
+          cle_publique: enBase64(destinataire.clePublique),
         };
       },
       entite(): Destinataire {
         const destinataire = resultat as DestinataireDTO;
         return {
-          clePublique: new Uint8Array(
-            Buffer.from(destinataire.cle_publique, 'base64')
-          ),
+          clePublique: octetsDepuisBase64(destinataire.cle_publique),
           keyId: destinataire.key_id,
         };
       },
