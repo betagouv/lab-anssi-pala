@@ -19,10 +19,9 @@ import { ReseauFetch } from '../noyau/infrastructure/ReseauFetch.ts';
 import { SystemeDeFichierNode } from '../noyau/infrastructure/SystemeDeFichierNode.ts';
 import { abonneNotificationScan } from './notificationScan.ts';
 import { fabriqueMessagerie } from '../messagerie/adaptateurs/messagerieMattermost.ts';
-import { EntrepotDeScanPostgres } from '../noyau/infrastructure/entrepots/postgres/entrepotDeScanPostgres.ts';
-import { knexPALA } from '../../../noyau-partage/src/knex/knexfile.ts';
 import { adaptateurProxy } from '../codex-security/adaptateurs/adaptateurProxy.ts';
 import { fabriqueDeChiffrement } from '../chiffrement-rapport/adaptateurs/fabriqueDeChiffrement.ts';
+import { type Entrepots, fabriqueEntrepots } from '../noyau/entrepots.ts';
 
 export type ContexteDeComposition = {
   racine: string;
@@ -31,7 +30,7 @@ export type ContexteDeComposition = {
 
 const outilCodexSecurity = (racine: string) => join(racine, 'outils/codex-security');
 
-const entrepot = new EntrepotDeScanPostgres(knexPALA);
+const entrepots: Entrepots = fabriqueEntrepots();
 
 export const lesDependancesPourLaPreparationEnvironnement = (
   { racine, console }: ContexteDeComposition,
@@ -63,7 +62,7 @@ export const lesDependancesPourLaGenerationConfig = ({
   systemeDeFichier: new SystemeDeFichierNode(racine),
   console,
   git: new GitEnLigneDeCommande(racine),
-  entrepot: entrepot,
+  entrepot: entrepots.scan,
 });
 
 export const lesDependancesPourLaGenerationConfigProxy = ({
@@ -101,7 +100,7 @@ export const lesDependancesPourLeScan = ({
   abonneNotificationScan(
     busDEvenements,
     fabriqueMessagerie(),
-    entrepot,
+    entrepots,
     fabriqueDeChiffrement()
   );
   return {

@@ -4,10 +4,10 @@ import type { ScanNonEffectue } from '../codex-security/domaine/scanNonEffectue.
 import type { Constat } from '../codex-security/domaine/constat.ts';
 import { intervalToDuration } from 'date-fns/intervalToDuration';
 import type { MessagerieInstantanee } from '../messagerie/domaine/messagerieInstantanee.ts';
-import type { EntrepotScan } from '../scan/entrepoScan.ts';
 import type { Scan } from '../noyau/partage/scan.ts';
 import type { ServiceDeChiffrement } from '../../../noyau-partage/src/chiffrement/application/serviceDeChiffrement.ts';
 import type { Destinataire } from '../../../noyau-partage/src/chiffrement/domaine/documentPartage.ts';
+import { type Entrepots } from '../noyau/entrepots.ts';
 import { environnement } from '../noyau/environnement.ts';
 
 const nomDeCible = (cible: string) => cible.substring(cible.lastIndexOf('/') + 1);
@@ -17,7 +17,7 @@ const nomDeCibleEnMajuscule = (cible: string) => nomDeCible(cible).toUpperCase()
 export const abonneNotificationScan = (
   bus: BusEvenementsPALA,
   messagerie: MessagerieInstantanee,
-  entrepot: EntrepotScan,
+  entrepots: Entrepots,
   serviceDeChiffrement: ServiceDeChiffrement
 ): void => {
   const estEvenementScanTermine = (
@@ -28,7 +28,9 @@ export const abonneNotificationScan = (
 
   const recupereLeScan = async (evenement: ScanTermine | ScanNonEffectue) => {
     try {
-      return await entrepot.dernierScanPourLaCible(nomDeCible(evenement.cible));
+      return await entrepots.scan.dernierScanPourLaCible(
+        nomDeCible(evenement.cible)
+      );
     } catch (_e) {
       return undefined;
     }
@@ -64,7 +66,7 @@ export const abonneNotificationScan = (
               destinataires
             )
           : evenement.rapport;
-      await entrepot.persiste(scan);
+      await entrepots.scan.persiste(scan);
     }
     const informationsGit = await recupereLesInformationsGit(scan);
 

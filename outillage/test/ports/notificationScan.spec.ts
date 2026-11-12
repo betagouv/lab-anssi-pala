@@ -16,6 +16,7 @@ import {
   ServiceDeChiffrementDeTest,
   unServiceDeChiffrementDeTest,
 } from '../../../noyau-partage/test/chiffrement/doubles/chiffrementDeTest.ts';
+import { type Entrepots } from '../../src/noyau/entrepots.js';
 
 class MessagerieDeTest implements MessagerieInstantanee {
   messages: Message[] = [];
@@ -26,15 +27,17 @@ class MessagerieDeTest implements MessagerieInstantanee {
 
 describe('Les abonnés à la notification du scan', () => {
   let bus: BusEvenementsPALA;
-  let entrepot: EntrepotDeScanMemoire;
+  let entrepots: Entrepots;
+  let entrepotScan: EntrepotDeScanMemoire;
   let serviceDeChiffrement: ServiceDeChiffrementDeTest;
   let identifiantDuScan: UUID;
   beforeEach(() => {
     bus = new BusEvenementsPALA();
-    entrepot = new EntrepotDeScanMemoire();
+    entrepotScan = new EntrepotDeScanMemoire();
+    entrepots = { scan: entrepotScan };
     serviceDeChiffrement = unServiceDeChiffrementDeTest();
     identifiantDuScan = randomUUID();
-    entrepot.persiste({
+    entrepotScan.persiste({
       id: identifiantDuScan,
       cible: 'projet',
       date: new Date(),
@@ -68,7 +71,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('envoie le message de constat', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages).toHaveLength(1);
@@ -77,7 +80,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('envoie le message de constat avec les hashs de commit et le nombre de jours', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages[0].contenu).toContain(
@@ -91,7 +94,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('ne rajoute pas les hashs de commit et le nombre de jours si le scan n’est pas trouvé', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine({ ...scanTermine, cible: 'cible-inconnue' }));
 
       expect(messagerieDeTest.messages[0].contenu).not.toContain(
@@ -105,10 +108,10 @@ describe('Les abonnés à la notification du scan', () => {
     it.skip('persiste le rapport chiffré dans le scan', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
-      expect(entrepot.tousLesElements[0].rapport).toBe(
+      expect(entrepotScan.tousLesElements[0].rapport).toBe(
         `rapport chiffré du scan ${identifiantDuScan}`
       );
     });
@@ -116,7 +119,7 @@ describe('Les abonnés à la notification du scan', () => {
     it.skip('chiffre le rapport du scan trouvé pour la cible', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(serviceDeChiffrement.contenusRecus).toEqual([
@@ -131,7 +134,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('ne chiffre pas le rapport du scan si aucun destinataire', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(serviceDeChiffrement.contenusRecus).toEqual([]);
@@ -140,16 +143,18 @@ describe('Les abonnés à la notification du scan', () => {
     it.skip('ne persiste jamais le rapport en clair', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
-      expect(entrepot.tousLesElements[0].rapport).not.toContain('contenu sensible');
+      expect(entrepotScan.tousLesElements[0].rapport).not.toContain(
+        'contenu sensible'
+      );
     });
 
     it('n’envoie pas le rapport dans le message de constat', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine(scanTermine));
 
       expect(messagerieDeTest.messages[0].contenu).not.toContain('contenu sensible');
@@ -158,7 +163,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('ne chiffre rien si le scan n’est pas trouvé', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanTermine({ ...scanTermine, cible: 'cible-inconnue' }));
 
       expect(serviceDeChiffrement.contenusRecus).toHaveLength(0);
@@ -169,7 +174,7 @@ describe('Les abonnés à la notification du scan', () => {
     it('envoie le message de constat avec les hashs de commit et le nombre de jours', async () => {
       const messagerieDeTest = new MessagerieDeTest();
 
-      abonneNotificationScan(bus, messagerieDeTest, entrepot, serviceDeChiffrement);
+      abonneNotificationScan(bus, messagerieDeTest, entrepots, serviceDeChiffrement);
       await bus.publie(unScanNonEffectue({ cible: 'projet' }));
 
       expect(messagerieDeTest.messages[0].contenu).toContain(
