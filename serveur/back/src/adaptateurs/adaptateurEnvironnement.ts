@@ -79,10 +79,17 @@ const verifieLesVariablesNecessaires = () => {
   }
 };
 
+const baseDeDonnees = () => {
+  return {
+    active: () => process.env.BASE_DE_DONNEES_TYPE === 'postgres',
+  };
+};
+
 export const adaptateurEnvironnement: Environnement = {
   trustProxy,
   enrolement,
   rateLimit,
   serveur,
   verifieLesVariablesNecessaires,
+  baseDeDonnees,
 };
