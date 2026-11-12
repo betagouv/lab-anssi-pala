@@ -57,16 +57,15 @@ export const abonneNotificationScan = (
     };
     const scan = await recupereLeScan(evenement);
     if (scan && estEvenementScanTermine(evenement)) {
-      const destinataires: Destinataire[] = [];
-      scan.rapport =
-        destinataires.length > 0
-          ? await serviceDeChiffrement.chiffre(
-              scan.id,
-              evenement.rapport,
-              destinataires
-            )
-          : evenement.rapport;
-      await entrepots.scan.persiste(scan);
+      const destinataires: Destinataire[] = await entrepots.destinataire.tous();
+      if (destinataires.length > 0) {
+        scan.rapport = await serviceDeChiffrement.chiffre(
+          scan.id,
+          evenement.rapport,
+          destinataires
+        );
+        await entrepots.scan.persiste(scan);
+      }
     }
     const informationsGit = await recupereLesInformationsGit(scan);
 
