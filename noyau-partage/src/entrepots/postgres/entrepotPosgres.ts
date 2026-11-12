@@ -11,21 +11,23 @@ export abstract class EntrepotPosgres<T> implements Entrepot<T> {
   }
 
   async persiste(entite: T): Promise<void> {
-    const entiteDTO = this.mappe(entite).dto();
+    const entiteDTO = this.mappe(entite)!.dto();
     await this.knex.insert(entiteDTO).into(this.table).onConflict('id').merge();
   }
 
-  async lis(identifiant: string): Promise<T> {
+  async lis(identifiant: string): Promise<T | undefined> {
     const resultat = await this.knex
       .select()
       .from(this.table)
       .where('id', identifiant)
       .first();
-    return this.mappe(resultat).entite();
+    return this.mappe(resultat)?.entite();
   }
 
-  protected abstract mappe(resultat: unknown): {
-    dto: () => unknown;
-    entite: () => T;
-  };
+  protected abstract mappe(resultat: unknown):
+    | {
+        dto: () => unknown;
+        entite: () => T;
+      }
+    | undefined;
 }

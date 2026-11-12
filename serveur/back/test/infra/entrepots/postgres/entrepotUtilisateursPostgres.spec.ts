@@ -70,4 +70,32 @@ describe('L’Entrepôt d’utilisateurs postgres', () => {
       nom: '',
     });
   });
+
+  it('retrouve les utilisateurs à partir des keyId de leur enveloppe', async () => {
+    const unUtilisateur = (keyId: string) => ({
+      id: randomUUID(),
+      appareil: {
+        clePublique: 'cle-publique',
+        compteur: 1,
+        identifiant: `appareil-${keyId}`,
+      },
+      enveloppe: {
+        clePriveeChiffree: { ciphertext: 'text', iv: 'iv' },
+        clePublique: 'clé-publique',
+        keyId,
+        prf: { hkdfSalt: 'hdk-sel', salt: 'sel', version: 1 },
+      },
+      nom: '',
+    });
+    const jeanne = unUtilisateur('cle-jeanne');
+    const paul = unUtilisateur('cle-paul');
+    await entrepot.persiste(jeanne);
+    await entrepot.persiste(paul);
+    await entrepot.persiste(unUtilisateur('cle-anne'));
+
+    const utilisateurs = await entrepot.parKeyIds(['cle-jeanne', 'cle-paul']);
+
+    expect(utilisateurs).toHaveLength(2);
+    expect(utilisateurs).toEqual(expect.arrayContaining([jeanne, paul]));
+  });
 });

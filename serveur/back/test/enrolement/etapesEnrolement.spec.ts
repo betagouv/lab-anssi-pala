@@ -6,7 +6,7 @@ import {
   FinaliseEnregistrement,
   FinaliseEnrolement,
 } from '../../src/enrolement/etapesEnrolement.ts';
-import { EntrepotUtilisateursEnMemoire } from '../../src/adaptateurs/entrepotUtilisateursEnMemoire.ts';
+import { EntrepotUtilisateursEnMemoire } from '../infra/entrepots/memoire/entrepotUtilisateursEnMemoire.ts';
 import type { Enveloppe } from '../../src/enrolement/enveloppe.ts';
 
 describe('Les étapes d‘enrôlement', () => {

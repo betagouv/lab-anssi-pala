@@ -5,6 +5,8 @@ import { LocalisateurServicesEnrolement } from '../src/enrolement/localisateurSe
 import { Express, NextFunction, Request, Response } from 'express';
 import { adaptateurEnvironnement } from '../src/adaptateurs/adaptateurEnvironnement';
 import { lesServicesDEnrolement } from './servicesDeTest';
+import { EntrepotScansEnMemoire } from './infra/entrepots/memoire/entrepotScansEnMemoire.ts';
+import { EntrepotUtilisateursEnMemoire } from './infra/entrepots/memoire/entrepotUtilisateursEnMemoire.ts';
 
 const middleware = () => {
   return {
@@ -32,6 +34,10 @@ export const testeurPALA = () => {
   const localisateurServicesEnrolement = {
     localise: () => lesServicesDEnrolement(),
   } as unknown as LocalisateurServicesEnrolement;
+  const entrepots = {
+    scans: new EntrepotScansEnMemoire(),
+    utilisateurs: new EntrepotUtilisateursEnMemoire(),
+  };
   let serveur: ServeurPALA;
   let app: Express;
   let ceremonieEnCours = false;
@@ -64,6 +70,7 @@ export const testeurPALA = () => {
       adaptateurProtection: adaptateurProtection,
       middleware: lesMiddleware,
       localisateurServicesEnrolement,
+      entrepots,
     });
     app = serveur.app;
   };
@@ -82,6 +89,7 @@ export const testeurPALA = () => {
       return testeur;
     },
     localisateurServicesEnrolement: () => localisateurServicesEnrolement,
+    entrepots: () => entrepots,
     avecCeremonieEnCours() {
       ceremonieEnCours = true;
       tentativeCeremonie += 1;
