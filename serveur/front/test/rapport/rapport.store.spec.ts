@@ -2,6 +2,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { get } from 'svelte/store';
 import { api } from '../../src/http/api.ts';
 import type { Scan } from '../../src/rapport/scan.ts';
+import {
+  etapesDechiffrement,
+  type SecretDuLecteur,
+} from '../../src/rapport/etapesDechiffrement.ts';
 
 const unScan: Scan = {
   id: 'scan-1',
@@ -15,11 +19,18 @@ const unScan: Scan = {
   destinataires: [],
 };
 
+const unSecretDuLecteur: SecretDuLecteur = {
+  identifiantAppareil: 'appareil-alice',
+  secret: new Uint8Array([1, 2, 3]),
+};
+
 const unStore = async () => import('../../src/rapport/rapport.store.ts');
 
 describe('Le store de lecture d’un rapport', () => {
   beforeEach(() => {
     api.scans().recupere = async () => unScan;
+    etapesDechiffrement.recupereSecretPrf = async () => unSecretDuLecteur;
+    etapesDechiffrement.dechiffreRapport = async () => 'contenu en clair';
   });
 
   it('est prêt, sans scan ni contenu, tant que rien n’est chargé', async () => {
@@ -90,6 +101,97 @@ describe('Le store de lecture d’un rapport', () => {
         scan: null,
         contenu: null,
       });
+    });
+  });
+
+  describe('pendant le déchiffrement', () => {
+    it('est en déchiffrement et invite à toucher la YubiKey', async () => {
+      const { storeRapport } = await unStore();
+      await storeRapport.charge('scan-1');
+
+      void storeRapport.dechiffre();
+
+      expect(get(storeRapport)).toEqual({
+        statut: 'dechiffrement',
+        message: 'Touchez votre YubiKey lorsqu’elle clignote…',
+        scan: unScan,
+        contenu: null,
+      });
+    });
+  });
+
+  describe('quand le déchiffrement réussit', () => {
+    it('déchiffre le scan avec le secret de la clé qui a répondu', async () => {
+      let destinatairesSollicites: unknown;
+      let dechiffrementDemande: unknown;
+      etapesDechiffrement.recupereSecretPrf = async (destinataires) => {
+        destinatairesSollicites = destinataires;
+        return unSecretDuLecteur;
+      };
+      etapesDechiffrement.dechiffreRapport = async (scan, secretDuLecteur) => {
+        dechiffrementDemande = { scan, secretDuLecteur };
+        return 'contenu en clair';
+      };
+      const { storeRapport } = await unStore();
+      await storeRapport.charge('scan-1');
+
+      await storeRapport.dechiffre();
+
+      expect(destinatairesSollicites).toEqual(unScan.destinataires);
+      expect(dechiffrementDemande).toEqual({
+        scan: unScan,
+        secretDuLecteur: unSecretDuLecteur,
+      });
+    });
+
+    it('expose le contenu déchiffré', async () => {
+      const { storeRapport } = await unStore();
+      await storeRapport.charge('scan-1');
+
+      await storeRapport.dechiffre();
+
+      expect(get(storeRapport)).toEqual({
+        statut: 'dechiffre',
+        message: 'Rapport déchiffré.',
+        scan: unScan,
+        contenu: 'contenu en clair',
+      });
+    });
+  });
+
+  describe('quand le déchiffrement échoue', () => {
+    it('est en erreur avec le message de l’erreur et conserve le scan', async () => {
+      etapesDechiffrement.recupereSecretPrf = () =>
+        Promise.reject(new Error('Geste annulé.'));
+      const { storeRapport } = await unStore();
+      await storeRapport.charge('scan-1');
+
+      await storeRapport.dechiffre();
+
+      expect(get(storeRapport)).toEqual({
+        statut: 'erreur',
+        message: 'Geste annulé.',
+        scan: unScan,
+        contenu: null,
+      });
+    });
+  });
+
+  describe('quand aucun scan n’est chargé', () => {
+    it('ne lance pas le déchiffrement', async () => {
+      let cleSollicitee = false;
+      etapesDechiffrement.recupereSecretPrf = async () => {
+        cleSollicitee = true;
+        return unSecretDuLecteur;
+      };
+      api.scans().recupere = () => Promise.reject(new Error('Scan introuvable.'));
+      const { storeRapport } = await unStore();
+      await storeRapport.charge('scan-inconnu');
+
+      await storeRapport.dechiffre();
+
+      expect(cleSollicitee).toBe(false);
+      expect(get(storeRapport).message).toBe('Scan introuvable.');
     });
   });
 });

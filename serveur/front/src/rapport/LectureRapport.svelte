@@ -25,6 +25,8 @@
       window.location.pathname.split('/').filter(Boolean).at(-1) ?? ''
     );
 
+  const enDechiffrement = $derived($storeRapport.statut === 'dechiffrement');
+
   onMount(() => {
     storeRapport.charge(identifiantScan());
   });
@@ -62,6 +64,24 @@
             <dd>{new Date($storeRapport.scan.date).toLocaleString('fr-FR')}</dd>
           </dl>
 
+          <form
+            onsubmit={(e) => {
+              e.preventDefault();
+              storeRapport.dechiffre();
+            }}
+          >
+            <dsfr-button
+              label={enDechiffrement ? 'Déchiffrement en cours…' : 'Déchiffrer'}
+              type="submit"
+              disabled={enDechiffrement}
+            ></dsfr-button>
+          </form>
+
+          {#if $storeRapport.contenu !== null}
+            <h2>Rapport déchiffré</h2>
+            <pre class="rapport">{$storeRapport.contenu}</pre>
+          {/if}
+
           <h2>Scan chiffré</h2>
           <pre>{JSON.stringify($storeRapport.scan, null, 2)}</pre>
         {/if}
@@ -94,6 +114,10 @@
   }
   .resume dd {
     margin: 0;
+  }
+  .rapport {
+    white-space: pre-wrap;
+    word-break: break-word;
   }
   pre {
     background: var(--background-contrast-grey);

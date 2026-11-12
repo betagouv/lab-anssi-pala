@@ -1,5 +1,8 @@
 import type { IdentiteCryptographique } from 'pala-noyau-partage/src/chiffrement/domaine/identiteCryptographique.ts';
-import { enBase64 } from 'pala-noyau-partage/src/chiffrement/adaptateurs/base64.ts';
+import {
+  enBase64,
+  octetsDepuisBase64,
+} from 'pala-noyau-partage/src/chiffrement/adaptateurs/base64.ts';
 
 export type Enveloppe = {
   keyId: string;
@@ -19,5 +22,21 @@ export const encodeEnBase64 = (identite: IdentiteCryptographique): Enveloppe => 
     salt: enBase64(identite.prf.salt),
     hkdfSalt: enBase64(identite.prf.hkdfSalt),
     version: identite.prf.version,
+  },
+});
+
+export const decodeDepuisBase64 = (
+  enveloppe: Enveloppe
+): IdentiteCryptographique => ({
+  keyId: enveloppe.keyId,
+  clePublique: octetsDepuisBase64(enveloppe.clePublique),
+  clePriveeChiffree: {
+    iv: octetsDepuisBase64(enveloppe.clePriveeChiffree.iv),
+    ciphertext: octetsDepuisBase64(enveloppe.clePriveeChiffree.ciphertext),
+  },
+  prf: {
+    salt: octetsDepuisBase64(enveloppe.prf.salt),
+    hkdfSalt: octetsDepuisBase64(enveloppe.prf.hkdfSalt),
+    version: enveloppe.prf.version,
   },
 });
