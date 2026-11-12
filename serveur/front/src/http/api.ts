@@ -5,6 +5,7 @@ import type {
   RegistrationResponseJSON,
 } from '@simplewebauthn/browser';
 import type { Enveloppe } from '../enrolement/enveloppe.ts';
+import type { Scan } from '../rapport/scan.ts';
 
 type ApiEnrolement = {
   demandeOptionsEnregistrement: (
@@ -16,6 +17,10 @@ type ApiEnrolement = {
     reponseAuthentification: AuthenticationResponseJSON;
     enveloppe: Enveloppe;
   }) => Promise<unknown>;
+};
+
+type ApiScans = {
+  recupere: (identifiant: string) => Promise<Scan>;
 };
 
 const enrolement = {
@@ -44,16 +49,18 @@ const enrolement = {
   },
 };
 
-export const api = {
-  enrolement: (): ApiEnrolement => enrolement,
+const scans: ApiScans = {
+  recupere(identifiant: string): Promise<Scan> {
+    return recupereJson(`/scans/${encodeURIComponent(identifiant)}`);
+  },
 };
 
-const posteJson = async <T>(url: string, corps: unknown): Promise<T> => {
-  const reponse = await fetch(url, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(corps),
-  });
+export const api = {
+  enrolement: (): ApiEnrolement => enrolement,
+  scans: (): ApiScans => scans,
+};
+
+const reponseJson = async <T>(url: string, reponse: Response): Promise<T> => {
   if (!reponse.ok) {
     const detail = (await reponse.json().catch(() => ({}))) as { erreur?: string };
     throw new Error(
@@ -62,3 +69,16 @@ const posteJson = async <T>(url: string, corps: unknown): Promise<T> => {
   }
   return reponse.json() as Promise<T>;
 };
+
+const recupereJson = async <T>(url: string): Promise<T> =>
+  reponseJson(url, await fetch(url, { headers: { accept: 'application/json' } }));
+
+const posteJson = async <T>(url: string, corps: unknown): Promise<T> =>
+  reponseJson(
+    url,
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(corps),
+    })
+  );
