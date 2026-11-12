@@ -1,5 +1,6 @@
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { api } from '../http/api.ts';
+import { etapesDechiffrement } from './etapesDechiffrement.ts';
 import type { Scan } from './scan.ts';
 
 export type Statut =
@@ -19,7 +20,8 @@ const etatInitial: EtatRapport = {
   contenu: null,
 };
 
-const { subscribe, set } = writable<EtatRapport>(etatInitial);
+const store = writable<EtatRapport>(etatInitial);
+const { subscribe, set } = store;
 
 const messageDe = (erreur: unknown): string =>
   erreur instanceof Error ? erreur.message : String(erreur);
@@ -35,4 +37,29 @@ const charge = async (identifiantScan: string): Promise<void> => {
   }
 };
 
-export const storeRapport = { subscribe, charge };
+const dechiffre = async (): Promise<void> => {
+  const { scan } = get(store);
+  if (!scan) return;
+
+  set({
+    statut: 'dechiffrement',
+    message: 'Touchez votre YubiKey lorsqu’elle clignote…',
+    scan,
+    contenu: null,
+  });
+
+  try {
+    const secretDuLecteur = await etapesDechiffrement.recupereSecretPrf(
+      scan.destinataires
+    );
+    const contenu = await etapesDechiffrement.dechiffreRapport(
+      scan,
+      secretDuLecteur
+    );
+    set({ statut: 'dechiffre', message: 'Rapport déchiffré.', scan, contenu });
+  } catch (erreur) {
+    set({ statut: 'erreur', message: messageDe(erreur), scan, contenu: null });
+  }
+};
+
+export const storeRapport = { subscribe, charge, dechiffre };
