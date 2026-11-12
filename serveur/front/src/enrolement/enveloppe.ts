@@ -1,5 +1,5 @@
 import type { IdentiteCryptographique } from 'pala-noyau-partage/src/chiffrement/domaine/identiteCryptographique.ts';
-import { enBase64 } from './encodage.ts';
+import { enBase64 } from 'pala-noyau-partage/src/chiffrement/adaptateurs/base64.ts';
 
 export type Enveloppe = {
   keyId: string;

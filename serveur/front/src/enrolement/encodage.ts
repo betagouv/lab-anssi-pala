@@ -1,6 +1,3 @@
-export const enBase64 = (octets: Uint8Array): string =>
-  btoa(String.fromCharCode(...octets));
-
 export const base64urlVersOctets = (valeur: string): Uint8Array => {
   const base64 = valeur.replace(/-/g, '+').replace(/_/g, '/');
   const reste = base64.length % 4;
