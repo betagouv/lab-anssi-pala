@@ -4,7 +4,10 @@ import type { AuthenticationResponseJSON } from '@simplewebauthn/browser';
 import type { IdentiteCryptographique } from 'pala-noyau-partage/src/chiffrement/domaine/identiteCryptographique.ts';
 import { encodeEnBase64 } from '../../src/enrolement/enveloppe.ts';
 import { api } from '../../src/http/api.ts';
-import { etapesEnrolement } from '../../src/enrolement/etapesEnrolement.ts';
+import {
+  etapesEnrolement,
+  type ResultatEnrolement,
+} from '../../src/enrolement/etapesEnrolement.ts';
 
 const identifiantAppareil = new Uint8Array([1, 2, 3]);
 
@@ -26,13 +29,22 @@ const uneReponseAuthentification = {
   id: 'identifiant-appareil',
 } as AuthenticationResponseJSON;
 
+const unResultatEnrolement: ResultatEnrolement = {
+  identite: uneIdentiteCryptographique,
+  reponseAuthentification: uneReponseAuthentification,
+};
+
 const unStore = async () => import('../../src/enrolement/enrolement.store.ts');
 
 describe('Le store d’enrôlement', () => {
   beforeEach(() => {
-    etapesEnrolement.recupereSecretAuthentification = async () => ({});
-    etapesEnrolement.enregistreAppareil = async () => ({});
-    etapesEnrolement.genereIdentiteCryptographique = async () => ({});
+    etapesEnrolement.recupereSecretAuthentification = async () => ({
+      secret: new Uint8Array([60, 61]),
+      reponseAuthentification: uneReponseAuthentification,
+    });
+    etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
+    etapesEnrolement.genereIdentiteCryptographique = async () =>
+      unResultatEnrolement;
     api.enrolement().finaliseEnrolement = async () => ({});
   });
 
@@ -48,7 +60,7 @@ describe('Le store d’enrôlement', () => {
 
   describe('pendant l’enrôlement', () => {
     it('est en cours et invite à toucher la YubiKey', async () => {
-      etapesEnrolement.enregistreAppareil = async () => ({});
+      etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
       const { storeEnrolement } = await unStore();
 
       void storeEnrolement.enrole('Alice');
@@ -64,7 +76,7 @@ describe('Le store d’enrôlement', () => {
       let enregistrementAppareilAppele = false;
       etapesEnrolement.enregistreAppareil = async () => {
         enregistrementAppareilAppele = true;
-        return {};
+        return identifiantAppareil;
       };
       const { storeEnrolement } = await unStore();
       void storeEnrolement.enrole('Alice');
@@ -80,7 +92,7 @@ describe('Le store d’enrôlement', () => {
       let appareilPour: string = '';
       etapesEnrolement.enregistreAppareil = async (nom: string) => {
         appareilPour = nom;
-        return {};
+        return identifiantAppareil;
       };
       const { storeEnrolement } = await unStore();
 
@@ -90,13 +102,13 @@ describe('Le store d’enrôlement', () => {
     });
 
     it('génère l’identité cryptographique pour l’appareil enregistré', async () => {
-      let identifiantAppareilEnregistre: string = '';
+      let identifiantAppareilEnregistre: Uint8Array | undefined;
       etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
       etapesEnrolement.genereIdentiteCryptographique = async (
         identifiantAppareil
       ) => {
         identifiantAppareilEnregistre = identifiantAppareil;
-        return {};
+        return unResultatEnrolement;
       };
       const { storeEnrolement } = await unStore();
 
@@ -107,10 +119,8 @@ describe('Le store d’enrôlement', () => {
 
     it('finalise avec la réponse d’authentification et l’enveloppe en base64', async () => {
       etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
-      etapesEnrolement.genereIdentiteCryptographique = async () => ({
-        identite: uneIdentiteCryptographique,
-        reponseAuthentification: uneReponseAuthentification,
-      });
+      etapesEnrolement.genereIdentiteCryptographique = async () =>
+        unResultatEnrolement;
       let finalisationAppelee = false;
       api.enrolement().finaliseEnrolement = async () => {
         finalisationAppelee = true;
@@ -125,10 +135,8 @@ describe('Le store d’enrôlement', () => {
 
     it('est ok, annonce le keyId et expose l’enveloppe', async () => {
       etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
-      etapesEnrolement.genereIdentiteCryptographique = async () => ({
-        identite: uneIdentiteCryptographique,
-        reponseAuthentification: uneReponseAuthentification,
-      });
+      etapesEnrolement.genereIdentiteCryptographique = async () =>
+        unResultatEnrolement;
       const { storeEnrolement } = await unStore();
 
       await storeEnrolement.enrole('Alice');
@@ -143,10 +151,8 @@ describe('Le store d’enrôlement', () => {
 
   describe('quand l’enrôlement échoue', () => {
     it('est en erreur avec le message de l’erreur, sans enveloppe', async () => {
-      etapesEnrolement.genereIdentiteCryptographique = () => ({
-        identite: uneIdentiteCryptographique,
-        reponseAuthentification: uneReponseAuthentification,
-      });
+      etapesEnrolement.genereIdentiteCryptographique = async () =>
+        unResultatEnrolement;
       api.enrolement().finaliseEnrolement = () =>
         Promise.reject(new Error('Authentification refusée.'));
       const { storeEnrolement } = await unStore();
@@ -178,7 +184,7 @@ describe('Le store d’enrôlement', () => {
       };
       etapesEnrolement.genereIdentiteCryptographique = async () => {
         genereIdentiteCryptographiqueAppele = true;
-        return { identite: 'identite' };
+        return unResultatEnrolement;
       };
       etapesEnrolement.enregistreAppareil = () => Promise.reject(new Error('refus'));
       const { storeEnrolement } = await unStore();
@@ -195,10 +201,8 @@ describe('Le store d’enrôlement', () => {
       await storeEnrolement.enrole('Alice');
 
       etapesEnrolement.enregistreAppareil = async () => identifiantAppareil;
-      etapesEnrolement.genereIdentiteCryptographique = async () => ({
-        identite: uneIdentiteCryptographique,
-        reponseAuthentification: uneReponseAuthentification,
-      });
+      etapesEnrolement.genereIdentiteCryptographique = async () =>
+        unResultatEnrolement;
       api.enrolement().finaliseEnrolement = async () => ({});
       await storeEnrolement.enrole('Alice');
 

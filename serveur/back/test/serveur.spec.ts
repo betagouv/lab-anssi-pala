@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
-import { testeurPALA } from './testeurPALA';
+import { testeurPALA } from './testeurPALA.ts';
 
 describe('Serveur PALA', () => {
   const testeur = testeurPALA();

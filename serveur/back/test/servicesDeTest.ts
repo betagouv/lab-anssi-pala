@@ -1,4 +1,4 @@
-import { ServicesEnrolement } from '../src/enrolement/localisateurServicesEnrolement';
+import type { ServicesEnrolement } from '../src/enrolement/localisateurServicesEnrolement.ts';
 
 export const lesServicesDEnrolement = (
   services?: Partial<ServicesEnrolement>

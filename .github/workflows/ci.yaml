@@ -72,7 +72,7 @@ jobs:
         run: pnpm run format:verifie
 
   typage:
-    name: Typage du backend (tsc)
+    name: Typage du back et du front (tsc, svelte-check)
     needs: dependances
     runs-on: ubuntu-latest
     steps:
