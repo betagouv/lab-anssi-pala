@@ -23,3 +23,11 @@ Vue de l'architecture selon le [modèle C4](https://c4model.com/) des 3 premiers
 Décomposition du conteneur `pala-outillage`, organisé par domaines en architecture hexagonale.
 
 ![C4 niveau 3 — Composants](./c4-niveau-3-composants.svg)
+
+## Chiffrement du rapport
+
+Le rapport de scan est chiffré par enveloppe HPKE et lisible uniquement par les destinataires, avec leur YubiKey. Un schéma de séquence par étape :
+
+- [Enrôlement d'un destinataire](./chiffrement/enrolement.md)
+- [Chiffrement du rapport](./chiffrement/chiffrement.md)
+- [Déchiffrement du rapport](./chiffrement/dechiffrement.md)
