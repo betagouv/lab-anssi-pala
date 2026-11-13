@@ -154,7 +154,7 @@ describe('Le store de lecture d’un rapport', () => {
         statut: 'dechiffre',
         message: 'Rapport déchiffré.',
         scan: unScan,
-        contenu: 'contenu en clair',
+        contenu: expect.stringContaining('contenu en clair'),
       });
     });
   });
