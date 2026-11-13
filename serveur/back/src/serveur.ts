@@ -11,6 +11,7 @@ import { LocalisateurServicesEnrolement } from './enrolement/localisateurService
 import { adaptateurEnvironnement } from './adaptateurs/adaptateurEnvironnement.ts';
 import { creeRouteScans } from './http/routeScans.ts';
 import type { Entrepots } from './infra/entrepots.ts';
+import { enrolementActive } from './http/enrolementActive.ts';
 
 export type ConfigurationServeur = {
   adaptateurProtection: AdaptateurProtection;
@@ -113,7 +114,7 @@ const creeApp = (config: ConfigurationServeur) => {
   }
   app.get('/', (_: Request, reponse: Response) => envoieIndexAvecNonce(reponse));
 
-  app.get('/enrolement', (_: Request, reponse: Response) =>
+  app.get('/enrolement', enrolementActive, (_: Request, reponse: Response) =>
     envoieIndexAvecNonce(reponse, 'enrolement/index.html')
   );
 

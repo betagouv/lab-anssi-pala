@@ -7,6 +7,7 @@ import {
 import type { ContexteEnrolement } from '../enrolement/contexteEnrolement.ts';
 import type { ServicesEnrolement } from '../enrolement/localisateurServicesEnrolement.ts';
 import type { Middleware } from './middleware.ts';
+import { enrolementActive } from './enrolementActive.ts';
 
 declare module 'express-session' {
   interface SessionData {
@@ -42,6 +43,7 @@ export const creeRouteEnrolement = (
 
   routeur.post(
     '/enregistrement/demarrage',
+    enrolementActive,
     async (requete: Request, reponse: Response) => {
       const { options, contexte } = await demarreEnregistrement.demarre({
         nom: requete.body?.nom,
@@ -55,6 +57,7 @@ export const creeRouteEnrolement = (
     const routeur = Router();
     routeur.post(
       '/enregistrement/finalisation',
+      enrolementActive,
       middlewares.verifieCeremonieEnrolement,
       async (requete: Request, reponse: Response) => {
         const { identifiant, contexte } = await finaliseEnregistrement.finalise({
@@ -68,6 +71,7 @@ export const creeRouteEnrolement = (
 
     routeur.post(
       '/authentification/demarrage',
+      enrolementActive,
       middlewares.verifieCeremonieEnrolement,
       async (requete: Request, reponse: Response) => {
         const { options, contexte } = await demarreAuthentification.demarre({
@@ -80,6 +84,7 @@ export const creeRouteEnrolement = (
 
     routeur.post(
       '/finalisation',
+      enrolementActive,
       middlewares.verifieCeremonieEnrolement,
       async (requete: Request, reponse: Response) => {
         const resultat = await finaliseEnrolement.finalise({

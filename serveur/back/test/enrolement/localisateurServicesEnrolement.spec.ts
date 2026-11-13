@@ -36,6 +36,7 @@ describe('Le localisateur de services d‘enrôlement', () => {
       domaine: 'domaine',
       origine: 'origine',
       secretDeSession: 'secret',
+      active: true,
     });
     const entrepot = new EntrepotUtilisateursEnMemoire();
 

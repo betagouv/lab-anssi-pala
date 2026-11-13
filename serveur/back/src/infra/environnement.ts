@@ -3,6 +3,7 @@ export type ParametresEnrolement = {
   nomDuService: string;
   domaine: string;
   origine: string;
+  active: boolean;
 };
 
 export type ParametresServeur = {

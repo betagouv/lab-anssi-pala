@@ -27,6 +27,7 @@ const enrolement = (): ParametresEnrolement => {
     domaine: process.env.ENROLEMENT_DOMAINE!,
     origine: process.env.ENROLEMENT_ORIGINE!,
     secretDeSession: process.env.ENROLEMENT_SECRET_SESSION!,
+    active: process.env.ENROLEMENT_ACTIVE === 'true',
   };
 };
 

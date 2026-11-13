@@ -13,6 +13,7 @@ describe("Routes d'enrôlement", () => {
       nomDuService: 'PALA-Test',
       origine: 'http://127.0.0.1',
       secretDeSession: 'un-secret',
+      active: true,
     });
     testeur.initialise();
   });
@@ -57,6 +58,56 @@ describe("Routes d'enrôlement", () => {
       const reponse = await testeur.post(route, corps);
 
       expect(reponse.status).toBe(400);
+    }
+  );
+
+  it.each([
+    {
+      etape: 'finalisation enregistrement',
+      route: '/enrolement/enregistrement/finalisation',
+      corps: {
+        reponse: { preuve: 1 },
+      },
+    },
+    {
+      etape: 'démarrage authentification',
+      route: '/enrolement/authentification/demarrage',
+      corps: {},
+    },
+    {
+      etape: 'finalisation enrôlement',
+      route: `/enrolement/finalisation`,
+      corps: {
+        reponseAuthentification: { preuve: 2 },
+        enveloppe: { keyId: 'cle-1' },
+      },
+    },
+  ])(
+    'désactive l’enrôlement',
+    async ({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      etape,
+      route,
+      corps,
+    }: {
+      etape: string;
+      route: string;
+      corps: Record<string, unknown>;
+    }) => {
+      adaptateurEnvironnement.enrolement = () => ({
+        domaine: 'htpp://127.0.01',
+        nomDuService: 'PALA-Test',
+        origine: 'http://127.0.0.1',
+        secretDeSession: 'un-secret',
+        active: false,
+      });
+      testeur.localisateurServicesEnrolement().localise = () =>
+        lesServicesDEnrolement();
+      testeur.sansCeremonieEnCours().initialise();
+
+      const reponse = await testeur.post(route, corps);
+
+      expect(reponse.status).toBe(404);
     }
   );
 
