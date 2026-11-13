@@ -34,6 +34,10 @@ export type EnvironnementFournisseur = {
   url: string;
 };
 
+type EnvironnementPALA = {
+  url: string;
+};
+
 type Environnement = {
   mattermost: () => { urlWebhook: string };
   path: string;
@@ -43,6 +47,7 @@ type Environnement = {
   pourProxyLiteLLM: () => EnvironnementProxyLiteLLM;
   urlLiteLLMConfiguree: () => string;
   verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier): void;
+  pala(): EnvironnementPALA;
 };
 
 const IMAGE_LITE_LLM_PAR_DEFAUT =
@@ -96,6 +101,9 @@ export const environnement: Environnement = {
     modele: process.env.FOURNISSEUR_MODELE || '',
     nom: process.env.FOURNISSEUR_NOM || '',
     url: process.env.FOURNISSEUR_BASE_URL || '',
+  }),
+  pala: (): EnvironnementPALA => ({
+    url: process.env.PALA_BASE_URL || '',
   }),
   pourProxyLiteLLM: (): EnvironnementProxyLiteLLM => {
     const nombreOptionnel = (nom: string) =>
