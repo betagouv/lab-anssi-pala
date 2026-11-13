@@ -103,7 +103,7 @@
 
   <!-- Les outils -->
   <section id="outils" class="section">
-    <div class="conteneur">
+    <dsfr-container>
       <span class="barre-accent" aria-hidden="true"></span>
       <h2 class="titre-section">Deux agents, enchaînés</h2>
       <p class="intro">
@@ -177,12 +177,12 @@
           </div>
         </dsfr-card>
       </div>
-    </div>
+    </dsfr-container>
   </section>
 
   <!-- La chaîne -->
   <section id="chaine" class="section section--alt">
-    <div class="conteneur">
+    <dsfr-container>
       <span class="barre-accent" aria-hidden="true"></span>
       <h2 class="titre-section">Du dépôt à la preuve, en quatre temps</h2>
       <div class="grille grille-4">
@@ -194,12 +194,12 @@
           </div>
         {/each}
       </div>
-    </div>
+    </dsfr-container>
   </section>
 
   <!-- Sécurité -->
   <section id="securite" class="section">
-    <div class="conteneur">
+    <dsfr-container>
       <span class="barre-accent" aria-hidden="true"></span>
       <h2 class="titre-section">Pensé pour ne rien exposer</h2>
       <div class="grille grille-2">
@@ -212,12 +212,12 @@
           ></dsfr-callout>
         {/each}
       </div>
-    </div>
+    </dsfr-container>
   </section>
 
   <!-- Démarrage -->
   <section id="demarrage" class="section">
-    <div class="conteneur">
+    <dsfr-container>
       <div class="bloc-demarrage">
         <div class="bloc-demarrage__txt">
           <h2>Un scan complet en une commande</h2>
@@ -231,17 +231,18 @@
               >$ pnpm run scan-complet \
     --project api --url &lt;url-git&gt;</code
             ></pre>
-          <a
-            class="btn-blanc"
-            href={depotUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Lire le README
-          </a>
+          <div class="bloc-demarrage__action">
+            <dsfr-button
+              label="Lire le README"
+              kind="inverted-primary"
+              markup="a"
+              href={depotUrl}
+              target="_blank"
+            ></dsfr-button>
+          </div>
         </div>
       </div>
-    </div>
+    </dsfr-container>
   </section>
 </main>
 
@@ -254,51 +255,12 @@
 ></dsfr-footer>
 
 <style>
-  .conteneur {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  .section {
-    padding: 64px 0;
-  }
-  .section--alt {
-    background: #f6f6f6;
-    border-top: 1px solid #e5e5e5;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
   .hero-btns {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
   }
 
-  .barre-accent {
-    display: block;
-    width: 40px;
-    height: 4px;
-    background: #000091;
-    margin-bottom: 16px;
-  }
-  .titre-section {
-    margin: 0 0 8px;
-    font-size: 30px;
-    font-weight: 700;
-    color: #161616;
-  }
-  .intro {
-    margin: 0 0 32px;
-    font-size: 17px;
-    color: #3a3a3a;
-    max-width: 640px;
-  }
-
-  .grille {
-    display: grid;
-    gap: 24px;
-  }
   .grille-2 {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
@@ -314,14 +276,14 @@
   }
 
   .etape {
-    background: #ffffff;
-    border: 1px solid #dddddd;
+    background: var(--background-default-grey);
+    border: 1px solid var(--border-default-grey);
     padding: 24px;
   }
   .etape__num {
     font-size: 26px;
     font-weight: 800;
-    color: #000091;
+    color: var(--text-title-blue-france);
     line-height: 1;
     margin-bottom: 14px;
   }
@@ -329,17 +291,17 @@
     margin: 0 0 7px;
     font-size: 17px;
     font-weight: 700;
-    color: #161616;
+    color: var(--text-title-grey);
   }
   .etape p {
     margin: 0;
     font-size: 14.5px;
-    color: #3a3a3a;
+    color: var(--text-default-grey);
   }
 
   .bloc-demarrage {
-    background: #000091;
-    color: #ffffff;
+    background: var(--background-action-high-blue-france);
+    color: var(--text-inverted-blue-france);
     padding: 44px 40px;
     display: flex;
     flex-wrap: wrap;
@@ -355,42 +317,29 @@
     flex: 1 1 360px;
     min-width: 0;
   }
+  .bloc-demarrage__action {
+    margin-top: 16px;
+  }
   .bloc-demarrage h2 {
     margin: 0 0 10px;
     font-size: 26px;
     font-weight: 700;
-    color: #ffffff;
   }
   .bloc-demarrage p {
     margin: 0;
     font-size: 16px;
     line-height: 1.6;
-    color: #e8e8fa;
     max-width: 460px;
   }
   .commande {
     margin: 0;
     font-family: ui-monospace, 'Courier New', monospace;
     font-size: 13.5px;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
     padding: 16px 18px;
     white-space: pre-wrap;
     word-break: break-word;
-  }
-  .btn-blanc {
-    display: inline-block;
-    margin-top: 16px;
-    background: #ffffff;
-    color: #000091;
-    font-weight: 500;
-    font-size: 15px;
-    padding: 11px 20px;
-    text-decoration: none;
-  }
-  .btn-blanc:hover {
-    background: #f5f5fe;
   }
 
   @media (max-width: 620px) {
