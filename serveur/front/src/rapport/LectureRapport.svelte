@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { storeRapport, type Statut } from './rapport.store.ts';
+  import { type Statut, storeRapport } from './rapport.store.ts';
+  import DOMPurify from 'dompurify';
 
   const depotUrl = 'https://github.com/betagouv/lab-anssi-pala';
   const toolLinks = JSON.stringify([
@@ -76,16 +77,25 @@
               disabled={enDechiffrement}
             ></dsfr-button>
           </form>
-
-          {#if $storeRapport.contenu !== null}
-            <h2>Rapport déchiffré</h2>
-            <pre class="rapport">{$storeRapport.contenu}</pre>
-          {/if}
-
-          <h2>Scan chiffré</h2>
-          <pre>{JSON.stringify($storeRapport.scan, null, 2)}</pre>
         {/if}
       </div>
+
+      {#if $storeRapport.scan}
+        {#if $storeRapport.contenu !== null}
+          <div class="rapport">
+            <h2>Rapport déchiffré</h2>
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -- contenu assaini par DOMPurify -->
+            {@html DOMPurify.sanitize($storeRapport.contenu)}
+          </div>
+        {:else}
+          <div class="colonne">
+            <h2>Scan chiffré</h2>
+            <div class="rapport">
+              <pre>{$storeRapport.scan.rapport.document.ciphertext}</pre>
+            </div>
+          </div>
+        {/if}
+      {/if}
     </dsfr-container>
   </section>
 </main>
@@ -116,8 +126,12 @@
     margin: 0;
   }
   .rapport {
-    white-space: pre-wrap;
-    word-break: break-word;
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    margin: 24px 0;
+    overflow-x: auto;
   }
   pre {
     background: var(--background-contrast-grey);

@@ -2,6 +2,7 @@ import { get, writable } from 'svelte/store';
 import { api } from '../http/api.ts';
 import { etapesDechiffrement } from './etapesDechiffrement.ts';
 import type { Scan } from './scan.ts';
+import { marked } from 'marked';
 
 export type Statut =
   'pret' | 'chargement' | 'charge' | 'dechiffrement' | 'dechiffre' | 'erreur';
@@ -56,7 +57,13 @@ const dechiffre = async (): Promise<void> => {
       scan,
       secretDuLecteur
     );
-    set({ statut: 'dechiffre', message: 'Rapport déchiffré.', scan, contenu });
+    const contenuMarkdown = await marked.parse(contenu);
+    set({
+      statut: 'dechiffre',
+      message: 'Rapport déchiffré.',
+      scan,
+      contenu: contenuMarkdown,
+    });
   } catch (erreur) {
     set({ statut: 'erreur', message: messageDe(erreur), scan, contenu: null });
   }
