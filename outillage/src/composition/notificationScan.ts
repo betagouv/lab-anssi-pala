@@ -82,7 +82,11 @@ export const abonneNotificationScan = (
         ? `#### Constats
   ${evenement.constats.map((c) => constat(c)).join('\n')}`
         : '';
-    const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible} - [Rapport](${environnement.pala().url}/rapports/${scan?.id})
+    const rapport =
+      scan && scan.rapport
+        ? ` - [Rapport](${environnement.pala().url}/rapports/${scan?.id}`
+        : '';
+    const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible}${rapport})
   - **Cible :** ${cible}
   - **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
   - **Nombre de fichiers analysés :** ${evenement.nombreDeFichiers}
