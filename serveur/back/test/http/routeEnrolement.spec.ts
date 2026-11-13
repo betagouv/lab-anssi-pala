@@ -60,6 +60,14 @@ describe("Routes d'enrôlement", () => {
     }
   );
 
+  it("L'affichage de la page d'enrôlement ne nécessite pas de cérémonie en cours", async () => {
+    testeur.sansCeremonieEnCours().initialise();
+
+    const reponse = await testeur.get('/enrolement');
+
+    expect(reponse.status).not.toBe(400);
+  });
+
   describe('POST /enrolement/enregistrement/demarrage', () => {
     it("initie l'enregistrement, ne renvoie que les options et ouvre une session", async () => {
       let enregistrementDemarrePour = '';
