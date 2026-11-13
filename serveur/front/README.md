@@ -40,7 +40,7 @@ pnpm dev:front
 # 2) Via le back Express (CSP réelle, nonce). Builder d'abord, puis :
 pnpm build:front
 SVELTE_DEV_LOCAL_AVEC_HOT_RELOAD=1 NB_REQUETES_MAX_PAR_MINUTE=1000 pnpm dev:back
-# → http://localhost:8086 (ou $PORT)
+# → http://localhost:8086 (ou $PALA_PORT)
 ```
 
 > ⚠️ Le rate-limit bloque toute navigation si `NB_REQUETES_MAX_PAR_MINUTE` vaut `0` (défaut).
