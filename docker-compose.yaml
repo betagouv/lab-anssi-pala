@@ -29,7 +29,7 @@ services:
       - NODE_ENV=development
       - NB_REQUETES_MAX_PAR_MINUTE=1000
     ports:
-      - '8086:8086'
+      - '${PALA_PORT}:${PALA_PORT}'
     volumes:
       - ./serveur/front/src:/app/serveur/front/src
       - ./serveur/front/assets:/app/serveur/front/assets

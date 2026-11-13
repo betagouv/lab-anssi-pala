@@ -1,4 +1,8 @@
-import type { Environnement, ParametresEnrolement } from '../infra/environnement.ts';
+import type {
+  Environnement,
+  ParametresEnrolement,
+  ParametresServeur,
+} from '../infra/environnement.ts';
 
 const trustProxy = () => {
   if (process.env.NB_REQUETES_TRUST_PROXY === undefined) {
@@ -38,6 +42,22 @@ const rateLimit = () => {
   };
 };
 
+const serveur = (): ParametresServeur => {
+  const port = Number(process.env.PALA_PORT);
+  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+    throw new Error(
+      `PALA_PORT doit être un numéro de port valide, reçu : ${process.env.PALA_PORT}`
+    );
+  }
+  const hote = process.env.PALA_HOTE;
+  if (!hote) {
+    throw new Error(
+      `la variable d'environnement PALA_HOTE est obligatoire mais absente`
+    );
+  }
+  return { port, hote };
+};
+
 const verifieLesVariablesNecessaires = () => {
   const variablesNecessaires = [
     'ENROLEMENT_DOMAINE',
@@ -63,5 +83,6 @@ export const adaptateurEnvironnement: Environnement = {
   trustProxy,
   enrolement,
   rateLimit,
+  serveur,
   verifieLesVariablesNecessaires,
 };

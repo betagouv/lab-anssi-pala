@@ -138,8 +138,8 @@ const creeServeur = (config: ConfigurationServeur) => {
   adaptateurEnvironnement.verifieLesVariablesNecessaires();
   const app = creeApp(config);
 
-  const ecoute = (port: number, succes: () => void) => {
-    serveur = app.listen(port, succes);
+  const ecoute = (port: number, hote: string, succes: () => void) => {
+    serveur = app.listen(port, hote, succes);
   };
   const arreteEcoute = () => {
     serveur.close();
