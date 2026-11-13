@@ -8,6 +8,7 @@ import type { EntrepotScan } from '../scan/entrepoScan.ts';
 import type { Scan } from '../noyau/partage/scan.ts';
 import type { ServiceDeChiffrement } from '../../../noyau-partage/src/chiffrement/application/serviceDeChiffrement.ts';
 import type { Destinataire } from '../../../noyau-partage/src/chiffrement/domaine/documentPartage.ts';
+import { environnement } from '../noyau/environnement.ts';
 
 const nomDeCible = (cible: string) => cible.substring(cible.lastIndexOf('/') + 1);
 
@@ -80,7 +81,7 @@ export const abonneNotificationScan = (
         ? `#### Constats
   ${evenement.constats.map((c) => constat(c)).join('\n')}`
         : '';
-    const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible}
+    const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible} - [Rapport](${environnement.pala().url}/rapports/${scan?.id})
   - **Cible :** ${cible}
   - **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
   - **Nombre de fichiers analysés :** ${evenement.nombreDeFichiers}
