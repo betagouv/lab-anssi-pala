@@ -1,5 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { testeurPALA } from './testeurPALA.ts';
+import { adaptateurEnvironnement } from '../src/adaptateurs/adaptateurEnvironnement.ts';
 
 describe('Serveur PALA', () => {
   const testeur = testeurPALA();
@@ -42,5 +43,20 @@ describe('Serveur PALA', () => {
     expect(() => testeur.initialise()).toThrow(
       'Les paramètres suivants ENROLEMENT_DOMAINE, ENROLEMENT_ORIGINE, ENROLEMENT_SECRET_SESSION ne sont pas positionnés'
     );
+  });
+
+  it('ne renvoie pas la page d’enrôlement si pas activé', async () => {
+    adaptateurEnvironnement.verifieLesVariablesNecessaires = () => {};
+    adaptateurEnvironnement.enrolement = () => ({
+      domaine: '127.0.0.1',
+      nomDuService: 'PALA-Test',
+      origine: 'http://127.0.0.1',
+      secretDeSession: 'un-secret',
+      active: false,
+    });
+    testeur.initialise();
+    const reponse = await testeur.get('/enrolement');
+
+    expect(reponse.status).toBe(404);
   });
 });
