@@ -34,6 +34,10 @@ export type EnvironnementFournisseur = {
   url: string;
 };
 
+type EnvironnementBaseDeDonnees = {
+  active: () => boolean;
+};
+
 type EnvironnementPALA = {
   url: string;
 };
@@ -47,6 +51,7 @@ type Environnement = {
   pourProxyLiteLLM: () => EnvironnementProxyLiteLLM;
   urlLiteLLMConfiguree: () => string;
   verifiePresenceVariablesRacine(systemeDeFichier: SystemeDeFichier): void;
+  baseDeDonnees: () => EnvironnementBaseDeDonnees;
   pala(): EnvironnementPALA;
 };
 
@@ -96,6 +101,9 @@ const variablesRacine = (
 
 export const environnement: Environnement = {
   path: process.env.PATH!,
+  baseDeDonnees: (): EnvironnementBaseDeDonnees => ({
+    active: () => process.env.BASE_DE_DONNEES_TYPE === 'postgres',
+  }),
   fournisseur: (): EnvironnementFournisseur => ({
     apiKey: process.env.FOURNISSEUR_API_KEY || '',
     modele: process.env.FOURNISSEUR_MODELE || '',

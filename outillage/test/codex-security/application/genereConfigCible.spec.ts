@@ -12,7 +12,7 @@ import { Cible } from '../../../src/environnement/domaine/Cible.ts';
 import { environnement } from '../../../src/noyau/environnement.ts';
 import { GitMemoire } from '../../doubles/GitMemoire.ts';
 
-import { EntrepotDeScanMemoire } from '../../noyau/infrastructutre/entrepots/memoire/entrepotScanMemoire.ts';
+import { EntrepotDeScanMemoire } from '../../noyau/infrastructutre/entrepots/memoire/entrepotsMemoire.ts';
 
 const UNE_CIBLE = 'la-cible';
 

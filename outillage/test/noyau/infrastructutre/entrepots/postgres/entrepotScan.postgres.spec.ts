@@ -10,7 +10,7 @@ import {
 import Knex from 'knex';
 import { EntrepotDeScanPostgres } from '../../../../../src/noyau/infrastructure/entrepots/postgres/entrepotDeScanPostgres.ts';
 import { randomUUID } from 'node:crypto';
-import { knexPALA } from '../../../../../../noyau-partage/src/knex/knexfile.ts';
+import { initialiseLaConnexionBDD } from './initialiseLaConnexionBDD.ts';
 
 describe('L’entrepôt de Scan postgres', () => {
   let knex: Knex.Knex;
@@ -18,7 +18,7 @@ describe('L’entrepôt de Scan postgres', () => {
   let entrepot: EntrepotDeScanPostgres;
 
   beforeAll(async () => {
-    knex = knexPALA;
+    knex = await initialiseLaConnexionBDD(knex);
   });
 
   beforeEach(async () => {
@@ -158,7 +158,7 @@ describe('L’entrepôt de Scan postgres', () => {
 
     const resultat = await trx.select().from('scans').where('id', id).first();
 
-    expect(resultat.rapport).instanceOf(Buffer);
-    expect(resultat.rapport.toString('utf-8')).toBe('un rapport');
+    expect(resultat.rapport).instanceOf(Uint8Array);
+    expect(new TextDecoder().decode(resultat.rapport)).toBe('un rapport');
   });
 });

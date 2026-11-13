@@ -1,6 +1,8 @@
 import type { Scan } from '../../../../../src/noyau/partage/scan.ts';
 import type { Entrepot } from '../../../../../../noyau-partage/src/entrepots/entrepots.ts';
 import type { EntrepotScan } from '../../../../../src/scan/entrepoScan.ts';
+import type { Destinataire } from '../../../../../../noyau-partage/src/chiffrement/domaine/documentPartage.ts';
+import { type EntrepotDestinataire } from '../../../../../src/scan/entrepotDestinataire.ts';
 
 class EntrepotMemoire<T> implements Entrepot<T> {
   tousLesElements: T[] = [];
@@ -26,5 +28,13 @@ export class EntrepotDeScanMemoire
   async dernierScanPourLaCible(nomCible: string): Promise<Scan> {
     const scans = this.tousLesElements.filter((s) => nomCible === s.cible);
     return scans.length > 1 ? scans[scans.length - 1] : scans[0];
+  }
+}
+export class EntrepotDestinataireMemoire
+  extends EntrepotMemoire<Destinataire>
+  implements EntrepotDestinataire
+{
+  async tous(): Promise<Destinataire[]> {
+    return this.tousLesElements;
   }
 }
