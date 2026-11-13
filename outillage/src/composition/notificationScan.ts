@@ -75,6 +75,11 @@ export const abonneNotificationScan = (
       start: 0,
       end: evenement.dureeEnMs ?? 0,
     });
+    const constats =
+      evenement.constats.length > 0
+        ? `#### Constats
+  ${evenement.constats.map((c) => constat(c)).join('\n')}`
+        : '';
     const message = `### ${evenement.resultat === 'Succès' ? '✅' : '❌'} Scan de vulnérabilité terminé pour ${cible}
   - **Cible :** ${cible}
   - **Coût :** ${evenement.cout.type === 'estimé' ? evenement.cout.montantEnEuros.toFixed(2) : 0}€
@@ -82,8 +87,7 @@ export const abonneNotificationScan = (
   - **Durée du scan :** ${hours} H ${minutes} mn ${seconds} s
   - **Nombre de constats trouvés :** ${evenement.constats.length}
   ${informationsGit}
-  #### Constats
-  ${evenement.constats.map((c) => constat(c)).join('\n')}
+  ${constats}
   `;
     await messagerie.envoyer({ contenu: message });
   });
