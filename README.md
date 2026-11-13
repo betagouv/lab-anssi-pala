@@ -1,5 +1,7 @@
 # PALA — Pentest agentique, Lab ANSSI
 
+## Présentation
+
 **PALA** est une **expérimentation du Lab ANSSI** mettant à disposition des **outils d'audit de sécurité pilotés par des agents LLM**, sur une
 cible fournie par l'utilisateur.
 
@@ -9,6 +11,38 @@ Le but d’un tel outil est de mettre à disposition des leviers d’aide à la 
 - en utilisant des agents spécialisés dans la sécurité
 - en effectuant une analyse alliant la découverte, la preuve et la correction
 - tout cela sur des bases de code évoluant quotidiennement
+
+## Documentation
+
+La documentation technique est organisée dans le répertoire documentation/.
+
+Les instructions destinées aux agents de développement sont organisées dans .agents/skills/.
+
+Le fichier AGENTS.md constitue le point d'entrée commun des agents de code.
+
+## Stack technique
+
+- Runtime : Node.js
+- Langage : TypeScript
+- Frontend : Svelte
+- Backend : Express
+- CLI : Typescript
+- Base de données : PostgreSQL
+- Environnement de développement : Docker
+
+## Démarrage rapide
+
+Renseigner le `.env` en se basant sur `.env.example`.
+
+```bash
+pnpm install # Installe les dépendances du projet de ses sous modules
+
+./scripts/dev/start.sh # Construit l'image docker et la démarre
+
+pnpm run test # Lance les tests
+pnpm run typecheck # Vérifie le typage
+pnpm run format:corrige # Corrige les fichiers en suivant les conventions de codage
+```
 
 **L’outil est pensé en 2 parties distinctes :**
 
