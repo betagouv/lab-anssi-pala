@@ -6,7 +6,7 @@ import {
   FinaliseEnregistrement,
   FinaliseEnrolement,
 } from '../../src/enrolement/etapesEnrolement.ts';
-import { EntrepotUtilisateursEnMemoire } from '../../src/adaptateurs/entrepotUtilisateursEnMemoire.ts';
+import { EntrepotUtilisateursEnMemoire } from '../infra/entrepots/memoire/entrepotUtilisateursEnMemoire.ts';
 import { operationsWebAuthn } from '../../src/adaptateurs/adaptateurWebAuthn.ts';
 import { adaptateurEnvironnement } from '../../src/adaptateurs/adaptateurEnvironnement.ts';
 

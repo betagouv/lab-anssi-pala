@@ -15,10 +15,15 @@ type RateLimit = {
   nombreRequetesParMinuteSurPointSensible: number;
 };
 
+type BaseDeDonnees = {
+  active: () => boolean;
+};
+
 export type Environnement = {
   trustProxy: () => string | number;
   enrolement: () => ParametresEnrolement;
   rateLimit: () => RateLimit;
   serveur: () => ParametresServeur;
   verifieLesVariablesNecessaires: () => void;
+  baseDeDonnees: () => BaseDeDonnees;
 };

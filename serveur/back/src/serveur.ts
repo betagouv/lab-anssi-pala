@@ -9,11 +9,14 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { creeRouteEnrolement } from './http/routeEnrolement.ts';
 import { LocalisateurServicesEnrolement } from './enrolement/localisateurServicesEnrolement.ts';
 import { adaptateurEnvironnement } from './adaptateurs/adaptateurEnvironnement.ts';
+import { creeRouteScans } from './http/routeScans.ts';
+import type { Entrepots } from './infra/entrepots.ts';
 
 export type ConfigurationServeur = {
   adaptateurProtection: AdaptateurProtection;
   middleware: Middleware;
   localisateurServicesEnrolement: LocalisateurServicesEnrolement;
+  entrepots: Entrepots;
 };
 
 const CDN_LAB_ANSSI_UI_KIT =
@@ -55,8 +58,12 @@ const creeApp = (config: ConfigurationServeur) => {
       },
     });
 
-  const { adaptateurProtection, middleware, localisateurServicesEnrolement } =
-    config;
+  const {
+    adaptateurProtection,
+    middleware,
+    localisateurServicesEnrolement,
+    entrepots,
+  } = config;
   const app = express();
 
   app.get('/sante', (_: Request, reponse: Response) => {
@@ -84,6 +91,8 @@ const creeApp = (config: ConfigurationServeur) => {
     creeRouteEnrolement(localisateurServicesEnrolement.localise(), middleware)
   );
 
+  app.use('/scans', creeRouteScans(entrepots));
+
   if (process.env.NODE_ENV === 'development') {
     app.use(
       '/',
@@ -95,6 +104,7 @@ const creeApp = (config: ConfigurationServeur) => {
           if (chemin.startsWith('/statique')) return chemin;
           if (chemin === '/enrolement' || chemin === '/enrolement/')
             return '/statique/enrolement/';
+          if (chemin.startsWith('/rapports/')) return '/statique/rapport/';
           if (chemin === '/') return '/statique/';
           return `/statique${chemin}`;
         },
@@ -105,6 +115,10 @@ const creeApp = (config: ConfigurationServeur) => {
 
   app.get('/enrolement', (_: Request, reponse: Response) =>
     envoieIndexAvecNonce(reponse, 'enrolement/index.html')
+  );
+
+  app.get('/rapports/:id', (_: Request, reponse: Response) =>
+    envoieIndexAvecNonce(reponse, 'rapport/index.html')
   );
 
   app.use(/\/((?!statique).)*/, middleware.interdisLaMiseEnCache);

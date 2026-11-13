@@ -24,6 +24,14 @@ export class EntrepotUtilisateursPostgres
     super(knex, 'utilisateurs');
   }
 
+  async parKeyIds(keyIds: string[]): Promise<Utilisateur[]> {
+    const resultats: UtilisateurDTO[] = await this.knex
+      .select()
+      .from(this.table)
+      .whereRaw(`enveloppe ->> 'keyId' = ANY(?)`, [keyIds]);
+    return resultats.map((resultat) => this.mappe(resultat).entite());
+  }
+
   protected mappe(utilisateur: UtilisateurDTO | Utilisateur): {
     dto: () => unknown;
     entite: () => Utilisateur;
