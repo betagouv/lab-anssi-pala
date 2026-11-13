@@ -59,6 +59,10 @@ const creeApp = (config: ConfigurationServeur) => {
     config;
   const app = express();
 
+  app.get('/sante', (_: Request, reponse: Response) => {
+    reponse.status(200).json({ statut: 'ok' });
+  });
+
   app.use(adaptateurProtection.protectionLimiteTrafic());
 
   app.disable('x-powered-by');
