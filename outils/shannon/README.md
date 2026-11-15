@@ -33,7 +33,7 @@ Le tool-calling d'un modèle se vérifie hors Shannon avec `scripts/verifie_appe
 source/                sous-module : dépôt amont (jamais modifié)
 configs/               models.*.json et config-<intention>-cible.template.yaml
 scripts/               verifie_appels_outils_llm.py (test de tool-calling)
-patches/               patchs réappliqués au bootstrap (pnpm bootstrap)
+patches/               patchs réappliqués au bootstrap (pnpm pala:bootstrap)
 shannon.env.template   modèle ; shannon.env rempli (non versionné)
 smoke-target/          cible triviale locale pour un passage de vérification
 ```

@@ -9,8 +9,8 @@ garde la trace lisible.
 | ------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------- |
 | docker                          | 29.4.3 (build 055a478) | daemon actif                                                                                                  |
 | docker compose                  | v5.1.3                 | plugin CLI                                                                                                    |
-| node / pnpm                     | requis pour Shannon    | Node.js 24.22.1 (épinglé dans `.nvmrc`) pour l'outillage TypeScript (exécution directe des `.ts`)             |
-| typescript / vitest / commander | 7.0.2 / 5.0.2 / 15     | typescript & vitest : outillage de dev partagé à la racine du workspace ; commander : paquet `pala-outillage` |
+| node / pnpm                     | requis pour Shannon    | Node.js 24.22.3 (épinglé dans `.nvmrc`) pour l'outillage TypeScript (exécution directe des `.ts`)             |
+| typescript / vitest / commander | 7.0.2 / 5.1.0 / 15     | typescript & vitest : outillage de dev partagé à la racine du workspace ; commander : paquet `pala-outillage` |
 | python (hôte)                   | 3.9.6                  | scripts utilitaires (`verifie_appels_outils_llm.py`)                                                          |
 
 > Un troisième outil d'analyse de code a été évalué puis écarté le 28/09/2026 (rapport coût/bruit
@@ -31,4 +31,4 @@ garde la trace lisible.
 - CLI utilisée : `@openai/codex-security@0.1.30` (npm, `outils/codex-security/package-lock.json`),
   embarquant Codex `0.155.0` et le plugin Codex Security `0.1.95`
 - Proxy LiteLLM : `ghcr.io/berriai/litellm@sha256:87f34979b9f8cb274fac90ca8a4fdda07d8480de22755562a26adeb95ce20d02`
-- Node.js 24.22.1, Python 3.14.3 (hôte)
+- Node.js 24.22.3, Python 3.14.3 (hôte)
