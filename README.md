@@ -1,5 +1,7 @@
 # PALA — Pentest agentique, Lab ANSSI
 
+## Présentation
+
 **PALA** est une **expérimentation du Lab ANSSI** mettant à disposition des **outils d'audit de sécurité pilotés par des agents LLM**, sur une
 cible fournie par l'utilisateur.
 
@@ -10,46 +12,48 @@ Le but d’un tel outil est de mettre à disposition des leviers d’aide à la 
 - en effectuant une analyse alliant la découverte, la preuve et la correction
 - tout cela sur des bases de code évoluant quotidiennement
 
-**L’outil est pensé en 2 parties distinctes :**
+## Documentation
 
-- une première partie faisant de l’analyse statique agentique avec l’outil Codex. Cette partie d’analyse statique est
-  tout à fait automatisable et exécutable en une seule commande (voir [Scan complet](https://github.com/betagouv/lab-anssi-pala#effectuer-un-scan-complet)). Le détail du scan est donné également [ici](https://github.com/betagouv/lab-anssi-pala/blob/main/outils/codex-security/README.md#utilisation)
-- une seconde partie exécutant du pentest agentique avec l’outil Shannon. Cette partie d’exécution intrusive n’est aujourd’hui pas automatisée car elle demande à mettre en place des scénari qui dépendent des résultats de l’analyse précédente.
+La documentation de référence est organisée dans le répertoire [`documentation/`](documentation/README.md).
 
-La stratégie mise en place avec PALA est d’exécuter des scans de manière automatisée à intervalles réguliers.
+Les instructions destinées aux agents de développement sont organisées dans [`.agents/skills/`](.agents/skills/README.md).
 
-Cela afin de :
+Le fichier [`AGENTS.md`](AGENTS.md) constitue le point d'entrée commun des agents de code.
 
-- limiter le nombre de fichiers à analyser (contexte trop grand pour un LLM, performances dégradées, coût élevé)
-- obtenir une boucle de retour la plus rapide possible
-- informer les équipes de potentielles vulnérabilités
+## Stack technique
 
-Le dépôt ne contient aucun résultat d'audit : il fournit l'outillage, les configurations d'exemple et
-la méthode. Les cibles, les identifiants et les sorties de scan ne sont jamais versionnés.
+- Runtime : Node.js
+- Langage : TypeScript
+- Frontend : Svelte
+- Backend : Express
+- CLI : TypeScript
+- Base de données : PostgreSQL (Knex)
+- Environnement de développement : Docker
 
-## Les outils
+Versions et détail : [`documentation/technical/stack.md`](documentation/technical/stack.md).
 
-| Outil                                                               | Rôle                                                                                     | Nature                        |
-| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------- |
-| [Codex Security](https://github.com/openai/codex-security) (OpenAI) | Analyse statique de code agentique : repère des faiblesses potentielles et les documente | Lit le code, hors ligne       |
-| [Shannon](https://github.com/KeygraphHQ/shannon) (Keygraph)         | Pentest agentique dynamique sur une application en marche                                | Agit sur une instance vivante |
+## Démarrage rapide
 
-Les deux s'enchaînent : **Codex Security d'abord** (analyse statique, large et bon marché), puis
-**Shannon** (validation dynamique, ponctuelle) sur les points qui méritent une preuve.
+Prérequis : Node.js (version épinglée dans `.nvmrc`), pnpm, Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
+compatible OpenAI.
 
-Chaque outil est branché sur un modèle via une API compatible **Chat Completions**. Pour Codex
-Security, qui ne parle que l'API _Responses_, un **proxy LiteLLM local** fait la traduction et
-garde la clé du fournisseur hors de l'environnement de l'agent (voir
-[documentation Codex](outils/codex-security/README.md) de PALA).
+Renseigner le `.env` en se basant sur `.env.example`.
 
-## Architecture
+```bash
+pnpm install # Installe les dépendances du projet et de ses paquets
 
-Un modèle C4 détaille l’architecture [ici](documentation/architecture.md)
+docker network create reseau-pala # Une seule fois : réseau partagé par les conteneurs
+./scripts/dev/start.sh # Construit les images docker et les démarre
+
+pnpm run test # Lance les tests
+pnpm run typecheck # Vérifie le typage
+pnpm run lint # Analyse le code
+pnpm run format:corrige # Corrige les fichiers en suivant les conventions de codage
+```
+
+Le détail de l'installation est dans [`documentation/development/getting-started.md`](documentation/development/getting-started.md).
 
 ## Démarrage
-
-Prérequis : Node.js 24.22.1 (version épinglée dans `.nvmrc`), Python ≥ 3.10, Docker. Les modèles sont fournis par un fournisseur
-compatible OpenAI.
 
 L’outil dispose d’une CLI dont les commandes sont détaillées ci-dessous.
 
@@ -110,15 +114,15 @@ pnpm run pala:génère-config --cible <nom>
   (plus le contexte grossi, plus le modèle et le raisonnement deviennent complexes et sujets à erreurs).
 - Il est préférable de scanner des fichiers individuels ou des répertoires spécifiques.
 
-1. **Analyse statique** avec Codex Security : `pnpm démarre-proxy`, puis `pnpm scan` (dépôt entier)
+1. **Analyse statique** avec Codex Security : `pnpm codex:démarre-proxy`, puis `pnpm codex:scan`
    ```bash
    pnpm codex:démarre-proxy
    pnpm codex:scan --cible $PWD/cible/copies/<cible> --config $PWD/outils/codex-security/configs/config-<cible>.yaml
    ```
    Un compte rendu simple du scan est publié sur le webhook Mattermost (à renseigner dans le `.env` racine)
-   La confrontation d'un point précis au code se fait avec `pnpm validate`.
+   La confrontation d'un point précis au code se fait avec `pnpm codex:validate`.
 2. **Validation dynamique** avec Shannon : une instance **jetable** de la cible doit tourner en
-   local (base de données jetable, données de test). `pnpm shannon` lance le pentest ; les
+   local (base de données jetable, données de test). `pnpm shannon:pen-test` lance le pentest ; les
    configurations par intention (analyse, authentifié, création de compte, focus, SAST) sont dans
    `outils/shannon/configs/`.
 
@@ -134,31 +138,28 @@ Détails par outil :
 
 La commande `pnpm run codex:scan-complet --cible <url-git>` permet de lancer toutes les étapes précédentes en une seule fois.
 
-## Démarrage en local
-
-- Exécuter `pnpm install` à la racine du dépôt.
-- Exécuter `cp .env.example .env` et remplir les variables d'environnement.
-- Exécuter `./scripts/dev/start.sh`.
-
 ## Structure
 
-Le dépôt est un **workspace pnpm** : trois paquets (`pala-back`, `pala-front`, `pala-outillage`)
-et une racine qui porte l'outillage de dev partagé (TypeScript, vitest, prettier, tsx) et les
+Le dépôt est un **workspace pnpm** : quatre paquets (`pala-back`, `pala-front`, `pala-outillage`,
+`pala-noyau-partage`) et une racine qui porte l'outillage de dev partagé (TypeScript, vitest, prettier, tsx) et les
 scripts de lancement.
 
 ```
 serveur/back/          workspace « pala-back » : serveur Express (sert la SPA, protection CSP/rate-limit)
 serveur/front/         workspace « pala-front » : SPA Svelte 5 au design system de l'État
-outillage/             workspace « pala-outillage » : CLI TypeScript d'audit (Node 24.22.1, vitest, archi hexagonale)
+outillage/             workspace « pala-outillage » : CLI TypeScript d'audit (vitest, archi hexagonale)
+noyau-partage/         workspace « pala-noyau-partage » : chiffrement, entrepôts et migrations communs à la CLI et au serveur
 outils/<outil>/        source/ (sous-module amont), configs, README (voir documentation/ajouter-un-outil.md)
-documentation/         démarche, notes API fournisseurs, versions
+documentation/         documentation de référence : projet, architecture, technique, développement, qualité, métier
+.agents/skills/        skills destinées aux agents de code
+scripts/               démarrage local, hooks Clever Cloud, tâche planifiée de scan
 cible/                 copies locales des cibles (jamais versionnées)
 ```
 
 ## Sécurité et précautions
 
 - **Aucune cible, aucun identifiant, aucune sortie de scan n'est versionné** (voir `.gitignore`).
-  Les secrets vivent dans `.env` (non suivi) ; seuls les modèles `*.template.*` sont versionnés.
+  Les secrets vivent dans `.env` (non suivi) ; seuls les modèles (`.env.example`, `*.template.*`) sont versionnés.
 - Shannon agit réellement sur l'application en mode exploitation (écritures, comptes, e-mails) :
   **toujours une instance et une base jetables**, jamais un environnement de production.
 - Le bac à sable de Codex Security a un accès en lecture au disque : ne pas le lancer sur une
