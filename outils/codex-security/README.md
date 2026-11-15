@@ -35,7 +35,7 @@ codex-security ──Responses──▶ LiteLLM (127.0.0.1:4000) ──Chat Comp
 Le `.env` racine est la **source de vérité** du proxy : `LITELLM_BASE_URL` (URL du proxy, sans
 `/v1`) et `LITELLM_API_KEY` (clé créée côté proxy) y sont obligatoires. génère-config, scan et
 validate les lisent directement. En local, pointer vers le conteneur Docker
-(`LITELLM_BASE_URL=http://127.0.0.1:4000`, `pnpm démarre-proxy`) ; en **hébergé** (ex. une app
+(`LITELLM_BASE_URL=http://127.0.0.1:4000`, `pnpm codex:démarre-proxy`) ; en **hébergé** (ex. une app
 LiteLLM sur Clever Cloud), l'URL de l'app et sa master key.
 
 Réglages Codex utiles (section `codex` des configs) : fournisseur personnalisé pointant le proxy

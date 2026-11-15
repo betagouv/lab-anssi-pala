@@ -1,7 +1,7 @@
 # Secrets et environnements (jamais versionnés — voir .env.example / *.template)
 .env
 .env.*
-!.env.template
+!.env.example
 outils/*/*.env
 
 # Front PALA (Svelte/Vite) : dépendances et build (le dist est régénéré au déploiement)

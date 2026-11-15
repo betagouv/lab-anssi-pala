@@ -22,7 +22,7 @@ services:
       context: .
       dockerfile: ./Dockerfile-BACK
       args:
-        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise ./scripts/dev/start.sh, ou exporte-la depuis .nvmrc)}'
     env_file:
       - .env
     environment:
@@ -46,7 +46,7 @@ services:
       context: .
       dockerfile: ./Dockerfile-CLI
       args:
-        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise make up, ou exporte-la depuis .nvmrc)}'
+        NODE_VERSION: '${NODE_VERSION:?NODE_VERSION non definie (utilise ./scripts/dev/start.sh, ou exporte-la depuis .nvmrc)}'
     env_file:
       - .env
     command: ['sh', '-c', 'pnpm run migration-bdd && tail -f /dev/null']

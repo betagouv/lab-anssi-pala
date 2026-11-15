@@ -1,9 +1,8 @@
 ' Architecture de PALA selon le modèle C4 (https://c4model.com/)
-' Transposition des diagrammes mermaid du README.md racine.
 ' Niveaux 1 à 3 : Contexte, Conteneurs, Composants.
 '
 ' Rendu : PlantUML avec la bibliothèque standard C4-PlantUML.
-'   plantuml documentation/architecture-c4.puml
+'   plantuml documentation/architecture/architecture-c4.puml
 ' (génère un PNG/SVG par bloc @startuml)
 
 @startuml c4-niveau-1-contexte
@@ -18,7 +17,7 @@ title Pentest Agentique Lab ANSSI — PALA
 
 Enterprise_Boundary(b0, "") {
     Person(auditeur, "Auditeur sécurité", "Opère PALA sur une ou des cible·s")
-    Person(equipe, "Équipe de dev de la cible", "Reçoit les comptes rendus")
+    Person(equipe, "Équipe de dev de la cible", "Reçoit les comptes rendus, s'enrôle pour accéder aux rapports")
 
     System(pala, "PALA", "Suite d'audit de sécurité pilotée par des agents LLM", $sprite="nodejs")
 
@@ -35,6 +34,7 @@ Rel_D(pala, git, "Clone / met à jour le code", "git")
 Rel(pala, llm, "Requêtes d'inférence des agents", "HTTPS")
 Rel(pala, mattermost, "Publie le compte rendu de scan", "Webhook")
 Rel(equipe, mattermost, "Consulte les comptes rendus")
+Rel(equipe, pala, "S'enrôle", "HTTPS, WebAuthn")
 @enduml
 
 @startuml c4-niveau-2-conteneurs
@@ -48,7 +48,7 @@ Rel(equipe, mattermost, "Consulte les comptes rendus")
 !include <logos/docker>
 
 LAYOUT_WITH_LEGEND()
-title Pentes Agentique Lab ANSSI — PALA
+title Pentest Agentique Lab ANSSI — PALA
 
 Person(auditeur, "Auditeur sécurité", "Opère la CLI")
     System_Boundary(fournisseurs, "Fournisseurs") {
@@ -59,12 +59,13 @@ Person(auditeur, "Auditeur sécurité", "Opère la CLI")
 
 System_Boundary(pala, "PALA") {
     Container(cli, "CLI d'audit", "Node 24 / TypeScript, archi hexagonale", "Orchestre bootstrap, génération de config, scans et pentests", $sprite="nodejs")
-    Container(front, "SPA", "Svelte 5 + Design System de l'État", "Interface de consultation", $sprite="svelte-icon")
-    Container(back, "Serveur web", "Express", "Sert la SPA (CSP, rate-limit)", $sprite="nodejs")
+    Container(front, "SPA", "Svelte 5 + Design System de l'État", "Accueil et enrôlement", $sprite="svelte-icon")
+    Container(back, "Serveur web", "Express", "Sert la SPA (CSP, rate-limit), enrôlement WebAuthn", $sprite="nodejs")
+    Container(noyau, "Noyau partagé", "TypeScript", "Chiffrement par enveloppe, entrepôts, migrations", $sprite="nodejs")
     Container(proxy, "Proxy LiteLLM", "Conteneur Docker", "Traduit l'API Responses vers Chat Completions, garde la clé du fournisseur", $sprite="docker")
     Container(codex, "Codex Security", "Sous-module (OpenAI)", "Analyse statique agentique", $sprite="nodejs")
     Container(shannon, "Shannon", "Sous-module (Keygraph)", "Pentest dynamique agentique", $sprite="nodejs")
-    ContainerDb(bdd, "PostgreSQL", "Base de données", "Enregistre les scans", $sprite="postgresql")
+    ContainerDb(bdd, "PostgreSQL", "Base de données", "Enregistre les scans et les utilisateurs", $sprite="postgresql")
 }
 
 Rel(auditeur, cli, "Commandes pnpm")
@@ -74,6 +75,9 @@ Rel(cli, codex, "Lance l'analyse statique")
 Rel(cli, shannon, "Lance le pentest")
 Rel(cli, proxy, "Configure & démarre")
 Rel(cli, bdd, "Enregistre les scans", "SQL")
+Rel(back, bdd, "Enregistre les utilisateurs", "SQL")
+Rel(cli, noyau, "Utilise")
+Rel(back, noyau, "Utilise")
 Rel_D(cli, git, "Clone / pull", "git")
 Rel_D(cli, mattermost, "Publie le compte rendu", "Webhook")
 Rel(codex, proxy, "Appels d'inférence", "API Responses")
